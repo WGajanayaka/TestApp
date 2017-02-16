@@ -2053,7 +2053,7 @@ namespace SchoolHealthManagement.Controllers
                                          "m_Provinces ON A.ProvinceID = dbo.m_Provinces.ProvinceID INNER JOIN " +
                                          "m_Zones ON A.ZoneID = dbo.m_Zones.ZoneID " +
                                          "INNER JOIN ZoneWiseStudentCount ON ZoneWiseStudentCount.ProvinceID = m_Provinces.ProvinceID AND ZoneWiseStudentCount.ZoneID = A.ZoneID " +
-                                    "WHERE ZoneWiseStudentCount.Year = " + iYear + " " +
+                                    "WHERE ZoneWiseStudentCount.Year = " + iYear + " AND (dbo.StudentInfo.Year = " + iYear + ") " +
                                     "GROUP BY  A.SchoolID, A.SchoolName, dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName " +
                                     "ORDER BY dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
