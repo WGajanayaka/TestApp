@@ -1,0 +1,418 @@
+﻿@model SchoolHealthManagement.Models.BMIInfoModel
+
+@{
+    ViewBag.Title = "BMIInformation";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+
+@using (Html.BeginForm("BMIInformation", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true)
+    <script src="~/Content/assets/js/jquery-migrate-1.0.0.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.dob-picker').datepicker({ dateFormat: 'dd-M-yy' });
+            $('.dob-picker').datepicker('setDate', new Date());
+            $('#pfDate').datepicker({ dateFormat: 'dd-M-yy' });
+            $('#pfDate').datepicker('setDate', new Date());
+        });
+
+
+        function CtrlChanged(_Ctrl, _ValueOfCtrl, _i) {
+            //_Ctrl, _ValueOfCtrl
+            //alert(_Ctrl.id);
+            //alert(_i);
+            //alert(_ValueOfCtrl);
+            //alert(_Ctrl.id.replace('-', 'H'));
+            $('#' + _Ctrl.id.replace('-', 'H')).val(_ValueOfCtrl);
+            var isHeight = _Ctrl.id.indexOf('Height');
+            var heightVal = 0;
+            var weightVal = 0;
+            var bmi = 0;
+            if (isHeight == 0) {
+                heightVal = _ValueOfCtrl;
+                weightVal = $('#WeightH' + _i.toString()).val()
+                if (heightVal != 0) {
+                    bmi = weightVal / (heightVal * heightVal);
+                    $('#BMIH' + _i.toString()).val(bmi.toFixed(2));
+                    $('#BMI-' + _i.toString()).val(bmi.toFixed(2));
+                }
+                else {
+                    $('#BMIH' + _i.toString()).val(0);
+                    $('#BMI-' + _i.toString()).val(0);
+                }
+                // var bmival = $('#BMIH' + _i.toString()).val();
+                //alert(bmival);
+            }
+            else {
+
+                weightVal = _ValueOfCtrl;
+                heightVal = $('#HeightH' + _i.toString()).val()
+                if (heightVal != 0) {
+                    bmi = weightVal / (heightVal * heightVal);
+                    $('#BMIH' + _i.toString()).val(bmi.toFixed(2));
+                    $('#BMI-' + _i.toString()).val(bmi.toFixed(2));
+                }
+                else {
+                    $('#BMIH' + _i.toString()).val(0);
+                    $('#BMI-' + _i.toString()).val(0);
+                }
+                // alert($('#BMIH' + _i.toString()).val());
+            }
+            //var bmiVal = _ValueOfCtrl /
+
+            //$('#' + 'BMIH' + _i).val(_ValueOfCtrl);
+
+            //var bmival = $('#BMIH' + _i.toString()).val();
+            //alert(bmival);
+            //alert($('#' + _Ctrl.id.replace('-', 'H')).val());
+
+        }
+
+        function GradeChanged(_SchoolID, _Grade, _Trimester) {
+
+            var url = "/Home/BMIInformation";
+
+            var model = @Html.Raw(Json.Encode(Model)) //Convert Model to JSON 
+                    $.post(url, model);
+
+              //$.ajax({
+              //    url: url,
+              //    data: {},
+              //    cache: false,
+              //    type: "POST",
+              //    success: function (data) {
+
+              //    },
+              //    ERROR: function (reponse) {
+              //        alert("error : " + reponse);
+              //    }
+              //});
+
+
+              }
+
+              function GradeChanged(_SchoolID, _Grade, _Trimester) {
+
+                  Load_BMI_Information(_SchoolID, _Grade, _Trimester);
+
+                  var url = "/Home/GetExistingBMIs/";
+
+                  $.ajax({
+                      url: url,
+                      data: { SchoolID: _SchoolID, Grade: _Grade, Trimester: _Trimester },
+                      cache: false,
+                      type: "POST",
+                      success: function (data) {
+                          for (var x = 0; x < data.length; x++) {
+                              //markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                              //alert(data[x].AdmissionNo);
+
+
+                              $('#AdmissionNo-' + (x + 1).toString()).val(data[x].AdmissionNo);
+                              $('#AdmissionNoH' + (x + 1).toString()).val(data[x].AdmissionNo);
+
+                              $('#Gender-' + (x + 1).toString()).val(data[x].Gender);
+                              $('#GenderH' + (x + 1).toString()).val(data[x].Gender);
+
+                              $('#DOB-' + (x + 1).toString()).val(data[x].DOB);
+                              $('#DOBH' + (x + 1).toString()).val(data[x].DOB);
+
+                              $('#Height-' + (x + 1).toString()).val(data[x].Height);
+                              $('#HeightH' + (x + 1).toString()).val(data[x].Height);
+
+                              $('#Weight-' + (x + 1).toString()).val(data[x].Weight);
+                              $('#WeightH' + (x + 1).toString()).val(data[x].Weight);
+
+                              $('#BMI-' + (x + 1).toString()).val(data[x].BMI);
+                              $('#BMIH' + (x + 1).toString()).val(data[x].BMI);
+                          }
+                      },
+                      ERROR: function (reponse) {
+                          alert("error : " + reponse);
+                      }
+                  });
+
+              }
+
+              function Load_BMI_Information(_SchoolID, _Grade, _Trimester) {
+
+
+                  var url = "/Home/GetBMIInfo/";
+
+                  $.ajax({
+                      url: url,
+                      data: { SchoolID: _SchoolID, Grade: _Grade, Trimester: _Trimester },
+                      //data: { SchoolID: _SchoolID },
+                      cache: false,
+                      type: "POST",
+                      success: function (data) {
+                          //$('#TakenBy').val(data.TakenBy);
+                          $('#DatePerformed').val(data.DatePerformed);
+                      },
+                      ERROR: function (reponse) {
+                          alert("error : " + reponse);
+                      }
+                  });
+
+
+
+              }
+
+              function LoadGradeInfo() {
+
+           @*   var vschoolid = $('#SchoolID').val();
+              alert(vschoolid);
+             
+              var url = "@Html.Raw(Url.Action("BMIInformation", "Home", new  { SchoolID = "schID", Grade = "3" }))".replace("schID",vschoolid);
+              $.get(url);*@
+
+
+          }
+
+
+    </script>  
+    
+    <script>
+        $(document).ready(function () {
+
+            $('#btnExport').click(function () {
+
+                var vschoolid = $('#SchoolID').val();
+                var vGrade = $('#Grade').val();
+                var vTrimester = $('#Trimester').val();
+                if (vGrade != '' && vTrimester != '') {
+                 
+                    window.location.href = '/Home/Export2Excel?SchoolID=' + vschoolid + '&&Grade=' + vGrade + '&&Trimester=' + vTrimester;
+
+                }
+                
+
+
+            });
+
+            $('#btnHistory').click(function () {
+
+                var vschoolid = $('#SchoolID').val();
+ 
+                //window.location.href = '/Home/ViewBMIHistory?SchoolID=' + vschoolid;
+                var url = '/Home/ViewBMIHistory?SchoolID=' + vschoolid;
+                window.open(url, '_blank');
+
+                
+
+                
+
+
+
+            });
+        });
+    </script>
+    
+    <style>
+        .bckl {
+            color: #094B75;
+            padding-left: 20px;
+        }
+
+            .bckl:hover {
+                color: #40A8E8;
+            }
+    </style>
+    
+    <div class="container">
+        <div class="row index-top-box">
+            <div class="form-sub-headers">
+                <h2>BMI Information</h2>
+            </div>
+
+
+
+
+            <table class="details_container_table" style="width: 50%">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.HiddenFor(model => model.SchoolID)
+                            @Html.LabelFor(model => model.Grade)</td>
+                        <td style="width: 30%">@Html.DropDownListFor(model => model.Grade, (List<SelectListItem>)ViewBag.Grades, "Select Grade")
+                            @Html.ValidationMessageFor(model => model.Grade) </td>
+                        <td>
+                            <input type="button"  id="btnHistory" value="View History" class="blue-btn" />
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("School Name") </td>
+
+                        <td style="width: 30%">
+                            @Html.HiddenFor(model => model.SchoolName)
+                            @Html.TextBoxFor(model => model.SchoolName, new { disabled = "true" })
+                            @Html.HiddenFor(model => model.SchoolID)
+                            @Html.ValidationMessageFor(model => model.SchoolName) </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Taken By") </td>
+                        <td style="width: 30%">@Html.DropDownListFor(model => model.TakenBy, new List<SelectListItem>{
+                        new SelectListItem{Text="Teacher", Value="Teacher"},
+                        new SelectListItem{Text="MOH Officer", Value="MOH Officer"}         
+                        }, "Select Taken By")
+                            @Html.ValidationMessageFor(model => model.TakenBy)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.LabelFor(model => model.Trimester) </td>
+                        <td style="width: 30%">
+                            @*  @Html.EditorFor(model => model.PerformedDate)*@
+                            @Html.DropDownListFor(model => model.Trimester, new List<SelectListItem>{
+                        new SelectListItem{Text="1", Value="1"},
+                        new SelectListItem{Text="2", Value="2"},   
+                        new SelectListItem{Text="3", Value="3"}      
+                        }, "Select Trimester", new { onchange = "javascript:GradeChanged($('#SchoolID').val(), $('#Grade').val(), this.value);" })
+                            @Html.ValidationMessageFor(model => model.Trimester) </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Performed Date") </td>
+                        <td style="width: 30%">
+                            @*  @Html.EditorFor(model => model.PerformedDate)*@
+                            @Html.TextBoxFor(model => model.PerformedDate, new { id = "pfDate" })
+                            @Html.ValidationMessageFor(model => model.PerformedDate) 
+                            
+                        </td>
+                        <td> <input type="button" id="btnExport" value="Download Excel" class="blue-btn" /></td>
+                    </tr>
+                   
+
+                    <tr>
+
+                        <td style="width: 20%; text-align: right">Excel File</td>
+                        <td style="width: 30%">
+                            <input type="file" name="excelFile" /></td>
+                        <td>
+                            <input type="submit" id="btnUpload" value="Upload Excel" name="button" class="blue-btn" /></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+
+
+
+        </div>
+        <table class="datatable sortable" style="width: 100%">
+
+            <thead>
+                <tr>
+
+
+
+                    <th>
+                        @Html.DisplayName("AdmissionNo")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Gender")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Date of Birth")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Height (m)")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Weight (kg)")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("BMI (kg/m2)")
+                    </th>
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @{int i = 1; }
+
+                @foreach (var item in (List<SchoolHealthManagement.Models.BMIInfo>)ViewBag.BMIInfo)
+                {
+                    
+                    <tr>
+
+                        <td>
+                            @Html.Hidden("AdmissionNoH" + i.ToString(), (item == null?"":item.AdmissionNo))
+                            @Html.TextBoxFor(model => item.AdmissionNo, new { disabled = "true", id = "AdmissionNo-" + i.ToString(), onchange = "javascript:CtrlChanged(this,this.value);" })
+                            @* id = "AdmissionNo" + i.ToString(), *@
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("GenderH" + i.ToString(), (item == null?"":item.AdmissionNo))
+                            @Html.DropDownListFor(model => item.Gender, new List<SelectListItem>{
+                        new SelectListItem{Text="Male", Value="Male"},
+                        new SelectListItem{Text="Female", Value="Female"}         
+                        }, "Select Gender", new { disabled = "true", id = "Gender-" + i.ToString(), onchange = "javascript:CtrlChanged(this,this.value);" })
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("DOBH" + i.ToString(), (item == null?DateTime.MinValue:item.DOB))
+                            @Html.TextBoxFor(model => item.DOB, new {disabled = "true", @class = "dob-picker", id = "DOB-" + @i.ToString(), onchange = "javascript:CtrlChanged(this,this.value);" })
+                            @*<input type="text" class="dob-picker"  name = "DOB-" + @i.ToString() />*@
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("HeightH" + i.ToString(), (item == null?0:item.Height))
+                            @Html.TextBoxFor(model => item.Height, new {disabled = "true", @class = "tb-val-right", id = "Height-" + i.ToString(), onchange = "javascript:CtrlChanged(this,this.value," + i.ToString() + ");" })
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("WeightH" + i.ToString(), (item == null?0:item.Weight))
+                            @Html.TextBoxFor(model => item.Weight, new {disabled = "true", @class = "tb-val-right", id = "Weight-" + i.ToString(), onchange = "javascript:CtrlChanged(this,this.value, " + i.ToString() + ");" })
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("BMIH" + i.ToString(), (item == null?0: item.BMI))
+                            @Html.TextBoxFor(model => item.BMI, new { disabled = "true", @class = "tb-val-right", id = "BMI-" + i.ToString(), onchange = "javascript:CtrlChanged(this,this.value," + i.ToString() + ");" })
+                        </td>
+
+                    </tr> 
+                    
+                    i++;
+                }
+
+                @Html.Hidden("CountRows", i)
+            </tbody>
+
+
+        </table>
+
+        <div>
+            <table style="float: right;margin: 9px -7px 12px 4px;text-align: right;">
+                <tr>
+
+                    <td>
+                        <input type="submit" value="Save" name="button" class="blue-btn" />
+                        &nbsp;</td>
+                    @*<td> @Html.ActionLink("Back to List >>", "Index", null,new { @class = "bckl" })</td>*@
+                </tr>
+
+            </table>
+        </div>
+
+        <p>
+        </p>
+    </div>
+}
+
+
+

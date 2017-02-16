@@ -1,0 +1,384 @@
+﻿@model SchoolHealthManagement.Models.ImpressReleaseModel
+
+@{
+    ViewBag.Title = "Impress Release";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Impress Release</h2>
+</div>
+
+
+    <style>.search-btn {position: relative;top: 1px;}</style>
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('#fMonth').focus(function () {
+            $(".ui-datepicker-calendar").hide()
+        });
+        $('#fMonth').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM',
+            onClose: function (dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+
+               
+              
+            }
+        });
+    });
+
+    function GetZones(_ProvinceId) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#ZoneID").html(procemessage).show();
+        var url = "/Home/GetZonesByProvice/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Zone</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#ZoneID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    function DisplayTable() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetImpressRequests4Province/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                //alert(data.length);
+                for (var x = 0; x < data.length; x++) {
+
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[x].CensorsID + "</td>");
+                    tr.append("<td>" + data[x].ZonalRequestAmount + "</td>");
+                    tr.append("<td>" + data[x].PDEReleasedAmount + "</td>");
+                    tr.append("<td>" + data[x].ForMonth + "</td>");
+                    tr.append("<td>" + data[x].ReleasedDate + "</td>");
+                    $('table').append(tr);
+
+                }
+
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    $(function () {
+        $("#rls-date")
+.datepicker({
+    dateFormat: 'dd-M-yy',
+
+});
+    });
+
+    function SearchCensorsID() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetCensorsDetails/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                document.getElementById('SchoolName').value = data.School;
+                GetStudentCounts();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    function GetStudentCounts() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetStudentsInSchool/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+
+                //for (var x = 0; x < data.length; x++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data.Boys + "</td>");
+                    tr.append("<td>" + data.Girls + "</td>");
+                    tr.append("<td>" + data.Total + "</td>");
+                    $('#tableNoOfStudents').append(tr);
+
+                    DisplayTable();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    function DisplayTable() {
+        var _ProvinceID = $("#ProvinceID").val();
+        var _ZoneID = $("#ZoneID").val();
+        var _Year = $("#ForYear").val();
+        var _Month = $("#ForMonth").val();
+        var url = "/Home/GetImpressRelease4Zone/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceID, ZoneID: _ZoneID , ForYear:_Year, ForMonth:_Month},
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                //alert(data.length);
+                for (var x = 0; x < data.length; x++) {
+
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[x].CensorsID + "</td>");
+                    tr.append("<td>" + data[x].ZonalRequestAmount + "</td>");
+                    tr.append("<td>" + data[x].PDEReleasedAmount + "</td>");
+                    tr.append("<td>" + data[x].ForMonth + "</td>");
+                    tr.append("<td>" + data[x].ReleasedDate + "</td>");
+                    $('tableBelow').append(tr);
+
+                }
+
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+   <table class="details_container_table" style="width:50%">
+<tbody>
+<tr>
+    <td style="width:20%; text-align:right">     @Html.LabelFor(model => model.ForYear)</td>
+    <td style="width: 30%">@Html.DropDownListFor(item =>item.ForYear, (List<SelectListItem>)ViewBag.Years, "Select Year")</td>
+
+    <td style="width:20%; text-align:right">     @Html.LabelFor(model => model.ForMonth)</td>
+    <td style="width: 30%">@Html.DropDownListFor(item =>item.ForMonth , new List<SelectListItem>{
+                        new SelectListItem{Text="Jan", Value="1"},
+                        new SelectListItem{Text="Feb", Value="2"},
+                        new SelectListItem{Text="Mar", Value="3"},
+                        new SelectListItem{Text="Apr", Value="4"},
+                        new SelectListItem{Text="May", Value="5"},
+                        new SelectListItem{Text="Jun", Value="6"},
+                        new SelectListItem{Text="Jul", Value="7"},
+                        new SelectListItem{Text="Aug", Value="8"},
+                        new SelectListItem{Text="Sep", Value="9"},
+                        new SelectListItem{Text="Oct", Value="10"},
+                        new SelectListItem{Text="Nov", Value="11"},
+                        new SelectListItem{Text="Dec", Value="12"}        
+                        }, "Select Month")</td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">     @Html.Label("Province") </td>
+    <td style="width:30%">  @Html.DropDownListFor(model => model.ProvinceID, (List<SelectListItem>)ViewBag.Provinces, "Select Province",new { onchange = "javascript:GetZones(this.value);" })
+            @Html.ValidationMessageFor(model => model.ProvinceID)
+             </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.Label("Zone") </td>
+    <td style="width:30%"> @Html.DropDownListFor(model => model.ZoneID, (List<SelectListItem>)ViewBag.Zones, "Select Zone")
+            @Html.ValidationMessageFor(model => model.ZoneID) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("No Of Students") </td>
+    <td style="width:30%">       <table id="tableNoOfStudents" class ="datatable sortable">
+
+            <thead>
+                <tr>
+
+
+                    <th>
+                        @Html.DisplayName("Boys")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Girls")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+                   
+
+
+                </tr>
+            </thead>
+            <tbody>
+               
+            </tbody>
+        </table> </td>
+</tr>
+
+<tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.ZonalRequestAmount) </td>
+    <td style="width:30%">@Html.EditorFor(model => model.ZonalRequestAmount)
+            @Html.ValidationMessageFor(model => model.ZonalRequestAmount)  </td>
+</tr>
+
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.LabelFor(model => model.PDEReleasedAmount) </td>
+    <td style="width:30%"> @Html.EditorFor(model => model.PDEReleasedAmount)
+            @Html.ValidationMessageFor(model => model.PDEReleasedAmount) </td>
+</tr>
+
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.ReleasedDate)</td>
+    <td style="width:30%">   @Html.TextBoxFor(model => model.ReleasedDate,new { id = "rls-date" })
+            @Html.ValidationMessageFor(model => model.ReleasedDate) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  </td>
+    <td style="width:30%">  <input type="submit" value="Save" class="blue-btn" /> </td>
+</tr>
+
+</tbody>
+
+</table>
+
+<br />
+    
+    
+    
+    <table id="tableBelow" class ="datatable sortable" style="width: 100%;">
+
+            <thead>
+                <tr>
+
+                     <th>
+                        @Html.DisplayName("Month")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Province")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Zone")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Boys")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Girls")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Zonal Request Amount")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Cheque No")
+                    </th>
+                    <th>
+                        @Html.DisplayName("PDE's Released Amount")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Released Date")
+                    </th>
+
+
+                   
+
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @*@foreach (var item in (List<SchoolHealthManagement.Models.ZoneImpressSummaryModel>)ViewBag.ZoneImpressInfo)
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(model => item.ZoneName, new { disabled = "true", id = "ZoneName-" + i.ToString()})
+
+                        </td>
+                         <td>
+                            @Html.TextBoxFor(model => item.NoOfStudents, new { id = "NoOfStudents-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueJan, new { id = "ValueJan-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueFeb, new { id = "ValueFeb-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueMar, new { id = "ValueMar-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueApr, new { id = "ValueApr-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueMay, new { id = "ValueMay-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueJun, new { id = "ValueJun-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueJul, new { id = "ValueJul-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueAug, new { id = "ValueAug-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueSep, new { id = "ValueSep-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueOct, new { id = "ValueOct-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueNov, new { id = "ValueNov-" + i.ToString()})
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(model => item.ValueDec, new { id = "ValueDec-" + i.ToString()})
+                        </td>
+                    </tr>*@
+
+            </tbody>
+        </table>
+}
+
+
+    </div>
+    </div>

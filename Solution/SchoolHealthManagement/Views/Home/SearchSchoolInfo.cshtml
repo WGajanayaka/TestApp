@@ -1,0 +1,170 @@
+﻿@model SchoolHealthManagement.Models.SchoolInfoModel
+@{
+    ViewBag.Title = "SearchSchoolInfo";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>SearchSchoolInfo</h2>
+
+<script type="text/javascript">
+ $("#CensorsIDP").change(function () {
+             //enable the submit button here
+             alert("Handler for .change() called.");
+ });
+
+
+ function GetDevisions1() {
+
+     //alert("Handler for .change() called.");
+     ////enable the submit button here
+     //alert("Handler for .change() called.");
+     var url = "/Home/SearchSchoolInfo/";
+     var censorsid = $("#CensorsIDP").val();
+
+     alert(censorsid);
+
+     $.ajax({
+         url: url,
+         data: {
+             strProvince: "", strZone: "", strDevision: "", strCensorsID: censorsid, strSchool: "",
+             strPrincipalname: "", strInchargehealthpromotion: "", strInchargefeedingprogram: ""
+         },
+         cache: false,
+         type: "POST",
+         success: function (data) {
+             ////$(".loading-gif").remove();
+             if (data > 0)
+                 ShowSchool(data);
+             
+         },
+         ERROR: function (reponse) {
+             alert("error : " + reponse);
+         }
+     });
+ }
+
+ function GetDevisions() {
+     //$('#dialog').dialog('open');
+
+     var url = "/Home/SearchSchoolInfo?strProvince='',strZone='',strDevision='',strCensorsID='',strSchool='',strPrincipalname='',strInchargehealthpromotion='', strInchargefeedingprogram=''" ;
+
+     window.location.href = url;
+ }
+</script>
+
+<div class="container">
+
+     @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+        {
+
+         
+       
+
+        <table class="datatable sortable poptb" cellpadding="0" style="width: 100%">
+            <thead>
+                <tr>
+                  
+
+@*                    <th>
+                        @Html.DisplayName("Province")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Zone")
+                    </th>*@
+                    <th>
+                        @Html.DisplayName("Devision")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Censors ID")
+                    </th>
+                    <th>
+                        @Html.DisplayName("School")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Principal Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Incharge Health Promotion")
+                    </th>                    
+                    <th>
+                        @Html.DisplayName("Incharge Feeding Program")
+                    </th>
+                    <th>
+                        <input type="submit" value="Search" class="blue-btn" />
+                    </th>
+                </tr>
+
+                <tr>
+
+
+  @*                  <th>
+                        @Html.TextBoxFor(m=>m.ProvinceID)
+                    </th>
+                    <th>
+                        @Html.TextBoxFor(m=>m.ZoneID)
+                    </th>*@
+                    <th>
+                        @Html.TextBoxFor(m=>m.DevisionID)
+                    </th>
+                    <th>
+                        @Html.TextBoxFor(m=>m.CensorsID)
+                    </th>
+                    <th>
+                        @Html.TextBoxFor(m=>m.SchoolName)
+                    </th>
+                    <th>
+                        @Html.TextBoxFor(m=>m.PrincipalName)
+                    </th>
+                     <th>
+                        @Html.TextBoxFor(m=>m.InchargeHealthPromotion)
+                    </th>
+                     <th>
+                        @Html.TextBoxFor(m=>m.InchargeFeedingProgram)
+                    </th>
+
+                     <th>
+                        @Html.TextBoxFor(m=>m.InchargeFeedingProgram)
+                    
+                   </th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.SchoolInfoModel>)ViewBag.SchoolsInfo)
+                {
+                    <tr>
+ @*                       <td>
+                            @Html.DisplayFor(modelItem => item.ProvinceID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ZoneID)
+                        </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DevisionID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CensorsID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SchoolName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PrincipalName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InchargeHealthPromotion)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InchargeFeedingProgram)
+                        </td>
+
+                        <td>
+                            @Html.ActionLink("Edit" , "SchoolInfoFound", new { iSchoolID = item.SchoolID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+     }
+    </div>

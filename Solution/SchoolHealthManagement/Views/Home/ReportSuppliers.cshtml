@@ -1,0 +1,205 @@
+﻿@model SchoolHealthManagement.Models.SupplierInfoModel
+
+@{
+    ViewBag.Title = "ReportSuppliers";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>Report - Suppliers</h2>
+
+
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    function GetZones(_ProvinceId) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#ZoneID").html(procemessage).show();
+        var url = "/Home/GetZonesByProvice/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Zone</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#ZoneID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+    function GetDevisions(_ProvinceId, _ZoneID) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#DevisionID").html(procemessage).show();
+        var url = "/Home/GetDevisonsByZone/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId, ZoneID: _ZoneID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Devision</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#DevisionID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+</script>
+
+
+        @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <table class="details_container_table">
+                <tbody>
+
+   
+                    <tr>
+                   
+                        <td style="width: 20%; text-align: right;">Province</td>
+                        <td style="width: 30%;">@Html.DropDownList("ProvinceID", (List<SelectListItem>)ViewBag.Provinces, "Select Province", new { onchange = "javascript:GetZones(this.value);" })
+                            @*@Html.ValidationMessageFor(m => m.ProvinceID)*@
+
+                        </td>
+                        <td style="width: 20%; text-align: right;">Zone</td>
+                        <td style="width: 30%;">@Html.DropDownList("ZoneID", (List<SelectListItem>)ViewBag.Zones, "Select Zone", new { onchange = "javascript:GetDevisions($('#ProvinceID').val(), this.value);" })
+                            @*@Html.ValidationMessageFor(m => m.ZoneID)*@</td>
+                    
+                        <td style="width: 20%; text-align: right;">Division</td>
+                        <td style="width: 30%;">@Html.DropDownList("DevisionID", (List<SelectListItem>)ViewBag.Devisions, "Select Devision")
+                            @*@Html.ValidationMessageFor(m => m.DevisionID)</td>*@
+
+                             <td style="width: 38%;">
+                            <input type="submit" value="Load" name="button" class="blue-btn" />
+                        </td>
+                    </tr>
+
+                    
+
+                  
+                </tbody>
+            </table>
+       
+            
+            <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+
+
+
+                    <th>
+                        @Html.DisplayName("Census ID")
+                    </th>
+                    <th>
+                        @Html.DisplayName("School Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Supplier Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Address")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("NIC")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Phone No")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Bank Name")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Account Number")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Grade")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Male")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Female")
+                    </th>
+
+                     <th>
+                        @Html.DisplayName("Total")
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.SupplierInfoModel>)ViewBag.Suppliers)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CensusID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SchoolName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SupplierName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NIC)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.BankName)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.BankAccountNo)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.NoOfMaleStudents)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.NoOfFemaleStudents)
+                        </td>
+                         <td>
+                            @Convert.ToString(item.NoOfMaleStudents + item.NoOfFemaleStudents)
+                        </td>
+                        
+
+                      
+                        
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+    
+        }

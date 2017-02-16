@@ -1,0 +1,462 @@
+﻿@model SchoolHealthManagement.Models.SummaryOfDataModel
+@{
+    ViewBag.Title = "SummaryOfData";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<div class="container">
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Summary Of Data</h2>
+        </div>
+
+        <script type="text/javascript">
+            function GradeChanged(_SchoolID, _Grade, _Trimester) {
+
+                var url = "/Home/SummaryOfData?iYear=2016";
+
+                var model = @Html.Raw(Json.Encode(Model)) //Convert Model to JSON 
+                    $.post(url, model);
+                $("form").submit();
+
+        }
+
+        </script>
+
+@using (Html.BeginForm("SummaryOfData", "Home", FormMethod.Post))
+{
+        <table class="details_container_table">
+            <tr>
+
+                        <td style="width: 0%; text-align: left">@Html.Label("Year") 
+                            @Html.DropDownListFor(itemF => itemF.YearConsidered, (List<SelectListItem>)ViewBag.Years, "Select Year", new { onchange = "form.submit();" })
+                            </td>
+                        </tr>
+            <tr>
+                <td style="width: 50%; vertical-align: top; padding-right: 17px;">
+                       
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                         
+                            <tr>
+                                <th style="width: 100px" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("No Of Schools")
+                                </th>
+
+                                 <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Total Student Count")
+                                </th>
+
+                                 <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Entered")
+                                </th>
+
+                                <th style="width: 83px;text-align:right" rowspan ="2"colspan="3">
+                                    @Html.DisplayName("%")
+                                </th>
+                                 <th style="width: 83px;text-align:center" colspan="3"  scope="col">
+                                    @Html.DisplayName("BMI")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("# of Suppliers")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("Sanitary Facility")
+                                </th>
+                                 <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("SDS Bank Information")
+                                </th>
+                            </tr>
+                            <tr>
+                               
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("I")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("II")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("III")</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @{int iiTotal = 0;
+                              int iiTotalNoOfSchools = 0;
+                              int iiTotalNoOfStudents = 0;
+                              decimal iiAverageStudentCount = 0;
+                              int iiTotalSupCount = 0;
+                              int iiTotalSanFacility = 0;
+                              int iiProvCount = 0;                            
+                              }
+
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfDataProvinces)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.ActionLink(item.Province, "SummaryOfDataZonesInProvince",  new {iYear=Model.YearConsidered, ProvinceID=item.ProvinceID})
+                                    </td>
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NumberOfSchools)
+                                    </td>
+                                    
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.TotalStudentCount)
+                                          
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Entered)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Per)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI1)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI2)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI3)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.ActionLink(item.SupCount.ToString(), "SupplierInformationProvince",  new {strProvinceID=item.ProvinceID})
+
+@*                                        @Html.DisplayFor(modelItem => item.SupCount)*@
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.SanitoryCount)
+                                    </td>
+                                     <td align="center" colspan="3">
+                                        @Html.ActionLink("View", "SDSBankInformation", new { strProvinceID = item.ProvinceID, Province = item.Province })
+                                    </td>
+
+                                    @{iiProvCount++;
+                                        iiTotal += Convert.ToInt32(item.Entered.Replace(",",""));
+                                      iiTotalNoOfSchools += Convert.ToInt32(item.NumberOfSchools);
+                                      iiAverageStudentCount = iiAverageStudentCount + Convert.ToDecimal(item.Per); // iiAverageStudentCount + Convert.ToDecimal(item.Per); 
+                                      iiTotalSupCount += Convert.ToInt32(item.SupCount);
+                                      iiTotalSanFacility += Convert.ToInt32(item.SanitoryCount);
+                                      iiTotalNoOfStudents += Convert.ToInt32(item.TotalStudentCount.Replace(",", ""));
+
+                                //Decimal.Divide(iiAverageStudentCount + Convert.ToDecimal(item.Per), iiProvCount)
+                                      }
+
+                                </tr>
+                            }
+
+                            <tr>
+                                <td colspan="3" style="font-weight:bold">
+                                    @Html.Raw("Total")
+                                </td>
+                                <td colspan="3" class="tb-val-right" style="font-weight:bold">
+                                    @Html.Raw(@iiTotalNoOfSchools.ToString("#,##0"))
+                                </td>
+                                <td colspan="3" class="tb-val-right" style="font-weight:bold">
+                                    @Html.Raw(@iiTotalNoOfStudents.ToString("#,##0"))
+                                </td>
+                                <td colspan="3" class="tb-val-right" style="font-weight:bold">
+                                    @Html.Raw(@iiTotal.ToString("#,##0"))
+                                </td>
+                                <td colspan="3" class="tb-val-right" style="font-weight:bold">
+                                   @Html.Raw((iiProvCount==0?"":Decimal.Divide(iiAverageStudentCount, iiProvCount).ToString("#0.00")))
+                                </td>
+                                <td colspan="3"></td>
+                                <td colspan="3" class="tb-val-right" style="font-weight:bold">
+                                    @Html.Raw(@iiTotalSupCount.ToString("#,##0"))
+                                </td>
+                                <td colspan="3" class="tb-val-right" style="font-weight:bold">
+                                    @Html.Raw(@iiTotalSanFacility.ToString("#,##0"))
+                                </td>
+                            </tr>
+                            </table>
+                </td>
+            </tr>
+
+            <tr>
+
+
+
+                <td style="width: 50%; vertical-align: top; padding-right: 17px;">
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+
+
+
+                                <th style="width: 100px" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th style="width: 200px" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Zone")
+                                </th>
+                                <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("No Of Schools")
+                                </th>
+
+                                 <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Total Student Count")
+                                </th>
+
+                                 <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Entered")
+                                </th>
+
+                                <th style="width: 83px;text-align:right" rowspan ="2" colspan="3">
+                                    @Html.DisplayName("%")
+                                </th>
+
+                                <th style="width: 83px;text-align:center" colspan="3"  scope="col">
+                                    @Html.DisplayName("BMI")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("# of Suppliers")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("Sanitary Facility")
+                                </th>
+
+                            </tr>
+
+                            <tr>
+                               
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("I")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("II")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("III")</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @{int iTotal = 0;
+                              int iTotalNoOfSchools = 0;
+                              int iTotalNoOfStudents = 0;
+                              decimal iAverageStudentCount = 0;
+                              int iTotalSupCount = 0;
+                              int iTotalSanFacility = 0;
+                              int iProvCount = 0; 
+                              }
+
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfDataZones)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Province)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Zone)
+                                    </td>
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NumberOfSchools)
+                                    </td>
+                                    
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.TotalStudentCount)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Entered)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Per)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI1)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI2)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI3)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.SupCount)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.SanitoryCount)
+                                    </td>
+
+                                    @{iProvCount++;
+                                        iTotal += Convert.ToInt32(item.Entered.Replace(",", ""));
+
+                                      iTotalNoOfSchools += Convert.ToInt32(item.NumberOfSchools);
+                                      iAverageStudentCount = (iAverageStudentCount + Convert.ToDecimal(item.Per));
+                                      iTotalSupCount += Convert.ToInt32(item.SupCount);
+                                      iTotalSanFacility += Convert.ToInt32(item.SanitoryCount);
+                                      iTotalNoOfStudents += Convert.ToInt32(item.TotalStudentCount.Replace(",", ""));
+                                      }
+
+                                </tr>
+                            }
+                            <tr>
+                                <td  colspan="3" style="font-weight:bold">
+                                    @Html.Raw("Total")
+                                </td>
+                                <td  colspan="3"></td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iTotalNoOfSchools.ToString("#,##0"))
+                                </td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iTotalNoOfStudents.ToString("#,##0"))
+                                </td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iTotal.ToString("#,##0"))
+                                </td>
+                                
+                                 <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw((iProvCount == 0?"":Decimal.Divide(iAverageStudentCount, iProvCount).ToString("#0.00")))
+                                </td>
+                                <td colspan="3"></td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iTotalSupCount.ToString("#,##0"))
+                                </td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iTotalSanFacility.ToString("#,##0"))
+                                </td>
+                                
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </td>
+
+                <td style="width: 50%; text-align: right; vertical-align: top; padding-left: 17px;">
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+
+
+
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Zone")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("School")
+                                </th>
+                                <th  rowspan ="2" colspan="3" style="text-align:right">
+                                    @Html.DisplayName("No Of Students")
+                                </th>
+                                <th style="width: 83px;text-align:center" colspan="3"  scope="col">
+                                    @Html.DisplayName("BMI")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("# of Suppliers")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("Sanitary Facility")
+                                </th>
+
+                            </tr>
+
+                             <tr>
+                               
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("I")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("II")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("III")</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                             @{int iiiTotal = 0;
+                              int iiiTotalNoOfSchools = 0;
+                              int iiiTotalNoOfStudents = 0;
+                              int iiiTotalSupCount = 0;
+                              int iiiTotalSanFacility = 0;
+                              int iiiProvCount = 0; 
+                              }
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfData)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Province)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Zone)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.School)
+                                    </td>
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NoOfStudents)
+                                    </td>
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI1)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI2)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI3)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.SupCount)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.Label(item.SanitoryCount==1?"YES":"NO")
+                                    </td>
+
+                                    @{iiiProvCount++;
+
+                                      iiiTotalSupCount += Convert.ToInt32(item.SupCount);
+                                      iiiTotalSanFacility += Convert.ToInt32(item.SanitoryCount);
+                                      iiiTotalNoOfStudents += Convert.ToInt32((item.TotalStudentCount == null?"0":item.TotalStudentCount).Replace(",", ""));
+                                      }
+                                </tr>
+                            }
+
+  @*                          <tr>
+                                <td  colspan="3" style="font-weight:bold">
+                                    @Html.Raw("Total")
+                                </td>
+                                <td  colspan="3"></td>
+ 
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iiiTotalNoOfStudents.ToString("#,##0"))
+                                </td>
+                              
+                                <td colspan="3"></td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iiiTotalSupCount.ToString("#,##0"))
+                                </td>
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(@iiiTotalSanFacility.ToString("#,##0"))
+                                </td>
+                                
+                            </tr>*@
+                        </tbody>
+                    </table>
+                </td>
+
+
+
+
+            </tr>
+        </table>
+}
+    </div>
+</div>

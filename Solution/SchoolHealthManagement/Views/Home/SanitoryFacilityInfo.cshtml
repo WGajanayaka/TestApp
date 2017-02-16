@@ -1,0 +1,324 @@
+﻿@model SchoolHealthManagement.Models.SanitoryFacilityModel
+
+@{
+    ViewBag.Title = "SanitoryFacilityInfo";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<style>    
+ .snf label{ font-weight:bold}
+</style>
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Sanitory Facility Information</h2>
+</div>
+
+     <script language="javascript" type="text/javascript">
+
+         $(document).ready(function () {
+             CalculateCoveragePer();
+             CalculateCoveragePerFemale();
+             CalculateCoveragePerStaff();
+         });
+
+         function CalculateCoveragePer() {
+             //alert('Came1');
+             var _NoOfToilets = parseFloat($("#NoOfMaleToilets").val() > 0 ? $("#NoOfMaleToilets").val() : 0) + parseFloat($("#NoOfMaleUrinals").val() > 0 ? $("#NoOfMaleUrinals").val() : 0) ;
+             var _SchoolId = $("#SchoolID").val();
+
+             var url = "/Home/GetSanitoryInfoCoveragePercentage/";
+
+             $.ajax({
+                 url: url,
+                 data: { SchoolId: _SchoolId, NoOfToilets: _NoOfToilets },
+                 cache: false,
+                 type: "POST",
+                 success: function (data) {
+                     document.getElementById('MaleCoverage').value = data;
+                     $("#txtMaleCoverage").val(data);
+                     progress(data, ".progress");
+                     
+
+                 },
+                 ERROR: function (reponse) {
+                     alert("error : " + reponse);
+                 }
+             });
+
+         }
+
+         function CalculateCoveragePerStaff() {
+             //alert('Came2');
+             var _NoOfToilets = parseFloat($("#NoOfStaffToilets").val() > 0 ? $("#NoOfStaffToilets").val() : 0);
+             var _SchoolId = $("#SchoolID").val();
+
+             var url = "/Home/GetSanitoryInfoCoveragePercentageStaff/";
+
+             $.ajax({
+                 url: url,
+                 data: { SchoolId: _SchoolId, NoOfToilets: _NoOfToilets },
+                 cache: false,
+                 type: "POST",
+                 success: function (data) {
+                     //$("#StffCoverage").val(data);
+                     document.getElementById('StaffCoverage').value = data;
+                     $("#txtStaffCoverage").val(data);
+                     //$("#StaffCoverage").val(data);
+                     progress(data, ".progressStaff");
+                     
+
+                 },
+                 ERROR: function (reponse) {
+                     alert("error : " + reponse);
+                 }
+             });
+
+         }
+
+         function CalculateCoveragePerFemale() {
+             //alert('Came3');
+             var _NoOfToilets = parseFloat($("#NoOfFemaleToilets").val() > 0 ? $("#NoOfFemaleToilets").val() : 0);
+             var _SchoolId = $("#SchoolID").val();
+
+             var url = "/Home/GetSanitoryInfoCoveragePercentageFemale/";
+
+             $.ajax({
+                 url: url,
+                 data: { SchoolId: _SchoolId, NoOfToilets: _NoOfToilets },
+                 cache: false,
+                 type: "POST",
+                 success: function (data) {
+                     //alert(data);
+                     document.getElementById('FemaleCoverage').value = data;
+                     $("#txtFemaleCoverage").val(data);
+                     progress(data, ".progressFemale");
+                     
+                     //alert(data);
+                 },
+                 ERROR: function (reponse) {
+                     alert("error : " + reponse);
+                 }
+             });
+
+         }
+
+
+
+
+
+
+
+         function progress(xx, progressName) {
+
+             //alert(progressName);
+
+             if (xx < 101) {
+
+
+
+                 if (xx < 25) {
+                     $(progressName + "_bar").css('background', 'green');
+                 }
+                 else {
+                     $(progressName + "_bar").css('background', 'blue');
+
+                 }
+
+                 $(progressName + "_bar").animate(
+                   {
+                       width: xx + '%'
+                   }, {
+                       duration: 1000,
+                       step: function (current) {
+                           // $(this).html(parseInt(current, 10)+'%')
+                       }
+                   });
+             }
+
+             else {
+
+                 count++;
+                 if (xx.length == count) {
+                     //alert("Value should be less than 100");
+                     count = 0;
+                     //$("#enter-value").val("");
+                 }
+             }
+
+
+         }
+
+
+     </script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    
+  <style>
+
+.progress_container {
+    height:25px;
+    border-radius: 3px;
+    overflow:hidden;
+    background:red;
+    width: 460px;
+}
+.progress_bar {
+    color: #fff;
+    height:25px;
+    width: 0px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    background:black;
+}
+.progress_container {
+    margin-bottom: 30px;
+}
+
+
+
+.progressStaff_container {
+    height:25px;
+    border-radius: 3px;
+    overflow:hidden;
+    background:red;
+    width: 460px;
+}
+.progressStaff_bar {
+    color: #fff;
+    height:25px;
+    width: 0px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    background:black;
+}
+.progressStaff_container {
+    margin-bottom: 30px;
+}
+
+
+.progressFemale_container {
+    height:25px;
+    border-radius: 3px;
+    overflow:hidden;
+    background:red;
+    width: 460px;
+}
+.progressFemale_bar {
+    color: #fff;
+    height:25px;
+    width: 0px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
+    background:black;
+}
+.progressFemale_container {
+    margin-bottom: 30px;
+}
+</style>
+    
+    
+   
+    
+    
+    <table class="details_container_table" style="width:50%">
+<tbody>
+    <tr><td style="width:20%; text-align:right" class="snf"> @Html.Label("Male") </td>
+    <td style="width:30%">  </td></tr>
+<tr>
+    
+    <td style="width:20%; text-align:right">  @Html.Label("No Of Toilets") </td>
+    <td style="width:30%">    @Html.TextBoxFor(model => model.NoOfMaleToilets, new { onchange = "javascript:CalculateCoveragePer();" })
+            @Html.ValidationMessageFor(model => model.NoOfMaleToilets) </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("No Of Urinals")  </td>
+    <td style="width:30%">  @Html.TextBoxFor(model => model.NoOfMaleUrinals, new { onchange = "javascript:CalculateCoveragePer();" })
+            @Html.ValidationMessageFor(model => model.NoOfMaleUrinals) </td>
+</tr>
+
+     <tr>
+    <td style="width:20%; text-align:right"> @Html.Label("Coverage") </td>
+    <td style="width:30%">    @Html.HiddenFor(model => model.MaleCoverage )
+        @Html.TextBox("txtMaleCoverage","",new { disabled = "true" })
+            @Html.Label("%")
+            @Html.ValidationMessageFor(model => model.MaleCoverage) </td>
+</tr>
+    <tr>
+        <td></td>
+        <td>
+            <div class="progress_container">
+            <div class="progress_bar tip"></div>
+    </div>
+        </td>
+    </tr>
+
+    <tr><td style="width:20%; text-align:right" class="snf"> @Html.Label("Female")  </td>
+    <td style="width:30%">  </td></tr>
+   <tr>
+    
+    <td style="width:20%; text-align:right">    @Html.Label("No Of Toilets") </td>
+    <td style="width:30%"> @Html.TextBoxFor(model => model.NoOfFemaleToilets, new { onchange = "javascript:CalculateCoveragePerFemale();" })
+            @Html.ValidationMessageFor(model => model.NoOfFemaleToilets)  </td>
+</tr>
+  
+    <tr>
+    <td style="width:20%; text-align:right"> @Html.Label("Coverage") </td>
+    <td style="width:30%">    @Html.HiddenFor(model => model.FemaleCoverage )
+        @Html.TextBox("txtFemaleCoverage","",new { disabled = "true" })
+            @Html.Label("%")
+            @Html.ValidationMessageFor(model => model.FemaleCoverage) </td>
+     </tr>
+
+    <tr>
+        <td></td>
+        <td>
+            <div class="progressFemale_container">
+            <div class="progressFemale_bar tip"></div>
+    </div>
+        </td>
+    </tr>
+
+    <tr> <td style="width:20%; text-align:right" class="snf">     @Html.Label("Staff") </td>
+    <td style="width:30%">  </td></tr>
+   <tr>
+   
+    <td style="width:20%; text-align:right">     @Html.Label("No Of Toilets") </td>
+    <td style="width:30%">  
+             @Html.TextBoxFor(model => model.NoOfStaffToilets, new { onchange = "javascript:CalculateCoveragePerStaff();" })
+            @Html.ValidationMessageFor(model => model.NoOfStaffToilets)</td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">   @Html.Label("Coverage") </td>
+    <td style="width:30%">  @Html.HiddenFor(model => model.StaffCoverage)
+        @Html.TextBox("txtStaffCoverage","",new { disabled = "true" })
+            @Html.Label("%")
+            @Html.ValidationMessageFor(model => model.StaffCoverage)  </td>
+</tr>
+
+     <tr>
+        <td></td>
+        <td>
+            <div class="progressStaff_container">
+            <div class="progressStaff_bar tip"></div>
+    </div>
+        </td>
+    </tr>
+
+    <tr>
+
+        <td style="width:20%; text-align:right">  @Html.HiddenFor(model => model.SchoolID)</td>
+         <td style="width:30%"> <input type="submit" value="Save" class="blue-btn" /></td>
+    </tr>
+</tbody>
+
+</table>
+   
+}
+
+ </div>
+     </div>

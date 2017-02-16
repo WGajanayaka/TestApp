@@ -1,0 +1,245 @@
+﻿@model SchoolHealthManagement.Models.FundsReceivedModel
+
+@{
+    ViewBag.Title = "FundsReceived";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<style>.search-btn {position: relative;top: 1px;}</style>
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Funds Received</h2>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('#fMonth').focus(function () {
+            $(".ui-datepicker-calendar").hide()
+        });
+        $('#fMonth').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function (dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+
+
+
+            }
+        });
+    });
+
+    $(function () {
+        $("#paidDate").datepicker({
+            dateFormat: 'dd-M-yy',
+
+        });
+    });
+    function SearchCensorsID() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetCensorsDetails/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                document.getElementById('SchoolName').value = data.School;
+                document.getElementById('Province').value = data.Province;
+                document.getElementById('Zone').value = data.Zone;
+                document.getElementById('Devision').value = data.Devision;
+                GetSuppliers();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    function GetSuppliers() {
+        var _CensorsID = $("#CensorsID").val();
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#NameOfFoodSupplier").html(procemessage).show();
+        var url = "/Home/GetSuppliers4School/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Supplier</option>";
+
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#NameOfFoodSupplier").html(markup).show();
+                DisplayTable();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+    
+    function DisplayTable() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetFundsReceived4School/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                //alert(data.length);
+                for (var x = 0; x < data.length; x++) {
+                    
+                        tr = $('<tr/>');
+                        tr.append("<td>" + data[x].CensorsID + "</td>");
+                        tr.append("<td>" + data[x].NameOfFoodSupplier + "</td>");
+                        tr.append("<td>" + data[x].SchoolName + "</td>");
+                        tr.append("<td>" + data[x].PaidAmount + "</td>");
+                        tr.append("<td>" + data[x].ChequeNo + "</td>");
+                        $('#tableBelow').append(tr);
+                    
+                }
+
+                
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+<table class="details_container_table">
+<tbody>
+<tr>
+    <td style="width:20%; text-align:right">     @Html.Label("Month") </td>
+    <td style="width:30%">  
+            @Html.TextBoxFor(model => model.ForMonth,new { id = "fMonth" })
+            @Html.ValidationMessageFor(model => model.ForMonth)</td>
+    <td style="width:20%; text-align:right">     @Html.LabelFor(model => model.CensorsID)</td>
+    <td style="width:30%">
+            @Html.EditorFor(model => model.CensorsID)
+            @Html.ValidationMessageFor(model => model.CensorsID)
+            <input type="button" class="search-btn" onclick ="SearchCensorsID();"/>  </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.SchoolName) </td>
+    <td style="width:30%">  @Html.TextBoxFor(model => model.SchoolName, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.SchoolName)</td>
+    <td style="width:20%; text-align:right">@Html.LabelFor(model => model.Province)  </td>
+    <td style="width:30%"> @Html.TextBoxFor(model => model.Province, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.Province)  </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.Zone)   </td>
+    <td style="width:30%"> @Html.TextBoxFor(model => model.Zone, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.Zone) </td>
+    <td style="width:20%; text-align:right"> @Html.LabelFor(model => model.Devision)  </td>
+    <td style="width:30%">   @Html.TextBoxFor(model => model.Devision, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.Devision)</td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.NameOfFoodSupplier)  </td>
+    <td style="width:30%">@Html.DropDownListFor(model => model.NameOfFoodSupplier, (List<SelectListItem>)ViewBag.Suppliers, "Select Supplier")
+            @Html.ValidationMessageFor(model => model.NameOfFoodSupplier)  </td>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.PaidDate)  </td>
+    <td style="width:30%">  @Html.TextBoxFor(model => model.PaidDate,new { id = "paidDate" })
+            @Html.ValidationMessageFor(model => model.PaidDate) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.ChequeNo)  </td>
+    <td style="width:30%">  @Html.EditorFor(model => model.ChequeNo)
+            @Html.ValidationMessageFor(model => model.ChequeNo) </td>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.PaidAmount) </td>
+    <td style="width:30%">   @Html.EditorFor(model => model.PaidAmount)
+            @Html.ValidationMessageFor(model => model.PaidAmount)  <input type="submit"  class="blue-btn"  value="Create" /></td>
+</tr>
+
+</tbody>
+    </table>   
+
+    <table id="tableBelow" class ="datatable sortable" style="width: 100%;">
+
+            <thead>
+                <tr>
+
+
+                    <th>
+                        @Html.DisplayName("CensorsID")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Name Of Supplier")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Paid Date")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Paid Amount")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("ChequeNo")
+                    </th>
+
+
+                
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @*@foreach (var item in (List<SchoolHealthManagement.Models.GradesInfoModel>)ViewBag.GradesInfo)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TeacherInCharge)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Male)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Female)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Total)
+                        </td>
+
+                      
+                    </tr>
+   
+                }*@
+            </tbody>
+        </table>
+}
+
+
+
+</div>
+ </div>

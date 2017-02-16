@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_IndexWeb.cshtml";
+}
+
+<div>
+
+
+ 			<div class="header-wrp"><h3>Gallery</h3></div> 
+
+     <table class="datatable sortable" style="width: 100%;margin-left:15px;">
+
+            <tbody>
+                 @{int i = 1; }
+                
+                @foreach (var item in (List<string>)ViewBag.SubDirs)
+                {
+                    
+                    <tr>
+
+                        <td>
+                          <span>  <img src="@Url.Content("~/Content/assets/ico/folder.ico")" alt="" /></span>
+                         <span>      @Html.ActionLink(item, "DisplayGallery", new {sFolder=item })</span>
+                        </td>
+
+                        @*@Url.Content("~/Content/assets/ico/folder.ico")*@
+
+                    </tr> 
+                    
+                    i++; 
+                }
+
+                @Html.Hidden("CountRows",i)
+            </tbody>
+
+
+        </table>
+
+	@*<p>
+		<a class="fancybox" href="../Content/webindex/img/1.jpg" data-fancybox-group="gallery" title="Examination"><img src="../Content/webindex/img/11.jpg" Height = "150px" Width = "150px" alt="" /></a>
+
+		<a class="fancybox" href="../Content/webindex/img/2.jpg" data-fancybox-group="gallery" title="Air tickets for the students"><img src="../Content/webindex/img/22.jpg" alt="" /></a>
+
+		<a class="fancybox" href="../Content/webindex/img/3.jpg" data-fancybox-group="gallery" title="Award Ceremony"><img src="../Content/webindex/img/33.jpg" alt="" /></a>
+
+		<a class="fancybox" href="../Content/webindex/img/4.jpg" data-fancybox-group="gallery" title=""><img src="../Content/webindex/img/44.jpg" alt="" /></a>
+	</p>*@
+
+ 
+
+                </div>

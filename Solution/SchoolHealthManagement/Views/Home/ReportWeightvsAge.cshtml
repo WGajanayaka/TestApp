@@ -1,0 +1,446 @@
+﻿@model SchoolHealthManagement.Models.ReportBMIInfoModel
+
+@{
+    ViewBag.Title = "ReportWeightvsAge";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2></h2>
+
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Report BMI Information</h2>
+</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    function GetZones(_ProvinceId) {
+
+        
+        if (_ProvinceId == "All") {
+            $("#ZoneID").val("All");
+            $("#DevisionID").val("All");
+        }
+        else {
+            var procemessage = "<option value='0'> Please wait...</option>";
+            $("#ZoneID").html(procemessage).show();
+            var url = "/Home/GetZonesByProvice/";
+
+
+            $.ajax({
+                url: url,
+                data: { ProvinceID: _ProvinceId },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    var markup = "<option value='0'>Select Zone</option>";
+                    markup += "<option value= All>All</option>";
+                    for (var x = 0; x < data.length; x++) {
+                        markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                    }
+                    $("#ZoneID").html(markup).show();
+                },
+                ERROR: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+        }
+    }
+
+    function GetDevisions(_ProvinceId, _ZoneID) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#DevisionID").html(procemessage).show();
+        var url = "/Home/GetDevisonsByZone/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId, ZoneID: _ZoneID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Devision</option>";
+                markup += "<option value= All>All</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#DevisionID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+
+        //var ctx = document.getElementById('myChart').getContext('2d');
+        //var myChart = new Chart(ctx, {
+        //    type: 'line',
+        //    data: {
+        //        labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+        //        datasets: [{
+        //            label: 'apples',
+        //            data: [12, 19, 3, 17, 6, 3, 7],
+        //            backgroundColor: "rgba(153,255,51,0.4)"
+        //        }, {
+        //            label: 'oranges',
+        //            data: [2, 29, 5, 5, 2, 3, 10],
+        //            backgroundColor: "rgba(255,153,0,0.4)"
+        //        }]
+        //    }
+        //});
+
+    }
+
+    @*$(document).ready(function () {
+        var array = '@ViewBag.PropertyName';
+    
+        //alert(array.tostring());
+        //if (array != null) {
+        alert(array);
+        var fields  = array.split(/~/);
+        for (var i = 0; i < fields.length; i++) {
+            alert(fields[i]);
+        }  
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                    datasets: [{
+                        label: 'apples',
+                        data: [12, 19, 3, 17, 6, 3, 7],
+                        backgroundColor: "rgba(153,255,51,0.4)"
+                    }, {
+                        label: 'oranges',
+                        data: fields,
+                        backgroundColor: "rgba(255,153,0,0.4)"
+                    }]
+                }
+            });
+        //}
+    });*@
+    //function LoadChart(_ProvinceId, _ZoneID) {
+        
+    //    alert("hi");
+    //    var ctx = document.getElementById('myChart').getContext('2d');
+    //    var myChart = new Chart(ctx, {
+    //        type: 'line',
+    //        data: {
+    //            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+    //            datasets: [{
+    //                label: 'apples',
+    //                data: [12, 19, 3, 17, 6, 3, 7],
+    //                backgroundColor: "rgba(153,255,51,0.4)"
+    //            }, {
+    //                label: 'oranges',
+    //                data: [2, 29, 5, 5, 2, 3, 10],
+    //                backgroundColor: "rgba(255,153,0,0.4)"
+    //            }]
+    //        }
+    //    });
+
+    //}
+
+
+
+</script>
+
+  
+
+@using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    
+    
+    <table class="details_container_table">
+        <tbody>
+
+
+            <tr>
+
+                <td style="width: 20%; text-align: right;">Province</td>
+                <td style="width: 30%;">@Html.DropDownListFor(m => m.ProvinceID, (List<SelectListItem>)ViewBag.Provinces, "Select Province", new { onchange = "javascript:GetZones(this.value);" })
+                    @*@Html.ValidationMessageFor(m => m.ProvinceID)*@
+
+                </td>
+                <td style="width: 20%; text-align: right;">Zone</td>
+                <td style="width: 30%;">@Html.DropDownList("ZoneID", (List<SelectListItem>)ViewBag.Zones, "Select Zone", new { onchange = "javascript:GetDevisions($('#ProvinceID').val(), this.value);" })
+                    @*@Html.ValidationMessageFor(m => m.ZoneID)*@</td>
+                </tr>
+            <tr>
+                <td style="width: 20%; text-align: right;">Division</td>
+                <td style="width: 30%;">@Html.DropDownList("DevisionID", (List<SelectListItem>)ViewBag.Devisions, "Select Devision")
+                    </td>
+                @*@Html.ValidationMessageFor(m => m.DevisionID)</td>*@
+            @*</tr>*@
+      @*      <tr>*@
+                  @*  <td style="width: 20%; text-align: right;">Gender</td>
+               <td style="width: 30%;">@Html.DropDownList("Gender", new List<SelectListItem>{
+                        new SelectListItem{Text="Boy", Value="Boy"},
+                        new SelectListItem{Text="Girl", Value="Girl"}
+                        }, "Boy")
+                        </td>*@
+
+                 <td style="width: 20%; text-align: right;">Gender</td>
+               <td style="width: 20%;">@Html.DropDownList("Gender", new List<SelectListItem>{
+                        new SelectListItem{Text="Male", Value="Male"},
+                        new SelectListItem{Text="Female", Value="Female"}
+                        }, new SelectListItem { Text = "Male", Value = "Male" })
+                    <input type="submit" value="Load" name="button" class="blue-btn" />
+                        </td>
+                </tr>
+                     @{
+    string strProvinceID = (Model == null ? "" : Model.ProvinceID);
+                         }
+               
+           <tr>
+                <td colspan="4">
+                   
+                    @*<canvas id="myChart"></canvas>*@
+                   
+                </td>
+            </tr>
+
+           @* <tr>
+                <td>
+                    @{
+                        var data = ViewBag.Data;
+                        var myChart = new Chart(width: 600, height: 400)
+                            .AddTitle("Weight Per Age")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                                        yValues: data, yFields: "ClassM3D")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                            yValues: data, yFields: "ClassM2D")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                            yValues: data, yFields: "ClassM1D")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                            yValues: data, yFields: "ClassMedian")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                            yValues: data, yFields: "ClassP1D")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                            yValues: data, yFields: "ClassP2D")
+                            .AddSeries(chartType: "Line", xValue: data, xField: "AgeInMonths",
+                            yValues: data, yFields: "ClassP3D")
+                            //.DataBindTable(dataSource: data, xField: "AgeInMonths")
+                             .AddSeries(chartType: "Point", xValue: ViewBag.Boys, xField: "AgeInMonths",
+                            yValues: ViewBag.Boys, yFields: "Weight")
+
+                            .Write();
+                            
+                           
+                          }
+
+                </td>
+            </tr>*@
+
+
+        </tbody>
+    </table>
+    
+
+    
+    <div class="row">
+
+<div class="col-md-6">
+
+ <div>Boys - Count</div>
+    <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Category")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Count")
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIMeasurePerAgeModel>)ViewBag.TotalRangesBoys)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.Count)
+                        </td>
+
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+    
+     <div>Boys - Count (%)</div>
+    <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Category")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Count (%)")
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @{int iTotal = 0; }
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIMeasurePerAgeModel>)ViewBag.TotalRangesBoys)
+                {
+                    iTotal += Convert.ToInt32(item.Count);
+                }
+
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIMeasurePerAgeModel>)ViewBag.TotalRangesBoys)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                         <td>
+                             @{ decimal count = 0;
+                                if (iTotal != 0)
+                                {
+                                    count = Decimal.Divide(Convert.ToDecimal(item.Count), iTotal) * 100;
+                                }}
+                            @Html.DisplayFor(modelItem => count)
+                        </td>
+
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+
+</div>
+
+
+
+   
+     <div class="col-md-6">
+    
+    <div>Girls - Count</div>
+    <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Category")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Count")
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIMeasurePerAgeModel>)ViewBag.TotalRangesGirls)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.Count)
+                        </td>
+
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+    
+     <div>Girls - Count (%)</div>
+    <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Category")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Count (%)")
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @{int iTotalG = 0; }
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIMeasurePerAgeModel>)ViewBag.TotalRangesGirls)
+                {
+                    iTotalG += Convert.ToInt32(item.Count);
+                }
+
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIMeasurePerAgeModel>)ViewBag.TotalRangesGirls)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                         <td>
+                             @{ decimal countG = 0;
+                                if (iTotalG != 0)
+                                {
+                                    countG = Decimal.Divide(Convert.ToDecimal(item.Count), iTotalG) * 100;
+                                }}
+                            @Html.DisplayFor(modelItem => countG)
+                        </td>
+
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+         </div>   
+        </div>
+}
+
+    </div></div>
+
+@*<img src="@Url.Action("DrawChart")" alt="Drawing chart with HTML Helper" />*@
+
+
+
+
+
+
+@*@{
+    var myChart = new Chart(width: 600, height: 400)
+        .AddTitle("Chart Title")
+        .AddSeries(chartType:"Line",
+            xValue: new[] {  "Peter", "Andrew", "Julie", "Mary", "Dave" },
+            yValues: new[] { "2", "6", "4", "5", "3" })
+
+            .AddSeries(chartType: "Point",
+            xValue: new[] { "Peter", "Andrew", "Julie", "Mary", "Dave" },
+            yValues: new[] { "3", "6", "10", "15", "20" })
+        
+        .Write();
+}*@
+
+@*@{
+   
+    var myChart = new Chart(width: 600, height: 400)
+      .AddTitle("Chart Title")
+      .AddSeries(chartType: "Line",
+      xValue: new[] { ViewBag.Age }, yValues: new[] { "3", "6", "10", "15", "20" })
+       .Write()
+
+        .AddSeries(chartType: "Point",
+      xValue: ViewBag.Age,  yValues:ViewBag.Weight2)
+       .Write();
+        
+}*@
+

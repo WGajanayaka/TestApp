@@ -1,0 +1,115 @@
+﻿@model SchoolHealthManagement.Models.SchoolAttendanceModel
+
+@{
+    ViewBag.Title = "SchoolAttendance";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>SchoolAttendance</h2>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>School Attendance</legend>
+
+        <div class="editor-label">
+            @Html.HiddenFor(model => model.SchoolID)
+        </div>
+
+         <div class="editor-label">
+            @Html.LabelFor(model => model.CensorsID)
+            @Html.EditorFor(model => model.CensorsID)
+            @Html.ValidationMessageFor(model => model.CensorsID)
+        </div>
+
+        <div class="editor-label">
+            @Html.Label("School Name")
+            @Html.TextBoxFor(model => model.SchoolName, new { @readonly = "true" })
+            @Html.ValidationMessageFor(model => model.SchoolName)
+        </div>
+
+        <div class="editor-label">
+            @Html.Label("Month")
+            @Html.TextBoxFor(model => model.Month, new { @readonly = "true" })
+            @Html.ValidationMessageFor(model => model.Month)
+        </div>
+
+       
+
+        <table class="datatable sortable" style="width: 100%">
+
+            <thead>
+                <tr>
+
+
+
+                    <th>
+                        @Html.DisplayName("Grade")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Girls")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Boys")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+
+                  
+                </tr>
+            </thead>
+            <tbody>
+                 @{int i = 1; }
+                
+                @foreach (var item in (List<SchoolHealthManagement.Models.SchoolAttendanceModel>)ViewBag.SchoolAttendance)
+                {
+                    
+                    <tr>
+
+                        <td>
+                            @Html.Hidden("GradeH" + i.ToString())
+                            @Html.DropDownListFor(model => item.Grade, (List<SelectListItem>)ViewBag.Grades, "Select Grade", new { id = "Grade-" + i.ToString() , onchange = "javascript:CtrlChanged(this,this.value);" })
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("GirlsrH" + i.ToString())
+                             @Html.TextBoxFor(model => item.Girls, new {disabled = "true" , id = "Girls-" + i.ToString(), onchange = "javascript:CtrlChanged(this,this.value);" })
+                           
+                        </td>
+
+
+                        <td>
+                           @Html.Hidden("BoysH" + i.ToString())
+                           @Html.TextBoxFor(model => item.Boys, new { @class = "dob-picker", id = "Boys-" + @i.ToString(), onchange = "javascript:CtrlChanged(this,this.value);" })
+                           @*<input type="text" class="dob-picker"  name = "DOB-" + @i.ToString() />*@  
+                        </td>
+
+
+                        <td>
+                            @Html.Hidden("TotalH" + i.ToString())
+                            @Html.TextBoxFor(model => item.Total, new { id = "Total-" + i.ToString() , onchange = "javascript:CtrlChanged(this,this.value);" })
+                        </td>
+
+
+
+                    </tr> 
+                    
+                    i++; 
+                }
+
+                @Html.Hidden("CountRows",i)
+            </tbody>
+
+
+        </table>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}
+
+

@@ -1,0 +1,336 @@
+﻿@model SchoolHealthManagement.Models.SupplierInfoModel
+
+@{
+    ViewBag.Title = "Supplier Information";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<style>
+    .details_container_table td input[type="password"] {
+        border: 1px solid #d0d0d0;
+        height: 28px;
+        border-radius: 0px;
+        margin: 0;
+        padding: 0;
+        width: 226px;
+    }
+
+    .bckl {
+        color: #094B75;
+        padding-left: 20px;
+    }
+
+        .bckl:hover {
+            color: #40A8E8;
+        }
+</style>
+
+    <body>
+        @if(ViewBag.SuccessMessage != null)
+        {
+            <div class="SuccessMsg">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+   
+    </body>
+
+<div class="container">
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Supplier Information</h2>
+           
+        </div>
+
+         
+
+          <script type="text/javascript">
+
+             function SetCheckBoxes() {
+                  var idslist = "";
+
+                  $("input:checkbox[class=chkclass]").each(function () {
+
+                      if ($(this).is(":checked")) {
+                          var userid = $(this).attr("value");
+                          idslist = idslist + userid + ',';
+                      }
+                      //alert(idslist);
+
+                  });
+                  $("#Grade").val(idslist);
+             };
+
+
+             function LoadSupplier(_SuppName, _Address, _Grade, _NIC, _PhoneNo, _Bank, _AccountNo, _NoOfMaleStudents, _NoOfFemaleStudents,_BankID, _BankBranchID)
+             {
+                 //var idslist = "";
+                 $("#SupplierName").val(_SuppName);
+                 $("#Address").val(_Address);
+                 $("#NIC").val(_NIC);
+                 $("#Phone").val(_PhoneNo);
+                 $("#BankName").val(_Bank);
+                 $("#BankAccountNo").val(_AccountNo);
+                 $("#NoOfMaleStudents").val(_NoOfMaleStudents);
+                 $("#NoOfFemaleStudents").val(_NoOfFemaleStudents);
+                 $("#Grade").val(_Grade);
+                 $("#BankID").val(_BankID);
+                 
+
+                 $("input:checkbox[class=chkclass]").each(function () {
+                     if (_Grade.indexOf($(this).attr("value")) > -1) {
+                         $(this).prop("checked", true);
+                     }
+                     else {
+                         $(this).prop("checked", false);
+
+                     }
+                      
+
+                 });
+
+                 $("#NIC").attr("readonly", "readonly");
+
+                 $("#BankBranchID").empty();
+                 $.ajax({
+                     type: 'POST',
+                     url: '@Url.Action("GetBankBranchasJson")', // we are calling json method
+
+                     dataType: 'json',
+                     Async:false,
+
+                     data: { BankId: $("#BankID").val() },
+                     // here we are get value of selected country and passing same value as inputto json method GetStates.
+
+                     success: function (branches) {
+                         // branches contains the JSON formatted list
+                         // of branches passed from the controller
+
+                         $.each(branches, function (i, branche) {
+                             $("#BankBranchID").append('<option value="' + branche.Value + '">' +
+                                  branche.Text + '</option>');
+                             // here we are adding option for States
+
+                         });
+
+                         $("#BankBranchID").val(_BankBranchID);
+                     },
+                     error: function (ex) {
+                         alert('Failed to retrieve states.' + ex);
+                     }
+                 });
+
+                
+                 //alert(_SuppName);
+               
+             };
+
+             $(document).ready(function () {
+                 //Dropdownlist Selectedchange event
+                 $("#BankID").change(function () {
+                     $("#BankBranchID").empty();
+                     $.ajax({
+                         type: 'POST',
+                         url: '@Url.Action("GetBankBranchasJson")', // we are calling json method
+
+                         dataType: 'json',
+
+                         data: { BankId: $("#BankID").val() },
+                         // here we are get value of selected country and passing same value as inputto json method GetStates.
+
+                         success: function (branches) {
+                             // branches contains the JSON formatted list
+                             // of branches passed from the controller
+
+                             $.each(branches, function (i, branche) {
+                                 $("#BankBranchID").append('<option value="' + branche.Value + '">' +
+                                      branche.Text + '</option>');
+                                 // here we are adding option for States
+
+                             });
+                         },
+                         error: function (ex) {
+                             alert('Failed to retrieve states.' + ex);
+                         }
+                     });
+                     return false;
+                 })
+             });
+
+        </script>
+    
+
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+
+     
+            <table class="details_container_table" style="width: 50%">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.HiddenFor(model => model.SchoolID)
+                            @Html.Label("Supplier Name") </td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.SupplierName)
+                            @Html.ValidationMessageFor(model => model.SupplierName) </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("NIC") </td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.NIC)
+                            @Html.ValidationMessageFor(model => model.NIC)</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Address")</td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.Address)
+                            @Html.ValidationMessageFor(model => model.Address) </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Phone")  </td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.Phone)
+                            @Html.ValidationMessageFor(model => model.Phone) </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Bank Name") </td>
+                        <td style="width: 30%">@Html.DropDownList("BankID","Select a Bank")
+                            @Html.ValidationMessageFor(model => model.BankID)</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Bank Branch Name") </td>
+                        <td style="width: 30%">
+                            @Html.DropDownList("BankBranchID","Select a Branch")
+                        @Html.ValidationMessageFor(model => model.BankBranchID)
+                    </td>
+                </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Bank Account No") </td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.BankAccountNo)
+                            @Html.ValidationMessageFor(model => model.BankAccountNo)</td>
+                    </tr>
+
+                    <tr>
+                        @*  <td style="width:20%; text-align:right">   @Html.Label("Grade") </td>
+    <td style="width:30%">   @Html.DropDownListFor(model => model.Grade, (List<SelectListItem>)ViewBag.Grades, "Select Grade")
+            @Html.ValidationMessageFor(model => model.Grade) </td>*@
+                        <td style="width:20%; text-align:right">   
+                            @Html.Hidden("Grade") 
+                            @Html.Label("Grade") </td>
+                        <td id="listGrades" style="height: 100px; overflow: auto; border: solid; width: 150px;">
+                             <table width="10%">
+                                    <tr>
+                            @foreach (var items in (List<SelectListItem>)ViewBag.Grades)
+                            {  
+                               
+                                        <td width="25%">
+                                            <input type="checkbox" name="@items.Value" value="@items.Value" class="chkclass" onchange="SetCheckBoxes()" />
+                                        </td>
+                                        <td width="75%">
+                                            @items.Text
+                                        </td>
+
+                                  
+  
+                            }
+                          </tr>
+                         </table>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("No Of Male Students") </td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.NoOfMaleStudents, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(model => model.NoOfMaleStudents) </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("No Of Female Students") </td>
+                        <td style="width: 30%">@Html.TextBoxFor(model => model.NoOfFemaleStudents, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(model => model.NoOfFemaleStudents)  </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right"></td>
+                        <td style="width: 30%">
+                            <input type="submit" value="Save" class="blue-btn" />
+                            @*        @Html.ActionLink("Back to List >>", "Index", null,new { @class = "bckl" }) *@
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table> 
+   
+
+  
+        }
+
+          <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+
+
+
+                    <th>
+                        @Html.DisplayName("Supplier")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Address")
+                    </th>
+ 
+                    <th>
+                        @Html.DisplayName("NIC")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Phone")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Grades")
+                    </th>
+            
+                     
+
+                    <th>
+                        @Html.DisplayName("Edit Supplier")
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.SupplierInfoModel>)ViewBag.SupplierInfo)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SupplierName)
+                        </td>
+                         <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NIC)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        
+                            @Html.HiddenFor(modelItem => item.BankName)
+                       
+                            @Html.HiddenFor(modelItem => item.BankAccountNo)
+                        
+                            @Html.HiddenFor(modelItem => item.NoOfMaleStudents)
+                        
+                            @Html.HiddenFor(modelItem => item.NoOfFemaleStudents)
+                        </td>
+                        
+                         <td>
+                             <a id="sg" href="javascript:LoadSupplier('@item.SupplierName', '@item.Address','@item.Grade','@item.NIC','@item.Phone','@item.BankName', '@item.BankAccountNo', '@item.NoOfMaleStudents', '@item.NoOfFemaleStudents',@item.BankID,@item.BankBranchID)">Edit</a>
+                              
+                        </td>
+
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+</div>

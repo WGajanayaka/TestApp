@@ -1,0 +1,1120 @@
+﻿@model SchoolHealthManagement.Models.SchoolInfoModel
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var dig = $("#dialog");
+        dig.dialog({
+            autoOpen: false,
+            modal: true,
+            width: 'auto',
+            height: '500',
+            resizable: true,
+
+
+        });
+
+
+
+        $("#CensorsIDP").change(function () {
+            //enable the submit button here
+            //alert("Handler for .change() called.");
+            var url = "/Home/SearchSchoolInfo/";
+            var censorsid = $("#CensorsIDP").val();
+
+            alert(censorsid);
+
+            $.ajax({
+                url: url,
+                data: {
+                    strProvince: "", strZone: "", strDevision: "", strCensorsID: censorsid, strSchool: "",
+                    strPrincipalname: "", strInchargehealthpromotion: "", strInchargefeedingprogram: ""
+                },
+                cache: false,
+                type: "POST",
+                success: function (data) {
+                    ////$(".loading-gif").remove();
+                    //if (data > 0)
+                    //    ShowSchool(data);
+                    //else
+                    //    ShowSchools();
+                },
+                ERROR: function (reponse) {
+                    alert("error : " + reponse);
+                }
+            });
+        });
+
+
+        $(".search-btn").click(
+            function () {
+                //$(".loading-gif").show();
+                var url = "/Home/GetSchoolID/";
+                var censorsid = $("#txtSearch").val();
+
+                $.ajax({
+                    url: url,
+                    data: { strCensorsID: censorsid },
+                    cache: false,
+                    type: "POST",
+                    success: function (data) {
+                        //$(".loading-gif").remove();
+                        if (data > 0)
+                            ShowSchool(data);
+                        else
+                            ShowSchools(censorsid);
+                    },
+                    ERROR: function (reponse) {
+                        alert("error : " + reponse);
+                    }
+                });
+
+
+
+                //$("#dialog").dialog('open');
+                //return false;
+            }
+        );
+
+
+    });
+
+    function ShowSchool(_SchoolID) {
+
+        var url = "/Home/SchoolInfoFound?iSchoolID=" + _SchoolID;
+        //var url = "@Url.Action("SchoolInfoFound", "Home", new { iSchoolID = " + _SchoolID + " })";
+
+        window.location.href = url;
+
+    }
+
+    function ShowSchools(_censorsid) {
+        //$('#dialog').dialog('open');
+
+        var url = "/Home/SearchSchoolInfo?strCensorsid=" + _censorsid;
+
+        window.location.href = url;
+    }
+
+    @* function GetParam() {
+        var path = @Url.Action("CreateGradeInfo", "Home", new {iSchoolID =Model.SchoolID})
+
+        $('.lnk').append(path)
+
+    };*@
+
+
+    $(document).ready(function () {
+        $("#dialog").dialog({
+            autoOpen: false,
+            modal: true
+        });
+    });
+
+    $(".confirmLink").click(function (e) {
+        e.preventDefault();
+        var targetUrl = $(this).attr("href");
+
+        $("#dialog").dialog({
+            buttons: {
+                "Confirm": function () {
+                    window.location.href = targetUrl;
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+
+        $("#dialog").dialog("open");
+    });
+
+</script>
+
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    function GetZones(_ProvinceId) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#ZoneID").html(procemessage).show();
+        var url = "/Home/GetZonesByProvice/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Zone</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#ZoneID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+    function GetDevisions(_ProvinceId, _ZoneID) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#DevisionID").html(procemessage).show();
+        var url = "/Home/GetDevisonsByZone/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId, ZoneID: _ZoneID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Devision</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#DevisionID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+</script>
+<style type="text/css">
+    .field-validation-error {
+        color: red;
+        padding-left: 5px;
+        position: absolute;
+    }
+
+    .poptb thead th {
+        width: 100px;
+    }
+
+    .poptb input[type="text"] {
+        width: 100px;
+    }
+</style>
+
+<div class="container">
+
+    <div id="dialog" title="Find School">
+
+       
+
+        <table class="datatable sortable poptb" cellpadding="0" style="width: 100%">
+            <thead>
+                <tr>
+
+
+                    <th>
+                        @Html.DisplayName("Province")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Zone")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Devision")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Censors ID")
+                    </th>
+                    <th>
+                        @Html.DisplayName("School")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Principal Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Incharge Health Promotion")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Incharge Feeding Program")
+                    </th>
+                    <th></th>
+                </tr>
+
+                <tr>
+
+
+                    <th>
+                        @Html.TextBox("ProvinceID")
+                    </th>
+                    <th>
+                        @Html.TextBox("ZoneID")
+                    </th>
+                    <th>
+                        @Html.TextBox("DevisionID")
+                    </th>
+                    <th>
+                        @Html.TextBox("CensorsIDP")
+                    </th>
+                    <th>
+                        @Html.TextBox("SchoolID")
+                    </th>
+                    <th>
+                        @Html.TextBox("PrincipalName")
+                    </th>
+                    <th>
+                        @Html.TextBox("InchargeHealthPromotion")
+                    </th>
+                    <th>
+                        @Html.TextBox("InchargeFeedingProgram")
+                    </th>
+
+                    <th>
+                        @Html.TextBox("InchargeFeedingProgram")
+
+                    </th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.SchoolInfoModel>)ViewBag.SchoolsInfo)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProvinceID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ZoneID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DevisionID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CensorsID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SchoolName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PrincipalName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InchargeHealthPromotion)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InchargeFeedingProgram)
+                        </td>
+
+                        <td>
+                            @Html.ActionLink("Edit", "SchoolInfoFound", new { iSchoolID = item.SchoolID })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+    </div>
+
+
+    <div class="row index-top-box">
+        <div class="search-wrp">
+            <input type="text" placeholder="Search Here...." class="search-txt" id="txtSearch" />
+            <button class="search-btn"></button>
+        </div>
+        <div class="form-sub-headers">
+            <h2>School Information</h2>
+            @if (Model != null)
+            {
+                if (Model.TotalMarks >= 80 && Model.TotalMarks <=100)
+                {
+                    <img src="@Url.Content("~/content/images/" + "gold-star_Small.jpg" )" /> 
+                }
+                else if (Model.TotalMarks >= 70 && Model.TotalMarks <= 79)
+                {
+                     <img src="@Url.Content("~/content/images/" + "silver-star_Small.jpg" )" /> 
+                }
+                else if (Model.TotalMarks >= 60 && Model.TotalMarks <= 69)
+                {
+                     <img src="@Url.Content("~/content/images/" + "bronze-star_Small.jpg" )" /> 
+                }
+            }
+        </div>
+
+        @*<div class="loading-gif">                <img src="../Content/assets/img/backgrounds/ajax-loader.gif" /></div>*@
+        @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            
+            
+            
+            <table class="details_container_table">
+                <tbody>
+                    <tr>
+                        @Html.HiddenFor(x => x.SchoolID);
+                        <td style="width: 20%; text-align: right;">Province</td>
+                        <td style="width: 30%;">@Html.DropDownList("ProvinceID", (List<SelectListItem>)ViewBag.Provinces, "Select Province", new { onchange = "javascript:GetZones(this.value);" })
+                            @Html.ValidationMessageFor(m => m.ProvinceID)
+
+                        </td>
+                        <td style="width: 20%; text-align: right;">Zone</td>
+                        <td style="width: 30%;">@Html.DropDownList("ZoneID", (List<SelectListItem>)ViewBag.Zones, "Select Zone", new { onchange = "javascript:GetDevisions($('#ProvinceID').val(), this.value);" })
+                            @Html.ValidationMessageFor(m => m.ZoneID)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Division</td>
+                        <td style="width: 30%;">@Html.DropDownList("DevisionID", (List<SelectListItem>)ViewBag.Devisions, "Select Devision")
+                            @Html.ValidationMessageFor(m => m.DevisionID)</td>
+
+                        <td style="width: 20%; text-align: right;">Census ID</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.CensorsID, new { id = "CensID" })
+                            @Html.ValidationMessageFor(m => m.CensorsID)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Examination No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.ExaminationNo, new { id = "ExmNo" })
+                            @Html.ValidationMessageFor(m => m.ExaminationNo)</td>
+
+                        <td style="width: 20%; text-align: right;">School Name</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.SchoolName)
+                            @Html.ValidationMessageFor(m => m.SchoolName)
+                            @Html.TextBoxFor(m => m.SchoolID, new { style = "display:none", id = "SchID" })
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Name of Principal</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.PrincipalName)
+                            @Html.ValidationMessageFor(m => m.PrincipalName)</td>
+
+                        <td style="width: 20%; text-align: right;">Principal's Contact #</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.PrincipalContactNo)
+                            @Html.ValidationMessageFor(m => m.PrincipalContactNo)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">School Address</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.SchoolAddress)
+                            @Html.ValidationMessageFor(m => m.SchoolAddress)</td>
+
+                        <td style="width: 20%; text-align: right;">City</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.City)
+                            @Html.ValidationMessageFor(m => m.City)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">School Tel. No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.TelNo)
+                            @Html.ValidationMessageFor(m => m.TelNo)</td>
+                        <td style="width: 20%; text-align: right;">National/Provincial</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.National_Provincial)
+                            @Html.ValidationMessageFor(m => m.National_Provincial)</td>
+                    </tr>
+
+                    <tr>
+
+                        <td style="width: 20%; text-align: right;">Medium</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.Medium)
+                            @Html.ValidationMessageFor(m => m.Medium)</td>
+                        <td style="width: 20%; text-align: right;">Gender</td>
+                        <td style="width: 30%;">@Html.DropDownListFor(m => m.Sex, new List<SelectListItem>{
+                        new SelectListItem{Text="Boys", Value="Boys"},
+                        new SelectListItem{Text="Girls", Value="Girls"},
+                        new SelectListItem{Text="Mixed", Value="Mixed"}            
+                        }, "Select Gender")
+                            @Html.ValidationMessageFor(m => m.Sex)</td>
+
+
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Type of School</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.SchoolType)
+                            @Html.ValidationMessageFor(m => m.SchoolType)</td>
+                        <td style="width: 20%; text-align: right;">Grade Span</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.GradeSpan)
+                            @Html.ValidationMessageFor(m => m.GradeSpan)</td>
+
+                    </tr>
+
+                    <tr>
+                    </tr>
+                </tbody>
+
+
+            </table>
+            
+            <div class="form-sub-headers" style="margin: 9px 2px 30px 0">
+                <h2>Numberd Information</h2>
+            </div>    
+       
+            <table class="details_container_table">
+                <tbody>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Academic Staff Male</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.AcademicStaffMale, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(m => m.AcademicStaffMale)</td>
+
+                        <td style="width: 20%; text-align: right;">Academic Staff Female</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.AcademicStaffFemale, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(m => m.AcademicStaffFemale)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">NonAcademic Staff Male</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.NonAcademicStaffMale, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(m => m.NonAcademicStaffMale)</td>
+
+                        <td style="width: 20%; text-align: right;">Non Academic Staff Female</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.NonAcademicStaffFemale, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(m => m.NonAcademicStaffFemale)</td>
+
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Students Boys</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.StudentsMale, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(m => m.StudentsMale)</td>
+
+                        <td style="width: 20%; text-align: right;">Students Girls</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.StudentsFemale, new { @style = "text-align:right" })
+                            @Html.ValidationMessageFor(m => m.StudentsFemale)</td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td style="width: 20%; text-align: right;">AGA Division</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.AGADivision)
+                            @Html.ValidationMessageFor(m => m.AGADivision)</td>
+                        <td style="width: 20%; text-align: right;">GN Devision</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.GNDevision)
+                            @Html.ValidationMessageFor(m => m.GNDevision)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">District</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.District)
+                            @Html.ValidationMessageFor(m => m.District)</td>
+
+                    </tr>
+
+                    <br />
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Nearset Police Station</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.NearsetPoliceStation)
+                            @Html.ValidationMessageFor(m => m.NearsetPoliceStation)</td>
+                        <td style="width: 20%; text-align: right;">Police Station Contact No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.PoliceStationContactNo)
+                            @Html.ValidationMessageFor(m => m.PoliceStationContactNo)</td>
+
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Hospital Name</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.HospitalName)
+                            @Html.ValidationMessageFor(m => m.HospitalName)</td>
+
+                        <td style="width: 20%; text-align: right;">Hospital Contact No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.HospitalContactNo)
+                            @Html.ValidationMessageFor(m => m.HospitalContactNo)</td>
+
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">MOH Office - Contact Persion</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.ContactPersionMOH)
+                            @Html.ValidationMessageFor(m => m.ContactPersionMOH)</td>
+
+                        <td style="width: 20%; text-align: right;">MOH Office Contact No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.ContactNoMOH)
+                            @Html.ValidationMessageFor(m => m.ContactNoMOH)</td>
+
+
+                    </tr>
+
+                    <tr>
+
+                        <td style="width: 20%; text-align: right;">Name Of PHI</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.NameOfPHI)
+                            @Html.ValidationMessageFor(m => m.NameOfPHI)</td>
+
+                        <td style="width: 20%; text-align: right;">PHI Contact No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.PHIContactNo)
+                            @Html.ValidationMessageFor(m => m.PHIContactNo)</td>
+                    </tr>
+
+                    <tr>
+
+                        <td style="width: 20%; text-align: right;"></td>
+                        <td style="width: 30%; text-align: right;"></td>
+                    </tr>
+                </tbody>
+            </table>     
+            
+            <div class="form-sub-headers" style="margin: 9px 2px 30px 0">
+                <h2>School Development Commitee </h2>
+            </div>    
+            <table class="details_container_table">
+                <tbody>
+                     <tr>
+
+                        <td style="width: 20%; text-align: right;">Bank</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.Bank)
+                            @Html.ValidationMessageFor(m => m.Bank)</td>
+
+                        <td style="width: 20%; text-align: right;">Account No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.BankAccountNo)
+                            @Html.ValidationMessageFor(m => m.BankAccountNo)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="form-sub-headers" style="margin: 9px 2px 30px 0">
+                <h2>School Feeding Program </h2>
+            </div>    
+           
+       
+            <table class="details_container_table">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Feeding Programme</td>
+                        <td style="width: 30%;">@Html.DropDownListFor(m => m.FeedingProgramme, new List<SelectListItem>{
+                        new SelectListItem{Text="Milk Only", Value="Milk Only"},
+                        new SelectListItem{Text="Meal Only", Value="Meal Only"},
+                        new SelectListItem{Text="Milk and Meal", Value="Milk and Meal"},
+                        new SelectListItem{Text="None", Value="None"}           
+                        }, "Select Feeding Program")
+                            @Html.ValidationMessageFor(m => m.FeedingProgramme)</td>
+                        <td style="width: 20%; text-align: right;">Funding Source</td>
+                        <td style="width: 30%;">@Html.DropDownListFor(m => m.FeedingFundingSource, new List<SelectListItem>{
+                        new SelectListItem{Text="GOSL", Value="GOSL"},
+                        new SelectListItem{Text="WFP", Value="WFP"},
+                        new SelectListItem{Text="OTHER", Value="OTHER"}        
+                        }, "Select Funding Source")
+                            @Html.ValidationMessageFor(m => m.FeedingFundingSource)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Teacher Incharge</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.InchargeFeedingProgram)
+                            @Html.ValidationMessageFor(m => m.InchargeFeedingProgram)</td>
+                        <td style="width: 20%; text-align: right;">Contact No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.HealthInchargeContactNo)
+                            @Html.ValidationMessageFor(m => m.HealthInchargeContactNo)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Monitoring Officer</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.MonitoringOfficer, new { @readonly = "true" })
+                            @Html.ValidationMessageFor(m => m.MonitoringOfficer)</td>
+                       
+                    </tr>
+
+                </tbody>
+            </table>
+       
+            <div class="form-sub-headers" style="margin: 25px 2px 27px 0">
+                <h2>School Health Promotion Program   </h2>
+            </div> 
+              
+            
+            <table class="details_container_table">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%; text-align: right;">Teacher In-Charge</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.InchargeHealthPromotion)
+                            @Html.ValidationMessageFor(m => m.InchargeHealthPromotion)</td>
+                        <td style="width: 20%; text-align: right;">Contact No</td>
+                        <td style="width: 30%;">@Html.TextBoxFor(m => m.FeedingInchargeContactNo)
+                            @Html.ValidationMessageFor(m => m.FeedingInchargeContactNo)</td>
+                    </tr>
+                    <tr>
+
+                        <td style="width: 20%; text-align: right;"></td>
+                        <td style="width: 30%;">
+
+                            <input type="submit" value="Save" class="blue-btn" /></td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+
+
+  
+
+    
+        }
+        <div class="form-sub-headers"></div>
+        <table class="details_container_table">
+            <tbody>
+
+                <tr>
+                    <td style="width: 19%; text-align: right;"></td>
+                    <td style="width: 75%">
+
+
+                        <ul class="form-menu" style="padding: 0px; margin: 0px">
+                            @*                            <li><a href="@Url.Action("CreateGradeInfo", "Home",new{iSchoolID=Model.SchoolID})", id=" lnk">Students in Grades</a></li>*@
+                            <li><a id="sg" href="/Home/CreateGradeInfo?iSchoolID=@ViewBag.SchoolID" >Grades in School</a></li>
+                            <li><a id="si" href="/Home/AddStudent?iSchoolID=@ViewBag.SchoolID" >Student Information</a></li>
+                            <li><a id="wnhi" href="/Home/WaterAndHandwashInfo?iSchoolID=@ViewBag.SchoolID" >Water And Handwash Information</a></li>
+                            <li><a id="sfi" href="/Home/SanitoryFacilityInfo?iSchoolID=@ViewBag.SchoolID" >Sanitory Facility Information</a></li>
+                            <li><a id="sui" href="/Home/SupplierInformation?strSchoolID=@ViewBag.SchoolID">Supplier Information</a></li>
+                            <li><a id="sub" href="/Home/StudentsBulk?SchoolID=@ViewBag.SchoolID">Upload Students</a></li>
+                            <li><a id="scbi" href="/Home/BMIInformation?SchoolID=@ViewBag.SchoolID">BMI Information</a></li>
+                            <li><a id="ssd" href="/Home/SanitoryConstruction?SchoolID=@ViewBag.SchoolID">Sanitory Development Facility</a></li>
+                            <li><a id="shpp" href="/Home/SchoolHealthPromotionProgramme?SchoolID=@ViewBag.SchoolID">School Health Promotion Programme</a></li>
+
+@*                            <li><a id="scai" href="/Home/SchoolAttendance?SchoolID=@ViewBag.SchoolID&CensusID=@Model.SchoolID&SchoolName=@Model.SchoolName">School Attendance</a></li>*@
+
+    
+
+                        </ul>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+
+
+
+        @*<table class="datatable sortable" cellpadding="0" style="width:100%">
+<thead>
+    <tr>
+        
+        
+        <th>
+            @Html.DisplayName("Province ID")
+        </th>
+        <th>
+            @Html.DisplayName("Zone ID")
+        </th>
+        <th>
+            @Html.DisplayName("Devision ID")
+        </th>
+        <th>
+            @Html.DisplayName("Censors ID")
+        </th>
+        <th>
+            @Html.DisplayName("School ID")
+        </th>
+        <th>
+            @Html.DisplayName("Principal Name")
+        </th>
+        <th></th>
+      </tr>
+</thead>
+<tbody>
+@foreach (var item in (List<SchoolHealthManagement.Models.SchoolInfoModel>)ViewBag.SchoolsInfo)
+{
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ProvinceID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ZoneID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DevisionID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CensorsID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.SchoolID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PrincipalName)
+        </td>
+      
+    </tr>
+}
+</tbody>
+</table>*@
+    </div>
+
+    <div id="dialog2" title="Cannot Proceed">
+        Please use search by censorsID and load the school and try again.
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    function navigate(target) {
+        //Grab your values
+        var SchoolID = $('#SchoolID').val();
+        var CensusID = "ssss";
+        var SchoolName = $('#SchoolName').val();
+        alert(SchoolID);
+        alert(CensusID);
+        alert(SchoolName);
+        //Perform your navigation
+        window.location.href = target + '?SchoolID=' + SchoolID + '&CensusID=' + CensusID + '&SchoolName=' + SchoolName;
+        alert(target + '?SchoolID=' + SchoolID + '&CensusID=' + CensusID + '&SchoolName=' + SchoolName);
+    }
+
+    $(document).ready(function () {
+        $("#dialog2").dialog({
+            autoOpen: false,
+            modal: true
+        });
+    });
+
+    $("#sg").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+            var vSchiID = $("#SchID").val();
+            var urlS = "/Home/CreateGradeInfo?iSchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+    $("#si").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+            var vSchiID = $("#SchID").val();
+            var urlS = "/Home/AddStudent?iSchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+
+    $("#sui").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+            var vSchiID = $("#SchID").val();
+            //alert(vSchiID);
+            var urlS = "/Home/SupplierInformation?strSchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+    $("#sub").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+            var vSchiID = $("#SchID").val();
+
+            var urlS = "/Home/StudentsBulk?SchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+    $("#wnhi").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+            var vSchiID = $("#SchID").val();
+
+            var urlS = "/Home/WaterAndHandwashInfo?iSchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+    $("#sfi").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+            var vSchiID = $("#SchID").val();
+
+            var urlS = "/Home/SanitoryFacilityInfo?iSchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+
+    $("#scbi").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+
+            var vSchiID = $("#SchID").val();
+            //alert(vSchiID);
+            var urlS = "/Home/BMIInformation?SchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+
+    $("#shpp").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+
+            var vSchiID = $("#SchID").val();
+            //alert(vSchiID);
+            var urlS = "/Home/SchoolHealthPromotionProgramme?SchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+    
+</script>

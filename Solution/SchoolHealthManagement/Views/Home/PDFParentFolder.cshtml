@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = ViewBag.TitlePage;
+    Layout = "~/Views/Shared/_IndexWeb.cshtml";
+}
+<div class="header-wrp">
+<h3>@ViewBag.TitlePage</h3></div>
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <table class="datatable sortable" style="width: 100%;margin-left:15px;">
+
+            @*<thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("")
+                    </th>
+                    <th>
+                        @Html.DisplayName("")
+                    </th>
+                  
+                </tr>
+            </thead>*@
+            <tbody>
+                 @{int i = 1; }
+                
+                @foreach (var item in (List<string>)ViewBag.SubDirs)
+                {
+                    
+                    <tr>
+
+                        <td>
+                          <span>  <img src="@Url.Content("~/Content/assets/ico/folder.ico")" alt="" /></span>
+                         <span>      @Html.ActionLink(item, "DisplayFolderPDFs", new {strMenuItem= ViewBag.TitlePage, sFolder=item })</span>
+                        </td>
+
+
+                        
+                         
+                           
+                       
+
+
+                    </tr> 
+                    
+                    i++; 
+                }
+
+                @Html.Hidden("CountRows",i)
+            </tbody>
+
+
+        </table>
+}

@@ -1,0 +1,112 @@
+﻿
+@model SchoolHealthManagement.Models.LoginModel 
+
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section id="loginForm">
+@*<h2>Please Log in.</h2>*@
+@using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    
+    
+      <div class="top-content">
+  
+
+            <div class="inner-bg fadeIn2">
+               <div class="row log-in-header-wrp">
+                        <div class="col-sm-5">
+                            <h1 class="login-header fadeIn2">School Health Promotion Program <br />Information System (SHPP)</h1>
+
+                            <img src="~/Content/assets/img/backgrounds/login-logo.png" />
+                        </div>
+                    </div>
+                <div class="container">
+               
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3 form-box">
+                        	<div class="form-top">
+                        		<div class="form-top-left">
+                        			<h3>Login</h3>
+                            		<p>Enter your username and password to log on:</p>
+                        		</div>
+                        		<div class="form-top-right">
+                        			<i class="fa fa-lock"></i>
+                        		</div>
+                            </div>
+                            <div class="form-bottom">
+			                    @*<form role="form" action="" method="post" class="login-form">*@
+			                    	<div class="form-group">
+			                    		<label class="sr-only" for="form-username">Username</label>
+                                         
+                                        @Html.TextBoxFor(m => m.UserName)
+                                        @Html.ValidationMessageFor(m => m.UserName)
+@*			                        	<input type="text" name="form-username" placeholder="Username..." class="form-username form-control" id="form-username">*@
+			                        </div>
+			                        <div class="form-group">
+			                        	<label class="sr-only" for="form-password">Password</label>
+                                       
+                                        @Html.PasswordFor(m => m.Password)
+                                        @Html.ValidationMessageFor(m => m.Password)
+			                        	@*<input type="password" name="form-password" placeholder="Password..." class="form-password form-control" id="form-password">*@
+			                        </div>
+			                        @*<button type="submit" class="btn">Sign in!</button>*@
+                                    <input type="submit" value="Log in" class="btnLogin" />
+			                   @* </form>*@
+		                    </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            
+        </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+@*<fieldset>
+        <legend></legend>
+        <ol>
+            <li>
+              
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password)
+                @Html.ValidationMessageFor(m => m.Password)
+            </li>
+            <li>
+                @Html.CheckBoxFor(m => m.RememberMe)
+                @Html.LabelFor(m => m.RememberMe, new { @class = "checkbox" })
+            </li>
+        </ol>
+        <input type="submit" value="Log in" />
+    </fieldset>*@
+}
+    </section>

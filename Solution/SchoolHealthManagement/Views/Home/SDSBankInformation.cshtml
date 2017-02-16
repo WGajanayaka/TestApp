@@ -1,0 +1,114 @@
+﻿@{
+    ViewBag.Title = "SDSBankInformation";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>SDS Bank Information</h2>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="src/jquery.table2excel.js"></script>
+
+
+ <script>
+
+     $(document).ready(function () {
+
+         $('#btnExport').click(function () {
+
+             //var vschoolid = $('#SchoolID').val();
+             //var vGrade = $('#Grade').val();
+             //var vTrimester = $('#Trimester').val();
+             //if (vGrade != '' && vTrimester != '') {
+                 
+             window.location.href = '/Home/Export2ExcelSDS?ProvinceID=' + @ViewBag.ProvinceID ; 
+
+             //}
+                
+
+
+         });
+     })
+    @* $(document).ready(function () {
+
+         $('#btnExport').click(function () {
+
+             var Province = $('#Province').val();
+             var SDSBankInfo = @Html.Raw(Json.Encode(ViewBag.SDSBankInfo));
+
+             
+           
+             if (Province != '' ) {
+                 
+                 window.location.href = '/Home/Export2ExcelSDS?SDSBankInfo=' + SDSBankInfo + '&&strProvince=' + Province;
+
+             }
+                
+
+
+         });
+     })*@
+ </script>
+
+@using (Html.BeginForm("SummaryOfDataSchoolsInZone", "Home", FormMethod.Post))
+{
+    
+    <input type="button" onclick="javascript:window.print()" value="Print " />
+    <input type="button" id="btnExport" value="Export to Excel"  />
+
+    <table id="DTable" class="datatable sortable" cellpadding="0" style="width: 100%">
+        <thead>
+            <tr>
+                <th rowspan="2" colspan="3">
+                    @Html.DisplayName("Province")
+                </th>
+                <th rowspan="2" colspan="3">
+                    @Html.DisplayName("Zone")
+                </th>
+                <th rowspan="2" colspan="3">
+                    @Html.DisplayName("CensusID")
+                </th>
+                <th rowspan="2" colspan="3">
+                    @Html.DisplayName("School")
+                </th>
+                <th rowspan="2" colspan="3" style="text-align: right">
+                    @Html.DisplayName("Bank")
+                </th>
+                <th rowspan="2" colspan="3">
+                    @Html.DisplayName("Bank Account No")
+                </th>
+            </tr>
+          
+        </thead>
+
+        <tbody>
+            @foreach (var item in (List<SchoolHealthManagement.Models.SDSBankInfoModel>)ViewBag.SDSBankInfo)
+            {
+                <tr>
+
+                    <td class="tb-val-left" colspan="3">
+                        @Html.DisplayFor(modelItem => item.Province)
+                    </td>
+                    <td class="tb-val-left" colspan="3">
+                        @Html.DisplayFor(modelItem => item.Zone)
+                    </td>
+                    <td class="tb-val-left" colspan="3">
+                        @Html.DisplayFor(modelItem => item.CensorsID)
+                    </td>
+                    <td class="tb-val-left" colspan="3">
+                        @Html.DisplayFor(modelItem => item.SchoolName)
+                    </td>
+                    <td class="tb-val-left" colspan="3">
+                        @Html.DisplayFor(modelItem => item.Bank)
+                    </td>
+                    <td class="tb-val-left" colspan="3">
+                        @Html.DisplayFor(modelItem => item.BankAccountNo)
+                    </td>
+
+                </tr>
+           }
+
+
+        </tbody>
+    </table>
+}

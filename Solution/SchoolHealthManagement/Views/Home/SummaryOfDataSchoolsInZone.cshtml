@@ -1,0 +1,118 @@
+﻿@model SchoolHealthManagement.Models.SummaryOfDataModel
+@{
+    ViewBag.Title = "SummaryOfDataSchoolsInZone";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>Summary Of Data - Schools In Zone</h2>
+
+@using (Html.BeginForm("SummaryOfDataSchoolsInZone", "Home", FormMethod.Post))
+{
+        <table class="details_container_table">
+           <tr>
+                <td style="width: 50%; text-align: right; vertical-align: top; padding-left: 17px;">
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+
+
+
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Zone")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("School")
+                                </th>
+                                <th  rowspan ="2" colspan="3" style="text-align:right">
+                                    @Html.DisplayName("No Of Students")
+                                </th>
+                                <th style="width: 83px;text-align:center" colspan="3"  scope="col">
+                                    @Html.DisplayName("BMI")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("# of Suppliers")
+                                </th>
+                                <th style="width: 83px;text-align:center" rowspan ="2" colspan="3" >
+                                    @Html.DisplayName("Sanitary Facility")
+                                </th>
+
+                            </tr>
+
+                             <tr>
+                               
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("I")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("II")</th>
+                                <th scope="col" style="width: 83px;text-align:right"> @Html.DisplayName("III")</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                             @{int iiiTotal = 0;
+                              int iiiTotalNoOfSchools = 0;
+                              int iiiTotalNoOfStudents = 0;
+                              int iiiTotalSupCount = 0;
+                              int iiiTotalSanFacility = 0;
+                              int iiiProvCount = 0; 
+                              }
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfData)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Province)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Zone)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.School)
+                                    </td>
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NoOfStudents)
+                                    </td>
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI1)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI2)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.BMI3)
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.ActionLink(item.SupCount.ToString(), "SupplierInformationZoneProvince",  new {strProvinceID=item.ProvinceID, strZoneID=item.ZoneID, strZone=item.Zone})
+                                        @*@Html.DisplayFor(modelItem => item.SupCount)*@
+                                    </td>
+
+                                     <td class="tb-val-right" colspan="3">
+                                        @Html.Label(item.SanitoryCount==1?"YES":"NO")
+                                    </td>
+
+                                    @{iiiProvCount++;
+
+                                      iiiTotalSupCount += Convert.ToInt32(item.SupCount);
+                                      iiiTotalSanFacility += Convert.ToInt32(item.SanitoryCount);
+                                      iiiTotalNoOfStudents += Convert.ToInt32((item.TotalStudentCount == null?"0":item.TotalStudentCount).Replace(",", ""));
+                                      }
+                                </tr>
+                            }
+
+  
+                        </tbody>
+                    </table>
+                </td>
+
+
+
+
+            </tr>
+        </table>
+}

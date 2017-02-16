@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "ViewBMIHistory";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<div class="container">
+        <div class="row index-top-box">
+            <div class="form-sub-headers">
+                <h2>View BMI History</h2>
+            </div>
+
+
+
+
+<table class="datatable sortable" style="width: 100%">
+
+            <thead>
+                <tr>
+                      <th>
+                        @Html.DisplayName("Class")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Trimester")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Date Performed")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Taken By")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("AdmissionNo")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Gender")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Date of Birth")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Height (m)")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Weight (kg)")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("BMI (kg/m2)")
+                    </th>
+
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in (List<SchoolHealthManagement.Models.BMIHistoryInfo>)ViewBag.BMIHistoryInfo)
+                {
+                    
+                    <tr>
+                         <td>
+                            @Html.TextBoxFor(model => item.Class, new { disabled = "true"})
+                            @* id = "AdmissionNo" + i.ToString(), *@
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.Trimester,new { disabled = "true"})
+                        </td>
+                         <td>
+                            @Html.TextBoxFor(model => item.DatePerformed, new { disabled = "true"})
+                            @* id = "AdmissionNo" + i.ToString(), *@
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.TakenBy,new { disabled = "true"})
+                        </td>
+
+                        
+                        <td>
+                            @Html.TextBoxFor(model => item.AdmissionNo, new { disabled = "true"})
+                            @* id = "AdmissionNo" + i.ToString(), *@
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.Gender,new { disabled = "true"})
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.DOB, new {disabled = "true", @class = "dob-picker" })
+                            @*<input type="text" class="dob-picker"  name = "DOB-" + @i.ToString() />*@
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.Height, new {disabled = "true", @class = "tb-val-right" })
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.Weight, new {disabled = "true", @class = "tb-val-right"})
+                        </td>
+
+
+                        <td>
+                            @Html.TextBoxFor(model => item.BMI, new { disabled = "true", @class = "tb-val-right"})
+                        </td>
+
+                    </tr> 
+                    
+                   
+                }
+
+               
+            </tbody>
+
+
+        </table>
+</div>
+
+    </div>

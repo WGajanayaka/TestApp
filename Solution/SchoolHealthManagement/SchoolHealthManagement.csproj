@@ -1,0 +1,463 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E11851F0-A221-4B41-A73C-EB1FBEFCBF8F}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SchoolHealthManagement</RootNamespace>
+    <AssemblyName>SchoolHealthManagement</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClosedXML">
+      <HintPath>..\packages\ClosedXML.0.76.0\lib\net40-client\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="DataAnnotationsExtensions">
+      <HintPath>..\packages\DataAnnotationsExtensions.1.1.0.0\lib\NETFramework40\DataAnnotationsExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\packages\EPPlus.4.0.5\lib\net20\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\assembly\GAC_MSIL\Microsoft.ReportViewer.Common\11.0.0.0__89845dcd8080cc91\Microsoft.ReportViewer.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WebForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\MicosoftReportViewerWebForms_v11.1.0.1\lib\Microsoft.ReportViewer.WebForms.DLL</HintPath>
+    </Reference>
+    <Reference Include="ReportViewerForMvc">
+      <HintPath>..\packages\ReportViewerForMvc.1.0.1\lib\net45\ReportViewerForMvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.20710.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WHOAnthroPlus.BLL.PC">
+      <HintPath>C:\Program Files (x86)\WHO\WHO AnthroPlus\WHOAnthroPlus.BLL.PC.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="DS4Rpts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DS4Rpts.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\22CriteriasModel.cs" />
+    <Compile Include="Models\BankModel.cs" />
+    <Compile Include="Models\BanksBranchModel.cs" />
+    <Compile Include="Models\BMIInfoModel.cs" />
+    <Compile Include="Models\FileModel.cs" />
+    <Compile Include="Models\FundsReceivedModel.cs" />
+    <Compile Include="Models\ImpressRequestModel.cs" />
+    <Compile Include="Models\ImpressSummaryModel.cs" />
+    <Compile Include="Models\LoginModel.cs" />
+    <Compile Include="Models\MonitoringOfficerModel.cs" />
+    <Compile Include="Models\ReportMonitoringOfficerModel.cs" />
+    <Compile Include="Models\SanitoryConstructionModel.cs" />
+    <Compile Include="Models\SanitoryDevPayments.cs" />
+    <Compile Include="Models\SanitoryFacilityModel.cs" />
+    <Compile Include="Models\SchoolAttendanceModel.cs" />
+    <Compile Include="Models\SchoolInfoModel.cs" />
+    <Compile Include="Models\GradelInfoModel.cs" />
+    <Compile Include="Models\SDSBankInfoModel.cs" />
+    <Compile Include="Models\StudentModel.cs" />
+    <Compile Include="Models\SummaryOfDataModel.cs" />
+    <Compile Include="Models\SupplierInfoModel.cs" />
+    <Compile Include="Models\SupplierPaymentDetail.cs" />
+    <Compile Include="Models\SupplierPaymentRequest.cs" />
+    <Compile Include="Models\UserProfileModel.cs" />
+    <Compile Include="Models\WaterNHandwashModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="Content\assets\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="Content\assets\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="Content\assets\bootstrap\css\bootstrap.css" />
+    <Content Include="Content\assets\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Content\assets\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\assets\bootstrap\js\bootstrap.js" />
+    <Content Include="Content\assets\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\assets\bootstrap\js\npm.js" />
+    <Content Include="Content\assets\css\animations.css" />
+    <Content Include="Content\assets\css\form-elements.css" />
+    <Content Include="Content\assets\css\style.css" />
+    <Content Include="Content\assets\font-awesome\css\font-awesome.css" />
+    <Content Include="Content\assets\font-awesome\css\font-awesome.min.css" />
+    <Content Include="Content\assets\font-awesome\fonts\fontawesome-webfont.svg" />
+    <Content Include="Content\assets\ico\apple-touch-icon-114-precomposed.png" />
+    <Content Include="Content\assets\ico\apple-touch-icon-144-precomposed.png" />
+    <Content Include="Content\assets\ico\apple-touch-icon-57-precomposed.png" />
+    <Content Include="Content\assets\ico\apple-touch-icon-72-precomposed.png" />
+    <Content Include="Content\assets\ico\favicon.png" />
+    <Content Include="Content\assets\ico\file_pdf.ico" />
+    <Content Include="Content\assets\ico\folder.ico" />
+    <Content Include="Content\assets\img\backgrounds\1%402x.jpg" />
+    <Content Include="Content\assets\img\backgrounds\1.jpg" />
+    <Content Include="Content\assets\img\backgrounds\11.jpg" />
+    <Content Include="Content\assets\img\backgrounds\about-us.jpg" />
+    <Content Include="Content\assets\img\backgrounds\ajax-loader.gif" />
+    <Content Include="Content\assets\img\backgrounds\children.jpg" />
+    <Content Include="Content\assets\img\backgrounds\error.png" />
+    <Content Include="Content\assets\img\backgrounds\header-logo-sponsers.jpg" />
+    <Content Include="Content\assets\img\backgrounds\header-logo.jpg" />
+    <Content Include="Content\assets\img\backgrounds\info.png" />
+    <Content Include="Content\assets\img\backgrounds\inner-bg.jpg" />
+    <Content Include="Content\assets\img\backgrounds\login-logo.jpg" />
+    <Content Include="Content\assets\img\backgrounds\login-logo.png" />
+    <Content Include="Content\assets\img\backgrounds\search.jpg" />
+    <Content Include="Content\assets\js\jquery-1.11.1.js" />
+    <Content Include="Content\assets\js\jquery-1.11.1.min.js" />
+    <Content Include="Content\assets\js\jquery-migrate-1.0.0.js" />
+    <Content Include="Content\assets\js\jquery-ui.js" />
+    <Content Include="Content\assets\js\jquery-ui.min.js" />
+    <Content Include="Content\assets\js\jquery.backstretch.js" />
+    <Content Include="Content\assets\js\jquery.backstretch.min.js" />
+    <Content Include="Content\assets\js\placeholder.js" />
+    <Content Include="Content\assets\js\scripts.js" />
+    <Content Include="Content\assets\ui\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\assets\ui\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\assets\ui\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\assets\ui\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\assets\ui\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\assets\ui\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\assets\ui\jquery-ui.css" />
+    <Content Include="Content\assets\ui\jquery-ui.js" />
+    <Content Include="Content\Images\bronze-star_Small.jpg" />
+    <Content Include="Content\Images\gold-star_Small.jpg" />
+    <Content Include="Content\Images\silver-star_Small.jpg" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Content\webindex\css\bootstrap.css" />
+    <Content Include="Content\webindex\css\bootstrap.min.css" />
+    <Content Include="Content\webindex\css\shop-item.css" />
+    <Content Include="Content\webindex\css\sidebar.css" />
+    <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\webindex\img\1.jpg" />
+    <Content Include="Content\webindex\img\11.jpg" />
+    <Content Include="Content\webindex\img\2.jpg" />
+    <Content Include="Content\webindex\img\22.jpg" />
+    <Content Include="Content\webindex\img\3.jpg" />
+    <Content Include="Content\webindex\img\33.jpg" />
+    <Content Include="Content\webindex\img\4.jpg" />
+    <Content Include="Content\webindex\img\44.jpg" />
+    <Content Include="Content\webindex\img\e1.jpg" />
+    <Content Include="Content\webindex\img\e2.jpg" />
+    <Content Include="Content\webindex\img\header.jpg" />
+    <Content Include="Content\webindex\img\homeicon.png" />
+    <Content Include="Content\webindex\img\vision-mission.jpg" />
+    <Content Include="Content\webindex\js\bootstrap.js" />
+    <Content Include="Content\webindex\js\bootstrap.min.js" />
+    <Content Include="Content\webindex\js\jquery.js" />
+    <Content Include="Content\webindex\js\sidebar.js" />
+    <Content Include="Content\webindex\lightbox\lib\jquery-1.10.1.min.js" />
+    <Content Include="Content\webindex\lightbox\lib\jquery-1.9.0.min.js" />
+    <Content Include="Content\webindex\lightbox\lib\jquery.mousewheel-3.0.6.pack.js" />
+    <Content Include="Content\webindex\lightbox\source\blank.gif" />
+    <Content Include="Content\webindex\lightbox\source\fancybox_loading%402x.gif" />
+    <Content Include="Content\webindex\lightbox\source\fancybox_loading.gif" />
+    <Content Include="Content\webindex\lightbox\source\fancybox_overlay.png" />
+    <Content Include="Content\webindex\lightbox\source\fancybox_sprite%402x.png" />
+    <Content Include="Content\webindex\lightbox\source\fancybox_sprite.png" />
+    <Content Include="Content\webindex\lightbox\source\helpers\fancybox_buttons.png" />
+    <Content Include="Content\webindex\lightbox\source\helpers\jquery.fancybox-buttons.css" />
+    <Content Include="Content\webindex\lightbox\source\helpers\jquery.fancybox-buttons.js" />
+    <Content Include="Content\webindex\lightbox\source\helpers\jquery.fancybox-media.js" />
+    <Content Include="Content\webindex\lightbox\source\helpers\jquery.fancybox-thumbs.css" />
+    <Content Include="Content\webindex\lightbox\source\helpers\jquery.fancybox-thumbs.js" />
+    <Content Include="Content\webindex\lightbox\source\jquery.fancybox.css" />
+    <Content Include="Content\webindex\lightbox\source\jquery.fancybox.js" />
+    <Content Include="Content\webindex\lightbox\source\jquery.fancybox.pack.js" />
+    <Content Include="Global.asax" />
+    <Content Include="ReportViewerWebForm.aspx" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
+    <Content Include="Views\Shared\ReportViewerASPX.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="NewFolder1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\SchoolInfo.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\AddStudent.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Login\Login.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\CreateGradeInfo.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Site.Master" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\assets\bootstrap\css\bootstrap-theme.css.map" />
+    <Content Include="Content\assets\bootstrap\css\bootstrap.css.map" />
+    <Content Include="Content\assets\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\assets\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\assets\bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\assets\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\assets\font-awesome\fonts\fontawesome-webfont.eot" />
+    <Content Include="Content\assets\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <Content Include="Content\assets\font-awesome\fonts\fontawesome-webfont.woff" />
+    <Content Include="Content\assets\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <Content Include="Content\assets\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="Content\assets\font-awesome\less\animated.less" />
+    <Content Include="Content\assets\font-awesome\less\bordered-pulled.less" />
+    <Content Include="Content\assets\font-awesome\less\core.less" />
+    <Content Include="Content\assets\font-awesome\less\fixed-width.less" />
+    <Content Include="Content\assets\font-awesome\less\font-awesome.less" />
+    <Content Include="Content\assets\font-awesome\less\icons.less" />
+    <Content Include="Content\assets\font-awesome\less\larger.less" />
+    <Content Include="Content\assets\font-awesome\less\list.less" />
+    <Content Include="Content\assets\font-awesome\less\mixins.less" />
+    <Content Include="Content\assets\font-awesome\less\path.less" />
+    <Content Include="Content\assets\font-awesome\less\rotated-flipped.less" />
+    <Content Include="Content\assets\font-awesome\less\stacked.less" />
+    <Content Include="Content\assets\font-awesome\less\variables.less" />
+    <Content Include="Content\assets\font-awesome\scss\font-awesome.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_animated.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_bordered-pulled.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_core.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_fixed-width.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_icons.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_larger.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_list.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_mixins.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_path.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_rotated-flipped.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_stacked.scss" />
+    <Content Include="Content\assets\font-awesome\scss\_variables.scss" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_HomeLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_FormLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\FinalStudentTest.xlsx" />
+    <Content Include="DS4Rpts.xsc">
+      <DependentUpon>DS4Rpts.xsd</DependentUpon>
+    </Content>
+    <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="DS4Rpts.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DS4Rpts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="DS4Rpts.xss">
+      <DependentUpon>DS4Rpts.xsd</DependentUpon>
+    </Content>
+    <None Include="Properties\PublishProfiles\Vonitro.pubxml" />
+    <Content Include="Views\Home\AboutUs.cshtml" />
+    <Content Include="Views\Login\ChangePassword.cshtml" />
+    <Content Include="Views\Home\SearchSchoolInfo.cshtml" />
+    <Content Include="Views\Home\WaterAndHandwashInfo.cshtml" />
+    <Content Include="Views\Home\SanitoryFacilityInfo.cshtml" />
+    <Content Include="Views\Login\UserProfile.cshtml" />
+    <Content Include="Views\Home\SupplierInformation.cshtml" />
+    <Content Include="Views\Home\MonitoringOfficerInformation.cshtml" />
+    <Content Include="Views\Home\FundsReceived.cshtml" />
+    <Content Include="Views\Home\ImpressRequest.cshtml" />
+    <Content Include="Views\Home\StudentsBulk.cshtml" />
+    <Content Include="Views\Home\BMIInformation.cshtml" />
+    <Content Include="Views\Home\Help.cshtml" />
+    <Content Include="Views\Home\SummaryOfData.cshtml" />
+    <Content Include="Views\Login\Error.cshtml" />
+    <Content Include="Views\Home\SchoolAttendance.cshtml" />
+    <Content Include="Views\Home\SanitoryConstruction.cshtml" />
+    <Content Include="Views\Home\SchoolHealthPromotionProgramme.cshtml" />
+    <Content Include="Views\Home\ViewBMIHistory.cshtml" />
+    <Content Include="Views\Home\ShowReport.cshtml" />
+    <Content Include="Views\Home\Home.cshtml" />
+    <Content Include="Views\Home\DisplayFolderPDFs.cshtml" />
+    <Content Include="Views\Shared\_IndexWeb.cshtml" />
+    <Content Include="Views\Home\Gallery.cshtml" />
+    <Content Include="Views\Home\PDFParentFolder.cshtml" />
+    <Content Include="Views\Home\about.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Home\ContactUs.cshtml" />
+    <Content Include="Views\Home\statistics.cshtml" />
+    <Content Include="Views\Home\DisplayGallery.cshtml" />
+    <Content Include="Views\Home\SummaryOfDataZonesInProvince.cshtml" />
+    <Content Include="Views\Home\SummaryOfDataSchoolsInZone.cshtml" />
+    <Content Include="Views\Home\SupplierInformationZoneProvince.cshtml" />
+    <Content Include="Views\Home\SupplierInformationProvince.cshtml" />
+    <Content Include="Views\Home\SDSBankInformation.cshtml" />
+    <Content Include="Views\Home\ReportMonitoringOfficers.cshtml" />
+    <Content Include="Views\Home\ReportSuppliers.cshtml" />
+    <Content Include="Views\Home\ReportWeightvsAge.cshtml" />
+    <Content Include="Views\Home\ReportBMIProvincesInformation.cshtml" />
+    <Content Include="Views\Home\ReportBMIZonesInformation.cshtml" />
+    <Content Include="Views\Home\MOE_Impress_Summary.cshtml" />
+    <Content Include="Views\Home\Impress_Release.cshtml" />
+    <Content Include="Views\Home\SupplierPayments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:12128/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

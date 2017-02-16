@@ -1,0 +1,317 @@
+﻿@model SchoolHealthManagement.Models.SupplierPaymentRequest
+
+@{
+    ViewBag.Title = "Supplier Payment Detail";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<style>
+    .details_container_table td input[type="password"] {
+        border: 1px solid #d0d0d0;
+        height: 28px;
+        border-radius: 0px;
+        margin: 0;
+        padding: 0;
+        width: 226px;
+    }
+
+    .bckl {
+        color: #094B75;
+        padding-left: 20px;
+    }
+
+        .bckl:hover {
+            color: #40A8E8;
+        }
+</style>
+
+<body>
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="SuccessMsg">
+            @ViewBag.SuccessMessage
+        </div>
+    }
+
+</body>
+
+<div class="container">
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Supplier Payment Request</h2>
+
+        </div>
+
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                //Dropdownlist Selectedchange event
+                $("#ProvinceID").change(function () {
+                    $("#ZoneID").empty();
+                    $("#ZoneID").append('<option value="">Select Zone</option>');
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GetZonesByProvinceJson")', // we are calling json method
+
+                        dataType: 'json',
+
+                        data: { ProvinceID: $("#ProvinceID").val() },
+                        // here we are get value of selected country and passing same value as inputto json method GetStates.
+
+                        success: function (zones) {
+                            // branches contains the JSON formatted list
+                            // of branches passed from the controller
+                            $.each(zones, function (i, zone) {
+                                $("#ZoneID").append('<option value="' + zone.Value + '">' +
+                                     zone.Text + '</option>');
+                                // here we are adding option for States
+
+                            });
+                        },
+                        error: function (ex) {
+                            alert('Failed to retrieve states.' + ex);
+                        }
+                    });
+                    return false;
+                });
+
+                $("#Year").change(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("LoadSuppliersForPaymentJson")', // we are calling json method
+
+                        dataType: 'json',
+
+                        data: { ProvinceID: $("#ProvinceID").val(), ZoneID: $("#ZoneID").val(), year: $("#Year").val() },
+                        // here we are get value of selected country and passing same value as inputto json method GetStates.
+
+                        success: function (zones) {
+                            // branches contains the JSON formatted list
+                            // of branches passed from the controller
+                            $.each(zones, function (i, zone) {
+                                $("#ZoneID").append('<option value="' + zone.Value + '">' +
+                                     zone.Text + '</option>');
+                                // here we are adding option for States
+
+                            });
+                        },
+                        error: function (ex) {
+                            alert('Failed to retrieve states.' + ex);
+                        }
+                    });
+                });
+
+            });
+
+        </script>
+
+
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+
+
+            <table class="details_container_table" style="width: 50%">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%; text-align: right">
+                            @Html.Label("Payment Request ID")
+                        </td>
+                        <td style="width: 30%">
+                            @Html.TextBoxFor(model => model.Id)
+                            @Html.ValidationMessageFor(model => model.Id)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Request Date") </td>
+                        <td style="width: 30%">
+                            @Html.EditorFor(model => model.RequestDate)
+                            @Html.ValidationMessageFor(model => model.RequestDate)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Province") </td>
+                        <td style="width: 30%">
+                            @Html.DropDownList("ProvinceID", "Select Province")
+                            @Html.ValidationMessageFor(model => model.ProvinceID)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Zone") </td>
+                        <td style="width: 30%">
+                            @Html.DropDownList("ZoneID", "Select Zone")
+                            @Html.ValidationMessageFor(model => model.ZoneID)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Year")</td>
+                        <td style="width: 30%">
+                            @Html.DropDownList("Year", "Select Year")
+                            @Html.ValidationMessageFor(model => model.Year)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Month")  </td>
+                        <td style="width: 30%">
+                            @Html.DropDownList("Month", "Select Month")
+                            @Html.ValidationMessageFor(model => model.Month)
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <h3>Supplyer Payment Details</h3>
+            <table class="datatable sortable" id="SuppyerTable" style="width: 100%; padding-top: 6px;">
+                <thead>                           
+                    <tr>
+                        <th>
+                            @Html.DisplayName("Censors ID")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Supplier Name")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Bank Account No")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Bank")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Branch Name")
+                        </th>                       
+                        <th>
+                           
+                        </th>
+                        <th>
+                            @Html.DisplayName("Amount Name")
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.PaymentDetails)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CensorsID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Supplier.BankAccountNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Supplier.BankName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BranchName)
+                            </td>                    
+                            <td>
+                                @Html.DisplayFor(modelItem => item.MAXAmount)
+                            </td>
+                            <td>
+                                Rs: <input name="Amount[@item.CensorsID]"> 
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <table class="details_container_table" style="width: 50%">
+                <tbody>
+                   
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Total") </td>
+                        <td style="width: 30%">
+                            @Model.Total
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right">@Html.Label("Status") </td>
+                        <td style="width: 30%">
+                            @Model.Status
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 20%; text-align: right"></td>
+                        <td style="width: 30%">
+                            <input type="submit" value="Save" class="blue-btn" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        <h3>All Payment Details</h3>
+        <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Payment #")
+                    </th>
+                    <th>
+                        @Html.DisplayName("RequestDate")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Province")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Zone")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Year")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Month")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Status")
+                    </th>                 
+                    <th>
+                        @Html.DisplayName("Action")
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.SupplierPaymentRequest>)ViewBag.SupplierPaymentRequestList)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RequestDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ProvinceName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ZoneName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Year)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Month)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Total)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>                        
+                        <td>
+                           @Html.ActionLink("Edit", "SupplierPayments", new { id = @item.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

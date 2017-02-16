@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "SupplierInformationZoneProvince";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>Supplier Information - Zone/Province</h2>
+
+
+@using (Html.BeginForm("", "Home", FormMethod.Post))
+{
+        <table class="details_container_table">
+           <tr>
+                <td style="width: 50%; text-align: right; vertical-align: top; padding-left: 17px;">
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Zone")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Devision")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("CensusID")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("SchoolName")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("SupplierName")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Address")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("NIC")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Phone")
+                                </th>
+
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Bank Name")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Bank Account No")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("Grade")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("# Male Students")
+                                </th>
+                                <th rowspan ="2" colspan="3">
+                                    @Html.DisplayName("# Female Students")
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SupplierInfoModel>)ViewBag.SupplierInfo)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left" colspan="3">
+                                       @Html.DisplayFor(modelItem => item.Zone)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                       @Html.DisplayFor(modelItem => item.Devision)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.CensusID)
+                                    </td>
+                                    <td class="tb-val-left" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.SchoolName)
+                                    </td>
+                                    <td class="tb-val-right" colspan="3">
+                                        @Html.DisplayFor(modelItem => item.SupplierName)
+                                    </td>
+                                     <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Address)
+                                    </td>
+
+                                     <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NIC)
+                                    </td>
+
+                                     <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Phone)
+                                    </td>
+
+                                      <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.BankName)
+                                    </td>
+
+                                      <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.BankAccountNo)
+                                    </td>
+                                      <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.Grade)
+                                    </td>
+                                      <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NoOfMaleStudents)
+                                    </td>
+                                      <td class="tb-val-right"  colspan="3">
+                                        @Html.DisplayFor(modelItem => item.NoOfMaleStudents)
+                                    </td>
+
+                                
+                                </tr>
+                            }
+
+  
+                        </tbody>
+                    </table>
+                </td>
+
+
+
+
+            </tr>
+        </table>
+}

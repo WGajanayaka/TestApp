@@ -1,0 +1,115 @@
+﻿@model SchoolHealthManagement.Models.ReportBMIReportModel
+@{
+    ViewBag.Title = "ReportBMIProvincesInformation";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<h2>Report - BMI Information (Provinces)</h2>
+
+
+@using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div></div>
+    <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayName("Province")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Underweight")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Underweight %")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Stunning")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Stunning %")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Wasting")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Wasting %")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Healthy")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Healthy %")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Overweight")
+                    </th>
+                     <th>
+                        @Html.DisplayName("Overweight %")
+                    </th>
+                   
+
+
+
+                </tr>
+            </thead>
+            <tbody>
+                
+                @foreach (var item in (List<SchoolHealthManagement.Models.ReportBMIReportModel>)ViewBag.TotalBMIInfo)
+                {
+                   
+                    <tr>
+                        <td  >
+                            @Html.ActionLink(item.ProvinceName, "ReportBMIZonesInformation",  new {strProvince=item.ProvinceID})
+                        </td>
+                       @* <td>
+                            @Html.DisplayFor(modelItem => item.ProvinceName)
+                        </td>*@
+                         <td>
+                            @Html.DisplayFor(modelItem => item.Underweight)
+                        </td>
+                         <td>
+                             @{string PerUnderW = (Decimal.Divide(Convert.ToDecimal(item.Underweight), item.CountAll) * 100).ToString("#0.##");}
+                            @Html.DisplayFor(modelItem => PerUnderW)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Stunning)
+                        </td>
+                          <td>
+                              @{string PerStunt = (Decimal.Divide(Convert.ToDecimal(item.Stunning), item.CountAll) * 100).ToString("#0.##");}
+                            @Html.DisplayFor(modelItem => PerStunt)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Wasting)
+                        </td>
+                          <td>
+                              @{string PerWaste = (Decimal.Divide(Convert.ToDecimal(item.Wasting), item.CountAll) * 100).ToString("#0.##");}
+                            @Html.DisplayFor(modelItem => PerWaste)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Healthy)
+                        </td>
+                          <td>
+                              @{string PerHealth = (Decimal.Divide(Convert.ToDecimal(item.Healthy), item.CountAll) * 100).ToString("#0.##");}
+                            @Html.DisplayFor(modelItem => PerHealth)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Overweight)
+                        </td>
+                          <td>
+                              @{string PerOverW = (Decimal.Divide(Convert.ToDecimal(item.Overweight), item.CountAll) * 100).ToString("#0.##");}
+                            @Html.DisplayFor(modelItem => PerOverW)
+                        </td>
+                        
+
+                    </tr>
+                   
+                    
+                
+                }
+            </tbody>
+        </table>    
+}

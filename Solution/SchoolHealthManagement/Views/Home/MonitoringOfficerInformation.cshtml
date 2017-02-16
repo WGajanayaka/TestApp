@@ -1,0 +1,133 @@
+﻿@model SchoolHealthManagement.Models.MonitoringOfficerModel
+
+@{
+    ViewBag.Title = "MonitoringOfficerInformation";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<style>
+
+    .details_container_table td input[type="password"] {
+    border: 1px solid #d0d0d0;
+    height: 28px; border-radius:0px;
+    margin: 0;
+    padding: 0;
+    width: 226px;
+}.search-btn{position:relative;top:1px}
+    .bckl
+    { color:#094B75; padding-left:20px;
+    }
+        .bckl:hover
+        {color:#40A8E8;
+        }
+</style>
+
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Monitoring Officer Information</h2>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    function SearchCensorsID() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetCensorsDetails/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                document.getElementById('SchoolName').value = data.School;
+                document.getElementById('Province').value = data.Province;
+                document.getElementById('Zone').value = data.Zone;
+                document.getElementById('Devision').value = data.Devision;
+
+                document.getElementById('NameOfOfficer').value = data.NameOfOfficer;
+                document.getElementById('Designation').value = data.Designation;
+                document.getElementById('ContactNo').value = data.ContactNo;
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+   
+    
+</script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+   <table class="details_container_table" style="width:50%">
+<tbody>
+<tr>
+    <td style="width:20%; text-align:right">      @Html.LabelFor(model => model.CensorsID)</td>
+    <td style="width:30%">   @Html.EditorFor(model => model.CensorsID)
+            @Html.ValidationMessageFor(model => model.CensorsID) 
+         <input type="button"   class="search-btn" onclick ="SearchCensorsID();"/>
+    </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.LabelFor(model => model.SchoolName)  </td>
+    <td style="width:30%">   @Html.TextBoxFor(model => model.SchoolName, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.SchoolName) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.LabelFor(model => model.Province)  </td>
+    <td style="width:30%">   @Html.TextBoxFor(model => model.Province, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.Province) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">     @Html.LabelFor(model => model.Zone) </td>
+    <td style="width:30%"> @Html.TextBoxFor(model => model.Zone, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.Zone) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.Devision) </td>
+    <td style="width:30%">  @Html.TextBoxFor(model => model.Devision, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.Devision)  </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("Name Of Officer")  </td>
+    <td style="width:30%">  @Html.EditorFor(model => model.NameOfOfficer)
+            @Html.ValidationMessageFor(model => model.NameOfOfficer) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.Designation)  </td>
+    <td style="width:30%">  @Html.EditorFor(model => model.Designation)
+            @Html.ValidationMessageFor(model => model.Designation) </td>
+</tr>
+
+<tr>
+    <td style="width:20%; text-align:right">    @Html.Label("Contact No") </td>
+    <td style="width:30%">  @Html.EditorFor(model => model.ContactNo)
+            @Html.ValidationMessageFor(model => model.ContactNo) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  </td>
+    <td style="width:30%"> <input type="submit" value="Save" class="blue-btn" />  @Html.ActionLink("Back to List >>", "Index", null,new { @class = "bckl" }) </td>
+</tr>
+</tbody>
+
+</table>
+
+   
+}
+
+
+
+    
+</div>
+</div>

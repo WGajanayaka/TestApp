@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DS4Rpts" targetNamespace="http://tempuri.org/DS4Rpts.xsd" xmlns:mstns="http://tempuri.org/DS4Rpts.xsd" xmlns="http://tempuri.org/DS4Rpts.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Web.config" AppSettingsPropertyName="UsedConnection" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="UsedConnection (Web.config)" ParameterPrefix="@" PropertyReference="AppConfig.System.Configuration.ConfigurationManager.0.ConnectionStrings.UsedConnection.ConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="Province_DataEntery_CountTableAdapter" GeneratorDataComponentClassName="Province_DataEntery_CountTableAdapter" Name="Province_DataEntery_Count" UserDataComponentName="Province_DataEntery_CountTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="UsedConnection (Web.config)" DbObjectName="SHPPBK.dbo.Province_DataEntery_Count" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT ProvinceID, Entered FROM dbo.Province_DataEntery_Count</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="ProvinceID" DataSetColumn="ProvinceID" />
+              <Mapping SourceColumn="Entered" DataSetColumn="Entered" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="VW_MonitoringOfficerInfoTableAdapter" GeneratorDataComponentClassName="VW_MonitoringOfficerInfoTableAdapter" Name="VW_MonitoringOfficerInfo" UserDataComponentName="VW_MonitoringOfficerInfoTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="UsedConnection (Web.config)" DbObjectName="SHPPBK.dbo.VW_MonitoringOfficerInfo" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Both" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GeneratorSourceName="Fill" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="false">
+                    <CommandText>SELECT ProvinceName, ZoneName, CensorsID, SchoolName, NameOfOfficer, Designation, ContactNo FROM dbo.VW_MonitoringOfficerInfo</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="ProvinceName" DataSetColumn="ProvinceName" />
+              <Mapping SourceColumn="ZoneName" DataSetColumn="ZoneName" />
+              <Mapping SourceColumn="CensorsID" DataSetColumn="CensorsID" />
+              <Mapping SourceColumn="SchoolName" DataSetColumn="SchoolName" />
+              <Mapping SourceColumn="NameOfOfficer" DataSetColumn="NameOfOfficer" />
+              <Mapping SourceColumn="Designation" DataSetColumn="Designation" />
+              <Mapping SourceColumn="ContactNo" DataSetColumn="ContactNo" />
+            </Mappings>
+            <Sources />
+          </TableAdapter>
+        </Tables>
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DS4Rpts" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="DS4Rpts" msprop:Generator_UserDSName="DS4Rpts">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Province_DataEntery_Count" msprop:Generator_TableClassName="Province_DataEntery_CountDataTable" msprop:Generator_TableVarName="tableProvince_DataEntery_Count" msprop:Generator_TablePropName="Province_DataEntery_Count" msprop:Generator_RowDeletingName="Province_DataEntery_CountRowDeleting" msprop:Generator_RowChangingName="Province_DataEntery_CountRowChanging" msprop:Generator_RowEvHandlerName="Province_DataEntery_CountRowChangeEventHandler" msprop:Generator_RowDeletedName="Province_DataEntery_CountRowDeleted" msprop:Generator_UserTableName="Province_DataEntery_Count" msprop:Generator_RowChangedName="Province_DataEntery_CountRowChanged" msprop:Generator_RowEvArgName="Province_DataEntery_CountRowChangeEvent" msprop:Generator_RowClassName="Province_DataEntery_CountRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProvinceID" msprop:Generator_ColumnVarNameInTable="columnProvinceID" msprop:Generator_ColumnPropNameInRow="ProvinceID" msprop:Generator_ColumnPropNameInTable="ProvinceIDColumn" msprop:Generator_UserColumnName="ProvinceID" type="xs:int" minOccurs="0" />
+              <xs:element name="Entered" msprop:Generator_ColumnVarNameInTable="columnEntered" msprop:Generator_ColumnPropNameInRow="Entered" msprop:Generator_ColumnPropNameInTable="EnteredColumn" msprop:Generator_UserColumnName="Entered" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="VW_MonitoringOfficerInfo" msprop:Generator_TableClassName="VW_MonitoringOfficerInfoDataTable" msprop:Generator_TableVarName="tableVW_MonitoringOfficerInfo" msprop:Generator_TablePropName="VW_MonitoringOfficerInfo" msprop:Generator_RowDeletingName="VW_MonitoringOfficerInfoRowDeleting" msprop:Generator_RowChangingName="VW_MonitoringOfficerInfoRowChanging" msprop:Generator_RowEvHandlerName="VW_MonitoringOfficerInfoRowChangeEventHandler" msprop:Generator_RowDeletedName="VW_MonitoringOfficerInfoRowDeleted" msprop:Generator_UserTableName="VW_MonitoringOfficerInfo" msprop:Generator_RowChangedName="VW_MonitoringOfficerInfoRowChanged" msprop:Generator_RowEvArgName="VW_MonitoringOfficerInfoRowChangeEvent" msprop:Generator_RowClassName="VW_MonitoringOfficerInfoRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ProvinceName" msprop:Generator_ColumnVarNameInTable="columnProvinceName" msprop:Generator_ColumnPropNameInRow="ProvinceName" msprop:Generator_ColumnPropNameInTable="ProvinceNameColumn" msprop:Generator_UserColumnName="ProvinceName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ZoneName" msprop:Generator_ColumnVarNameInTable="columnZoneName" msprop:Generator_ColumnPropNameInRow="ZoneName" msprop:Generator_ColumnPropNameInTable="ZoneNameColumn" msprop:Generator_UserColumnName="ZoneName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="CensorsID" msprop:Generator_ColumnVarNameInTable="columnCensorsID" msprop:Generator_ColumnPropNameInRow="CensorsID" msprop:Generator_ColumnPropNameInTable="CensorsIDColumn" msprop:Generator_UserColumnName="CensorsID" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="10" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SchoolName" msprop:Generator_ColumnVarNameInTable="columnSchoolName" msprop:Generator_ColumnPropNameInRow="SchoolName" msprop:Generator_ColumnPropNameInTable="SchoolNameColumn" msprop:Generator_UserColumnName="SchoolName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="NameOfOfficer" msprop:Generator_ColumnVarNameInTable="columnNameOfOfficer" msprop:Generator_ColumnPropNameInRow="NameOfOfficer" msprop:Generator_ColumnPropNameInTable="NameOfOfficerColumn" msprop:Generator_UserColumnName="NameOfOfficer" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Designation" msprop:Generator_ColumnVarNameInTable="columnDesignation" msprop:Generator_ColumnPropNameInRow="Designation" msprop:Generator_ColumnPropNameInTable="DesignationColumn" msprop:Generator_UserColumnName="Designation" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="200" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="ContactNo" msprop:Generator_ColumnVarNameInTable="columnContactNo" msprop:Generator_ColumnPropNameInRow="ContactNo" msprop:Generator_ColumnPropNameInTable="ContactNoColumn" msprop:Generator_UserColumnName="ContactNo" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="20" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

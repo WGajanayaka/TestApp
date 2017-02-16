@@ -1,0 +1,254 @@
+﻿@model SchoolHealthManagement.Models.GradeInfoModel
+
+@{
+    ViewBag.Title = "Enter School Information";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+<div class="container">
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Grade Information</h2>
+        </div>
+
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+        <script language="javascript" type="text/javascript">
+            function GetCensorsID(_SchoolId) {
+                var procemessage = "Please wait...";
+                $("#CensorsID").val(procemessage);
+                var url = "/Home/GetCensorsIDBySchoolID/";
+
+                $.ajax({
+                    url: url,
+                    data: { SchoolId: _SchoolId },
+                    cache: false,
+                    type: "POST",
+                    success: function (data) {
+                        
+                        SetMaleEnabled(_SchoolId);
+                        
+                        $("#CensorsID").val(data);
+                    },
+                    ERROR: function (reponse) {
+                        alert("error : " + reponse);
+                    }
+                });
+
+            }
+
+            function SetMaleEnabled(_SchoolId) {
+       
+               
+                var url = "/Home/GetSchoolSex/";
+
+                $.ajax({
+                    url: url,
+                    data: { SchoolId: _SchoolId },
+                    cache: false,
+                    type: "POST",
+                    success: function (data) {
+
+                        if (data != "Boys" && data != "Mixed")
+                            $("#Male").attr("disabled", "disabled");
+                        else
+                            $("#Male").removeAttr("disabled");
+                    },
+                    ERROR: function (reponse) {
+                        alert("error : " + reponse);
+                    }
+                });
+
+            }
+
+
+            function GetDevisions(_ProvinceId, _ZoneID) {
+                var procemessage = "<option value='0'> Please wait...</option>";
+                $("#DevisionID").html(procemessage).show();
+                var url = "/Home/GetDevisonsByZone/";
+
+                $.ajax({
+                    url: url,
+                    data: { ProvinceID: _ProvinceId, ZoneID: _ZoneID },
+                    cache: false,
+                    type: "POST",
+                    success: function (data) {
+                        var markup = "<option value='0'>Select Devision</option>";
+                        for (var x = 0; x < data.length; x++) {
+                            markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                        }
+                        $("#DevisionID").html(markup).show();
+                    },
+                    ERROR: function (reponse) {
+                        alert("error : " + reponse);
+                    }
+                });
+
+            }
+
+
+            function LoadGrade(_Grade, _TeacherInCharge, _Male, _Female, _Total) {
+                //var idslist = "";
+                $("#Grade").val(_Grade);
+                $("#TeacherInCharge").val(_TeacherInCharge);
+                $("#Male").val(_Male);
+                $("#Female").val(_Female);
+                $("#Total").val(_Total);               
+
+                $("#Grade").attr("readonly", "readonly");
+                //alert(_SuppName);
+
+            };
+        </script>
+
+
+        @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <table class="details_container_table">
+                <tbody>
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Year</td>
+                        <td style="width: 38%;">@Html.TextBox("Year", @DateTime.Today.Year,  new { disabled = "true" })</td>
+                        </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">School</td>
+                        
+                        <td style="width: 38%;">
+                            @Html.TextBox("School",(String)ViewBag.School, new { disabled = "true" })
+                            @Html.DropDownList("SchoolID", (List<SelectListItem>)ViewBag.Schools, "Select School", new { style = "display:none"}) @*, new { onchange = "javascript:GetCensorsID(this.value);" }*@
+                            @Html.ValidationMessageFor(m => m.SchoolID)</td>
+                        <td style="width: 12%; text-align: right;">Censors ID</td>
+                        <td style="width: 38%;">@Html.TextBox("CensorsID", (string)ViewBag.CensorsID,  new { disabled = "true" })                           
+                    </tr>
+
+
+                   @* <tr>
+                        <td style="width: 12%; text-align: right;">Grade</td>
+                        <td style="width: 38%;">@Html.DropDownList("Grade", new List<SelectListItem>{
+                new SelectListItem{Text="1", Value="1"},
+                new SelectListItem{Text="2", Value="2"},
+                new SelectListItem{Text="3", Value="3"},
+                new SelectListItem{Text="4", Value="4"},
+                new SelectListItem{Text="5", Value="5"},
+                new SelectListItem{Text="6", Value="6"},
+                new SelectListItem{Text="7", Value="7"},
+                new SelectListItem{Text="8", Value="8"},
+                new SelectListItem{Text="9", Value="9"},
+                new SelectListItem{Text="10", Value="10"},
+                new SelectListItem{Text="11", Value="11"},
+                new SelectListItem{Text="12", Value="12"},
+                new SelectListItem{Text="13", Value="13"}
+            
+                }, "Select Grade")
+                            @Html.ValidationMessageFor(m => m.Grade)</td>
+                        <td style="width: 12%; text-align: right;"></td>
+                        
+                    </tr>*@
+
+                      <tr>
+                        <td style="width: 12%; text-align: right;">Grade</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.Grade)
+                            @Html.ValidationMessageFor(m => m.Grade)</td>
+                    </tr>
+                     <tr>
+                        <td style="width: 12%; text-align: right;">Teacher In Charge</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.TeacherInCharge)
+                            @Html.ValidationMessageFor(m => m.TeacherInCharge)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Male</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.Male, new { @style="text-align:right"})
+                            @Html.ValidationMessageFor(m => m.Male)</td>
+                    </tr>
+
+
+                    <tr>
+  
+                        <td style="width: 12%; text-align: right;">Female</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.Female, new { @style="text-align:right"})
+                            @Html.ValidationMessageFor(m => m.Female)
+                            <input type="submit" value="Save" class="blue-btn" />
+                        </td>
+
+                        <td style="width: 38%; text-align: right;">
+                            </td>
+                    </tr>
+                </tbody>
+            </table>  
+   
+    
+        }
+
+        <table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+
+            <thead>
+                <tr>
+
+
+
+                    <th>
+                        @Html.DisplayName("Grade")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Teacher InCharge")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Male")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Female")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+
+
+                    <th>
+                        Edit Grade
+                    </th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.GradesInfoModel>)ViewBag.GradesInfo)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TeacherInCharge)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Male)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Female)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Total)
+                        </td>
+
+                       @*  <td>
+                              @Html.ActionLink("Edit" , "CreateGradeInfo", new { iSchoolID = item.SchoolID }, new {@style="color:#000aaa;" })
+                        </td>*@
+                        <td>
+                             <a id="sg" href="javascript:LoadGrade('@item.Grade', '@item.TeacherInCharge','@item.Male','@item.Female','@item.Total')" >Edit</a>
+                              
+                        </td>
+
+                        
+                    </tr>
+   
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

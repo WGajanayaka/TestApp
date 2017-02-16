@@ -1,0 +1,440 @@
+﻿@model SchoolHealthManagement.Models._22CriteriasModel
+
+@{
+    ViewBag.Title = "SchoolHealthPromotionProgramme";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+ <script type="text/javascript">
+     function codeAddress() {
+         var SchoolHelthCommitee = @(Model.SchoolHelthCommitee);
+         var StudentHealthSocity = @(Model.StudentHealthSocity);
+         var FirstAidFacility = @(Model.FirstAidFacility);
+         var MedicalTest = @(Model.MedicalTest);
+         var Reactions4IssuesOfMedicalTest = @(Model.Reactions4IssuesOfMedicalTest);
+         var ContribOnSchHealthPrg = @(Model.ContribOnSchHealthPrg);
+         var PublicHealthPrg = @(Model.PublicHealthPrg);
+         var SupplySanitoryFacilities = @(Model.SupplySanitoryFacilities);
+         var CleanlinessOfSanitoryFacilities = @(Model.CleanlinessOfSanitoryFacilities);
+         var WaterSupply = @(Model.WaterSupply);
+         var StudentsAttendance = @(Model.StudentsAttendance);
+         var TeachersAttendance = @(Model.TeachersAttendance);
+         var ClassroomEnvironment = @(Model.ClassroomEnvironment);
+         var EnvironmentOfSchool = @(Model.EnvironmentOfSchool);
+         var MinimizeNutritionProblems = @(Model.MinimizeNutritionProblems);
+         var NutritionKnowledgeCompetence = @(Model.NutritionKnowledgeCompetence);
+         var StudentFitnessStatus = @(Model.StudentFitnessStatus);
+         var PysicalWellbeingProg = @(Model.PysicalWellbeingProg);
+         var IndividualFitness = @(Model.IndividualFitness);
+         var MaintananceOfCanteens = @(Model.MaintananceOfCanteens);
+         var MentalEnvironment = @(Model.MentalEnvironment);
+         var InstructionsNGuidence = @(Model.InstructionsNGuidence);
+
+         var TotalMarks = 0;
+         $("#Label1").text(SchoolHelthCommitee-1);
+         $("#Label2").text(StudentHealthSocity-1);
+         $("#Label3").text(FirstAidFacility-1);
+         $("#Label4").text(MedicalTest-1);
+         $("#Label5").text(Reactions4IssuesOfMedicalTest-1);
+         $("#Label6").text(ContribOnSchHealthPrg-1);
+         $("#Label7").text(PublicHealthPrg-1);
+         $("#Label8").text(SupplySanitoryFacilities-1);
+         $("#Label9").text(CleanlinessOfSanitoryFacilities-1);
+         $("#Label10").text(WaterSupply-1);
+         $("#Label11").text(StudentsAttendance-1);
+         $("#Label12").text(TeachersAttendance-1);
+         $("#Label13").text(ClassroomEnvironment-1);
+         $("#Label14").text(EnvironmentOfSchool);
+         $("#Label15").text(MinimizeNutritionProblems-1);
+         $("#Label16").text(NutritionKnowledgeCompetence-1);
+         $("#Label17").text(StudentFitnessStatus-1);
+         $("#Label18").text(PysicalWellbeingProg-1);
+         $("#Label19").text(IndividualFitness-1);
+         $("#Label20").text(MaintananceOfCanteens-1);
+         $("#Label21").text(MentalEnvironment-1);
+         $("#Label22").text(InstructionsNGuidence);
+
+         TotalMarks = SchoolHelthCommitee + StudentHealthSocity  + FirstAidFacility  + MedicalTest  + Reactions4IssuesOfMedicalTest +
+              ContribOnSchHealthPrg + PublicHealthPrg  + SupplySanitoryFacilities  + CleanlinessOfSanitoryFacilities  + WaterSupply +
+              StudentsAttendance + TeachersAttendance  + ClassroomEnvironment  + EnvironmentOfSchool  + MinimizeNutritionProblems +
+              NutritionKnowledgeCompetence  + StudentFitnessStatus  + PysicalWellbeingProg  + IndividualFitness  + MaintananceOfCanteens  +
+              MentalEnvironment  + InstructionsNGuidence - 20 ;
+         $("#Total").text("Total : " + TotalMarks);
+     }
+     window.onload = codeAddress;
+
+     function CtrlChanged(_ValueSel, _LabelFor) {
+         //alert(_ValueSel);
+         //alert(_LabelFor);
+         $("#" + _LabelFor).text(_ValueSel - 1);
+
+         var TotalMarks = 0;
+         for(i=1;i<23;i++)
+         {
+             var valLbl = $("#Label" + i).text();
+             //alert(valLbl);
+             TotalMarks = Number(TotalMarks) + Number(valLbl);
+             //alert(TotalMarks);
+         }
+
+         $("#Total").text("Total : " + TotalMarks);
+
+     }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <script type="text/javascript">
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+    <div class="container">
+        <div class="row index-top-box">
+            <div class="form-sub-headers">
+                <h2>School Health Promotion Programme</h2>
+            </div>
+            
+@if (ViewData.ModelState["Error"] != null) //    @if (!ViewData.ModelState.IsValid)
+{
+
+    <div style="background-color: #ffeeee; border: 1px solid #de8181; color: #b55858; font-size: 12px; font-weight: 900; padding: 9px 9px 11px 22px; width: 97%;">
+
+
+        @Html.ValidationMessage("Error")
+
+    </div>
+   
+}
+
+
+            <table class="details_container_table">
+                <tbody>
+
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("School Helth Commitee")</td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.SchoolHelthCommitee, new List<SelectListItem>{
+                        new SelectListItem{Text="Active Committee Available", Value="3"},
+                        new SelectListItem{Text="Committee Available, Not Active", Value="2"},
+                        new SelectListItem{Text="No Committee", Value="1"}        
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label1');" })
+                            @Html.ValidationMessageFor(model => model.SchoolHelthCommitee)</td>
+                        <td>
+                            @*<label id="Label1"></label>*@
+                            <label id="Label1">@Html.DisplayFor(model => model.SchoolHelthCommitee)</label>
+                            @*@Html.LabelFor(model => model.SchoolHelthCommitee, new { @id="Label1"})*@
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Student Health Socity") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.StudentHealthSocity, new List<SelectListItem>{
+                        new SelectListItem{Text="Active Socity available, 100% Student paticipation, Annual Plan available", Value="4"},
+                        new SelectListItem{Text="Active Socity available, 50% Student paticipation, Annual Plan available", Value="3"},
+                        new SelectListItem{Text="Socity available, Student paticipation not sufficent, Annual Plan available", Value="2"}        
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label2');" })
+                            @Html.ValidationMessageFor(model => model.StudentHealthSocity) </td>
+                        <td>
+                            <label id="Label2"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("First-Aid Facility") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.FirstAidFacility, new List<SelectListItem>{
+                        new SelectListItem{Text="FirstAid Unit Available, Methods Available, Equipments Available for Accidents, Trained Teachers and Students Available", Value="4"},
+                        new SelectListItem{Text="FirstAid Unit Available, Methods Available", Value="3"},
+                        new SelectListItem{Text="No Facilities", Value="1"}        
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label3');" })
+                            @Html.ValidationMessageFor(model => model.FirstAidFacility) </td>
+                        <td>
+                            <label id="Label3"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Health Medical Test") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.MedicalTest, new List<SelectListItem>{
+                        new SelectListItem{Text="Done for Last Year, All Eligible Students Have Participated", Value="4"},
+                        new SelectListItem{Text="SMI is done for 100%-80%", Value="3"},
+                        new SelectListItem{Text="SMI is done for 80%-50%", Value="2"} ,
+                        new SelectListItem{Text="Not done SMI Yearly", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label4');" })
+                            @Html.ValidationMessageFor(model => model.MedicalTest)
+                        </td>
+                        <td>
+                            <label id="Label4"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Taking reactions for the issues of Medical Test") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.Reactions4IssuesOfMedicalTest, new List<SelectListItem>{
+                        new SelectListItem{Text="Have done reactions for Identified issues, Monitering them", Value="4"},
+                        new SelectListItem{Text="There are reactions for identified issues, but not monitering them", Value="3"},
+                        new SelectListItem{Text="No reactions for identified issues, but there are information about disclosure", Value="2"} ,
+                        new SelectListItem{Text="No information about issues", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label5');" })
+                            @Html.ValidationMessageFor(model => model.Reactions4IssuesOfMedicalTest)
+                        </td>
+                         <td>
+                            <label id="Label5"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Contribution on school health programmes") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.ContribOnSchHealthPrg, new List<SelectListItem>{
+                        new SelectListItem{Text="Existing level is high (80%), Have performed at least one activity for a term", Value="4"},
+                        new SelectListItem{Text="Less level (30%)", Value="2"},
+                        new SelectListItem{Text="No Contribution", Value="1"}
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label6');" })
+                            @Html.ValidationMessageFor(model => model.ContribOnSchHealthPrg)
+                        </td>
+                        <td>
+                            <label id="Label6"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Public Health Programms Done by School") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.PublicHealthPrg, new List<SelectListItem>{
+                        new SelectListItem{Text="Done more than 3 programmes annually", Value="6"},
+                        new SelectListItem{Text="Done more than 2 programmes annually", Value="4"},
+                        new SelectListItem{Text="Done more than 1 programme annually", Value="3"} ,
+                        new SelectListItem{Text="Not done any programmes annually", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label7');" })
+                            @Html.ValidationMessageFor(model => model.PublicHealthPrg)
+                        </td>
+                         <td>
+                            <label id="Label7"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Supply Sanitory Facilities") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.SupplySanitoryFacilities, new List<SelectListItem>{
+                        new SelectListItem{Text="Having adequate facilities to be used by teachers and students", Value="7"},
+                        new SelectListItem{Text="Having facilities but not adequate (80%)", Value="4"},
+                        new SelectListItem{Text="Having facilities but not adequate (50%)", Value="3"},
+                        new SelectListItem{Text="No facilities", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label8');" })
+                            @Html.ValidationMessageFor(model => model.SupplySanitoryFacilities)
+                        </td>
+                         <td>
+                            <label id="Label8"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Sanitory Facilities and Cleanliness of Them") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.CleanlinessOfSanitoryFacilities, new List<SelectListItem>{
+                        new SelectListItem{Text="Properly planned, maintained cleanliness, un-interrupted water supply", Value="7"},
+                        new SelectListItem{Text="Maintained cleanliness, has water supply, but no proper work flow", Value="5"},
+                        new SelectListItem{Text="Maintained cleanliness, no water supply", Value="3"} ,
+                        new SelectListItem{Text="Cleanliness is not maintained", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label9');" })
+                            @Html.ValidationMessageFor(model => model.CleanlinessOfSanitoryFacilities)
+                        </td>
+                         <td>
+                            <label id="Label9"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Water Supply") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.WaterSupply, new List<SelectListItem>{
+                        new SelectListItem{Text="Having facilities, Properly maintained, using methods for not wasting, having water for drinking", Value="7"},
+                        new SelectListItem{Text="Having facilities, having facilities to maintain, not using methods for not wasting, having water for drinking", Value="5"},
+                        new SelectListItem{Text="Maintained cleanliness, no water supply", Value="3"} ,
+                        new SelectListItem{Text="Cleanliness is not maintained", Value="2"},
+                        new SelectListItem{Text="No Water Supply", Value="1"}          
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label10');" })
+                            @Html.ValidationMessageFor(model => model.WaterSupply)
+                        </td>
+                         <td>
+                            <label id="Label10"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Students Attendance") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.StudentsAttendance, new List<SelectListItem>{
+                        new SelectListItem{Text="Last year average attendance is greater than 90%", Value="6"},
+                        new SelectListItem{Text="Average attendance is between 90% - 80%", Value="4"},
+                        new SelectListItem{Text="Average attendance is between 80% - 70%", Value="2"} 
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label11');" })
+                            @Html.ValidationMessageFor(model => model.StudentsAttendance)
+                        </td>
+                         <td>
+                            <label id="Label11"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Teachers Attendance") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.TeachersAttendance, new List<SelectListItem>{
+                        new SelectListItem{Text="Average attendance is greater than 90%", Value="6"},
+                        new SelectListItem{Text="Average attendance is between 90% - 80%", Value="4"},
+                        new SelectListItem{Text="Average attendance is between 80% - 70%", Value="2"} 
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label12');" })
+                            @Html.ValidationMessageFor(model => model.TeachersAttendance)
+                        </td>
+                         <td>
+                            <label id="Label12"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Classroom Environment") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.ClassroomEnvironment, new List<SelectListItem>{
+                        new SelectListItem{Text="Every class has well organized, clean, good atmospheric and lighting environment. Has methods to maintain", Value="6"},
+                        new SelectListItem{Text="80% of classrooms has well organized, clean, good atmospheric and lighting environment. Has methods to maintain", Value="4"},
+                        new SelectListItem{Text="50% of classrooms has well organized, clean, good atmospheric and lighting environment. Has methods to maintain", Value="3"} ,
+                        new SelectListItem{Text="No adequate cleanliness, atmospheric and lighting environment in the classrooms", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label13');" })
+                            @Html.ValidationMessageFor(model => model.ClassroomEnvironment)
+                        </td>
+                        <td>
+                            <label id="Label13"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Environment of the School") 
+                          
+                        </td>
+                        <td style="width: 60%;">
+                             @Html.EditorFor(model => model.EnvironmentOfSchool, new { style="width:10px", @type="number", min = "1", max = "5"  })
+                           <a data-toggle="tooltip" data-placement="right" title="Maintained methodically, clean, accidents free and nice (1-5)">
+                                <img src="../Content/assets/img/backgrounds/info.png" /></a>
+
+                            @Html.ValidationMessageFor(model => model.EnvironmentOfSchool)
+                        </td>
+                        <td>
+                            <label id="Label14"></label>
+                        </td>
+                      <td> </td> 
+                    </tr>
+                     <tr>
+                        <td style="width:40%; text-align: right;">@Html.Label("Minimize the nutrition problems") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.MinimizeNutritionProblems, new List<SelectListItem>{
+                        new SelectListItem{Text="diagnosis is done, Programmes are done", Value="5"},
+                        new SelectListItem{Text="diagnosis is done, Information is given", Value="4"},
+                        new SelectListItem{Text="diagnosis is done, No Programmes", Value="2"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label15');" })
+                            @Html.ValidationMessageFor(model => model.MinimizeNutritionProblems)
+                        </td>
+                         <td>
+                            <label id="Label15"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Health, Nutrition Knowledge and Giving Competence") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.NutritionKnowledgeCompetence, new List<SelectListItem>{
+                        new SelectListItem{Text="Done more than 3 programmes annually", Value="7"},
+                        new SelectListItem{Text="Done more than 2 programmes annually", Value="5"},
+                        new SelectListItem{Text="Done more than 1 programmes annually", Value="3"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label16');" })
+                            @Html.ValidationMessageFor(model => model.NutritionKnowledgeCompetence)
+                        </td>
+                         <td>
+                            <label id="Label16"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Student Fitness Status") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.StudentFitnessStatus, new List<SelectListItem>{
+                        new SelectListItem{Text="90% of the students have adequate fitness", Value="11"},
+                        new SelectListItem{Text="90%-75% of the students have adequate fitness", Value="9"},
+                        new SelectListItem{Text="75%-65% of the students have adequate fitness", Value="7"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label17');" })
+                            @Html.ValidationMessageFor(model => model.StudentFitnessStatus)
+                        </td>
+                        <td>
+                            <label id="Label17"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Pysical Wellbeing Programmes") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.PysicalWellbeingProg, new List<SelectListItem>{
+                        new SelectListItem{Text="Having a proper plan, Every student is contributing", Value="7"},
+                        new SelectListItem{Text="Having a proper plan, No contibution by every student", Value="5"},
+                        new SelectListItem{Text="Randomly done", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label18');" })
+                            @Html.ValidationMessageFor(model => model.PysicalWellbeingProg)
+                        </td>
+                         <td>
+                            <label id="Label18"></label>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Individual Fitness") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.IndividualFitness, new List<SelectListItem>{
+                        new SelectListItem{Text="Frequently checked, directions are done", Value="5"},
+                        new SelectListItem{Text="Frequently checked, No directions done", Value="3"},
+                        new SelectListItem{Text="Not checked", Value="1"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label19');" })
+                            @Html.ValidationMessageFor(model => model.IndividualFitness)
+                        </td>
+                         <td>
+                            <label id="Label19"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Maintanance of Canteens") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.MaintananceOfCanteens, new List<SelectListItem>{
+                        new SelectListItem{Text="Kept  clean, Nutritious food available, No bad food", Value="5"},
+                        new SelectListItem{Text="Kept  clean, Nutritious food available, bad food available", Value="3"},
+                        new SelectListItem{Text="Cannot be satisfied about cleanliness, Nutritious food available, No bad food", Value="2"}         
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label20');" })
+                            @Html.ValidationMessageFor(model => model.MaintananceOfCanteens)
+                        </td>
+                        <td>
+                            <label id="Label20"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Mental Environment") </td>
+                        <td style="width: 60%;">@Html.DropDownListFor(model => model.MentalEnvironment, new List<SelectListItem>{
+                        new SelectListItem{Text="Friendly environment with no non-suitable punishments, Helping plans to students available", Value="4"},
+                        new SelectListItem{Text="Some punishments available, Helping environment available", Value="3"}   
+                        }, "Select", new { onchange = "javascript:CtrlChanged(this.value,'Label21');" })
+                            @Html.ValidationMessageFor(model => model.MentalEnvironment)
+                        </td>
+                        <td>
+                            <label id="Label21"></label>
+                        </td>
+                    </tr>
+                      <tr>
+                        <td style="width: 40%; text-align: right;">@Html.Label("Instructions and Guidence") </td>
+                        <td style="width: 60%;">
+                         @Html.EditorFor(model => model.InstructionsNGuidence, new { @type="number", min = "1", max = "3" } )
+                               @Html.ValidationMessageFor(model => model.InstructionsNGuidence)   
+                            <a data-toggle="tooltip" data-placement="right" title="Teacher available, Opportunities available to attend, Place available, has taken actions (1-3)">
+                                <img src="../Content/assets/img/backgrounds/info.png" /></a>
+                        </td>
+                          <td>
+                            <label id="Label22"></label>
+                        </td>
+                       
+                    </tr>
+                    <tr>
+                        <td style="width: 40%; text-align: right;"></td>
+                        <td style="width: 60%;">    <input type="submit" value="Save" class="blue-btn"  style="width:150px"/>
+                            <label id="Total" style="width: auto">Total :</label>
+                        </td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <style type="text/css">
+            .details_container_table td select, input {
+                width: 375px !important;
+            }
+        </style>
+    </div>
+
+   
+       
+
+    
+
+     
+          
+      
+}
+

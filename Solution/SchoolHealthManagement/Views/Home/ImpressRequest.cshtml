@@ -1,0 +1,276 @@
+﻿@model SchoolHealthManagement.Models.ImpressRequestModel
+
+@{
+    ViewBag.Title = "ImpressRequest";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Impress Request</h2>
+</div>
+
+
+    <style>.search-btn {position: relative;top: 1px;}</style>
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    $(function () {
+        $('#fMonth').focus(function () {
+            $(".ui-datepicker-calendar").hide()
+        });
+        $('#fMonth').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function (dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+
+               
+              
+            }
+        });
+    });
+
+    $(function () {
+        $("#rls-date")
+.datepicker({
+    dateFormat: 'dd-M-yy',
+
+});
+    });
+
+    function SearchCensorsID() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetCensorsDetails/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                document.getElementById('SchoolName').value = data.School;
+                GetStudentCounts();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    function GetStudentCounts() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetStudentsInSchool/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+
+                //for (var x = 0; x < data.length; x++) {
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data.Boys + "</td>");
+                    tr.append("<td>" + data.Girls + "</td>");
+                    tr.append("<td>" + data.Total + "</td>");
+                    $('#tableNoOfStudents').append(tr);
+
+                    DisplayTable();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+
+    function DisplayTable() {
+        var _CensorsID = $("#CensorsID").val();
+        var url = "/Home/GetImpressRequests4Province/";
+
+        $.ajax({
+            url: url,
+            data: { CensorsID: _CensorsID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                //alert(data.length);
+                for (var x = 0; x < data.length; x++) {
+
+                    tr = $('<tr/>');
+                    tr.append("<td>" + data[x].CensorsID + "</td>");
+                    tr.append("<td>" + data[x].ZonalRequestAmount + "</td>");
+                    tr.append("<td>" + data[x].PDEReleasedAmount + "</td>");
+                    tr.append("<td>" + data[x].ForMonth + "</td>");
+                    tr.append("<td>" + data[x].ReleasedDate + "</td>");
+                    $('table').append(tr);
+
+                }
+
+                //CensorsID = mydataRow["CensorsID"].ToString().Trim(),
+                //      ZonalRequestAmount = Convert.ToDecimal(mydataRow["ZonalRequestAmount"]),
+                ////SchoolName = Convert.ToDateTime(mydataRow["PaidDate"]).ToString("dd-MMM-yyyy"),
+                //      PDEReleasedAmount = Convert.ToDecimal(mydataRow["PDEReleasedAmount"]),
+                //      ForMonth = Convert.ToDateTime(mydataRow["ForMonth"]),
+                //      ReleasedDate = Convert.ToDateTime(mydataRow["ReleasedDate"])
+                //tr = $('<tr/>');
+                //tr.append("<td>" + "Aaaaaa" + "</td>");
+                //tr.append("<td>" + "bbbbb" + "</td>");
+                //tr.append("<td>" + "cccc" + "</td>");
+                //tr.append("<td>" + "Aaaaaa" + "</td>");
+                //tr.append("<td>" + "bbbbb" + "</td>");
+                //tr.append("<td>" + "cccc" + "</td>");
+                //tr.append("<td>" + "Aaaaaa" + "</td>");
+                //tr.append("<td>" + "bbbbb" + "</td>");
+                //tr.append("<td>" + "cccc" + "</td>");
+                //$('#tableBelow').append(tr);
+
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+   <table class="details_container_table" style="width:50%">
+<tbody>
+<tr>
+    <td style="width:20%; text-align:right">     @Html.LabelFor(model => model.ForMonth)</td>
+    <td style="width:30%">  @Html.TextBoxFor(model => model.ForMonth,new { id = "fMonth" })
+            @Html.ValidationMessageFor(model => model.ForMonth) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">     @Html.LabelFor(model => model.CensorsID) </td>
+    <td style="width:30%">  @Html.EditorFor(model => model.CensorsID)
+            @Html.ValidationMessageFor(model => model.CensorsID)
+            <input type="button" class="search-btn" onclick ="SearchCensorsID();"/>  </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.SchoolName) </td>
+    <td style="width:30%"> @Html.TextBoxFor(model => model.SchoolName, new { disabled = "true" })
+            @Html.ValidationMessageFor(model => model.SchoolName) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("No Of Students") </td>
+    <td style="width:30%">       <table id="tableNoOfStudents" class ="datatable sortable">
+
+            <thead>
+                <tr>
+
+
+                    <th>
+                        @Html.DisplayName("Boys")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Girls")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+                   
+
+
+                </tr>
+            </thead>
+            <tbody>
+               
+            </tbody>
+        </table> </td>
+</tr>
+
+<tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.ZonalRequestAmount) </td>
+    <td style="width:30%">@Html.EditorFor(model => model.ZonalRequestAmount)
+            @Html.ValidationMessageFor(model => model.ZonalRequestAmount)  </td>
+</tr>
+
+
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.LabelFor(model => model.PDEReleasedAmount) </td>
+    <td style="width:30%"> @Html.EditorFor(model => model.PDEReleasedAmount)
+            @Html.ValidationMessageFor(model => model.PDEReleasedAmount) </td>
+</tr>
+
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.ReleasedDate)</td>
+    <td style="width:30%">   @Html.TextBoxFor(model => model.ReleasedDate,new { id = "rls-date" })
+            @Html.ValidationMessageFor(model => model.ReleasedDate) </td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">  </td>
+    <td style="width:30%">  <input type="submit" value="Save" class="blue-btn" /> </td>
+</tr>
+
+</tbody>
+
+</table>
+
+<br />
+    
+    
+    
+    <table id="tableBelow" class ="datatable sortable" style="width: 100%;">
+
+            <thead>
+                <tr>
+
+                     <th>
+                        @Html.DisplayName("Month")
+                    </th>
+                    <th>
+                        @Html.DisplayName("CensorsID")
+                    </th>
+                    <th>
+                        @Html.DisplayName("School Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Boys")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Girls")
+                    </th>
+
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Zonal Request Amount")
+                    </th>
+                    <th>
+                        @Html.DisplayName("PDE's Released Amount")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Released Date")
+                    </th>
+
+
+                   
+
+
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+}
+
+
+    </div>
+    </div>

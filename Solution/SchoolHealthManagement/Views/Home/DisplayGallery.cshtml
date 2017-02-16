@@ -1,0 +1,24 @@
+﻿@{
+    ViewBag.Title = "DisplayGallery";
+    Layout = "~/Views/Shared/_IndexWeb.cshtml";
+}
+
+<h2>@ViewBag.Folder</h2>
+<div>
+
+
+    <p>
+        @foreach (var item in (List<string>)ViewBag.Images)
+        {
+                    
+        
+            <a class="fancybox" href="~/Gallery/@ViewBag.Folder/@item" data-fancybox-group="gallery" title="@Path.GetFileName(item).Replace(Path.GetExtension(item), "")" >
+                <img src="~/Gallery/@ViewBag.Folder/@item"  Height = "150px" Width = "200px" alt="" /></a>
+        
+        }
+    </p>
+
+
+
+
+</div>

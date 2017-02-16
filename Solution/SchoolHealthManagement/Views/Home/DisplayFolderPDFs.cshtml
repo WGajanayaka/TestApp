@@ -1,0 +1,62 @@
+﻿@{
+    ViewBag.Title = "DisplayFolderPDFs";
+    Layout = "~/Views/Shared/_IndexWeb.cshtml";
+}
+
+@*<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>*@
+<script language="javascript" type="text/javascript">
+
+ function GetDevisions() {
+     return "File Names";
+
+    }
+</script>
+
+<h2>@ViewBag.TitlePage</h2>
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <table class="datatable sortable" style="width: 100%">
+
+           
+            <tbody>
+                 @{int i = 1; }
+                
+                @foreach (var item in (List<SchoolHealthManagement.Models.FileModel>)ViewBag.FilesInFolder)
+                {
+                    
+                    <tr>
+
+                        <td>
+                            <img src="@Url.Content("~/Content/assets/ico/file_pdf.ico")" alt="" />
+                        </td>
+
+
+                        <td>
+                            @item.FileName
+                           
+                        </td>
+
+                         <td>
+                            <a href="Details" title="@item.FileDetails">Details</a>
+                           @* <span> @Html.ActionLink("Details", "Details", new { title = "eedffe" } )</span>*@
+                           
+                        </td>
+
+                         <td>
+                             <span>  @Html.ActionLink("Download", "DownloadPDF", new {strPath=ViewBag.FolderPath, strPDF=item.FileName })</span>
+                           
+                        </td>
+
+
+                    </tr> 
+                    
+                    i++; 
+                }
+
+                @Html.Hidden("CountRows",i)
+            </tbody>
+
+
+        </table>
+}

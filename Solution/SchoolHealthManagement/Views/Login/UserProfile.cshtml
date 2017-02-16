@@ -1,0 +1,306 @@
+﻿@model SchoolHealthManagement.Models.UserProfileModel
+
+@{
+    ViewBag.Title = "User Profile";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<style>
+
+    .details_container_table td input[type="password"] {
+    border: 1px solid #d0d0d0;
+    height: 28px; border-radius:0px;
+    margin: 0;
+    padding: 0;
+    width: 226px;
+}
+    .bckl
+    { color:#094B75; padding-left:20px;
+    }
+        .bckl:hover
+        {color:#40A8E8;
+        }
+</style>
+    <div class="container">
+<div class="row index-top-box">
+    <div class="form-sub-headers">
+<h2>User Profile</h2>
+</div>
+   
+
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script language="javascript" type="text/javascript">
+    function GetZones(_ProvinceId) {
+        //alert(_ProvinceId);
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#ZoneID").html(procemessage).show();
+        var url = "/Home/GetZonesByProvice/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Zone</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#ZoneID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+    function GetDevisions(_ProvinceId, _ZoneID) {
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#DevisionID").html(procemessage).show();
+        var url = "/Home/GetDevisonsByZone/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId, ZoneID: _ZoneID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select Devision</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#DevisionID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+    function GetSchools(_ProvinceId, _ZoneID, _DevisionID) {
+        //alert(_ProvinceId);
+        //alert(_ZoneID);
+        //alert(_DevisionID);
+        var procemessage = "<option value='0'> Please wait...</option>";
+        $("#SchoolID").html(procemessage).show();
+        var url = "/Home/GetSchoolsByDevison/";
+
+        $.ajax({
+            url: url,
+            data: { ProvinceID: _ProvinceId, ZoneID: _ZoneID, DevisionID: _DevisionID },
+            cache: false,
+            type: "POST",
+            success: function (data) {
+                var markup = "<option value='0'>Select School</option>";
+                for (var x = 0; x < data.length; x++) {
+                    markup += "<option value=" + data[x].Value + ">" + data[x].Text + "</option>";
+                }
+                $("#SchoolID").html(markup).show();
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+
+    function SetLocationDisbled(_RoleID) {
+
+       
+        var url = "/Login/GetLocationInfo/";
+
+        $.ajax({
+            url: url,
+            data: {},
+            cache: false,
+            type: "POST",
+            success: function (data) {
+
+               
+                //if (data.RoleID == 2) {
+                //    $("#ProvinceID").attr("disabled", "disabled");
+                //    document.getElementById('ProvinceID').value = data.ProvinceID;
+                //}
+
+                if (data.RoleID == 3) {
+                    $("#ProvinceID").attr("disabled", "disabled");
+                    document.getElementById('ProvinceID').value = data.ProvinceID;
+
+                    //$("#ZoneID").removeAttr("disabled");
+                    //$("#DevisionID").removeAttr("disabled");
+                    //document.getElementById('ZoneID').value = data.ZoneID;
+
+                } else if (data.RoleID == 4) {
+                    $("#ProvinceID").attr("disabled", "disabled");
+                    document.getElementById('ProvinceID').value = data.ProvinceID;
+
+                    $("#ZoneID").attr("disabled", "disabled");
+                    document.getElementById('ZoneID').value = data.ZoneID;
+
+                    //$("#DevisionID").removeAttr("disabled");
+                    //document.getElementById('DevisionID').value = data.DevisionID;
+
+                } else if (data.RoleID == 5) {
+                    $("#ProvinceID").attr("disabled", "disabled");
+                    document.getElementById('ProvinceID').value = data.ProvinceID;
+
+                    $("#ZoneID").attr("disabled", "disabled");
+                    document.getElementById('ZoneID').value = data.ZoneID;
+
+                    $("#DevisionID").attr("disabled", "disabled");
+                    document.getElementById('DevisionID').value = data.DevisionID;
+
+                }
+                //else {
+                //    $("#ProvinceID").removeAttr("disabled");
+
+                //    $("#ZoneID").removeAttr("disabled");
+
+                //    $("#DevisionID").removeAttr("disabled");
+                //}
+                
+            },
+            ERROR: function (reponse) {
+                alert("error : " + reponse);
+            }
+        });
+
+    }
+</script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+  
+
+     @*   <div id="RoleID" data-value="@Request.RequestContext.HttpContext.Session["LoginRoleID"]"></div>*@
+    
+    
+    <table class="details_container_table" style="width:50%">
+<tbody>
+<tr>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.Name)</td>
+      <td style="width:30%">   @Html.EditorFor(model => model.Name)
+            @Html.ValidationMessageFor(model => model.Name)</td>
+</tr>
+
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.Designation)
+          </td>
+      <td style="width:30%">  @Html.EditorFor(model => model.Designation)
+            @Html.ValidationMessageFor(model => model.Designation)  </td>
+
+
+
+</tr>
+
+        <tr>
+    <td style="width:20%; text-align:right">  @Html.LabelFor(model => model.Email)
+           </td>
+      <td style="width:30%"> @Html.EditorFor(model => model.Email)
+            @Html.ValidationMessageFor(model => model.Email)  </td>
+
+
+
+</tr>
+
+            <tr>
+    <td style="width:20%; text-align:right">  
+        @Html.LabelFor(model => model.UserName)
+         
+           </td>
+      <td style="width:30%">   @Html.EditorFor(model => model.UserName)
+            @Html.ValidationMessageFor(model => model.UserName)  </td>
+
+</tr>
+
+            <tr>
+    <td style="width:20%; text-align:right">   @Html.LabelFor(model => model.Password)
+           </td>
+      <td style="width:30%">  @Html.PasswordFor(model => model.Password)
+            @Html.ValidationMessageFor(model => model.Password)  </td>
+
+</tr>
+
+
+    
+            <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("ConfirmPassword", "Confirm Password")
+          </td>
+      <td style="width:30%">   @Html.PasswordFor(model => model.ConfirmPassword)  </td>
+
+</tr>
+
+
+    
+            <tr>
+    <td style="width:20%; text-align:right"> @Html.Label("Role ID")
+          </td>
+      <td style="width:30%">   @Html.DropDownList("RoleID", (List<SelectListItem>)ViewBag.Roles, "Select Role", new { onchange = "javascript:SetLocationDisbled(2);" })
+            @Html.ValidationMessageFor(model => model.RoleID)   </td>
+
+</tr>
+
+
+    
+            <tr>
+    <td style="width:20%; text-align:right">   @Html.Label("Province")
+           </td>
+      <td style="width:30%"> @Html.DropDownList("ProvinceID", (List<SelectListItem>)ViewBag.Provinces, "Select Province", new { onchange = "javascript:GetZones(this.value);" })
+            @Html.ValidationMessageFor(model => model.ProvinceID)   </td>
+
+</tr>
+
+
+    
+            <tr>
+    <td style="width:20%; text-align:right">   @Html.Label("Zone")
+         
+      <td style="width:30%">    @Html.DropDownList("ZoneID", (List<SelectListItem>)ViewBag.Zones, "Select Zone", new { onchange = "javascript:GetDevisions($('#ProvinceID').val(), this.value);" })
+            @Html.ValidationMessageFor(model => model.ZoneID)</td> </td>
+
+</tr>
+
+
+    
+            <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("Devision")     
+           </td>
+      <td style="width:30%">  @Html.DropDownList("DevisionID", (List<SelectListItem>)ViewBag.Devisions, "Select Devision", new { onchange = "javascript:GetSchools($('#ProvinceID').val(), $('#ZoneID').val(),  this.value);" })
+            @Html.ValidationMessageFor(model => model.DevisionID)  </td>
+
+</tr>
+
+
+    
+            <tr>
+    <td style="width:20%; text-align:right">  @Html.Label("School")
+          </td>
+      <td style="width:30%">   @Html.DropDownListFor(model => model.SchoolID,(List<SelectListItem>)ViewBag.Schools, "Select School")
+            @Html.ValidationMessageFor(model => model.SchoolID)  </td>
+
+</tr>
+
+
+                <tr>
+    <td style="width:20%; text-align:right">  
+          </td>
+      <td style="width:30%"> <input type="submit" value="Save" class="blue-btn" />     @Html.ActionLink("Back to List >>", "Index", null,new { @class = "bckl" })</td>
+
+</tr>
+    </tbody>
+    </table>
+
+  
+
+       
+
+}
+
+
+
+
+     </div>
+        </div>

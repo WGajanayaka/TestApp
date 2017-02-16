@@ -1,0 +1,345 @@
+﻿@model SchoolHealthManagement.Models.SanitoryConstructionModel
+
+@{
+    ViewBag.Title = "Sanitory Developement Facility";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+
+
+<script src="http://code.jquery.com/jquery-migrate-1.0.0.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('.agstDate').datepicker({ dateFormat: 'dd-M-yy' });
+        $('#PaymentDateVal').datepicker({ dateFormat: 'dd-M-yy' });
+        $('.agstDate').datepicker('setDate', new Date());
+        $('#agDate').datepicker({ dateFormat: 'dd-M-yy' });
+        $('#agDate').datepicker('setDate', new Date());
+        $('#agstDate').datepicker({ dateFormat: 'dd-M-yy' });
+        $('#agstDate').datepicker('setDate', new Date());
+    });
+
+
+    $(document).ready(function () {
+        $('#example').DataTable({
+            "ajax": "data/arrays.txt",
+            "deferRender": true
+        });
+
+
+    });
+
+    function redirect(_SanitoryDevelopmentType) {
+
+
+        window.location.href = '/Home/SanitoryConstructionDD?SchoolID=' + $('#SchoolID').val() + '&&SanitoryDevelopmentType=' + _SanitoryDevelopmentType;
+    }
+
+    function SavePayment() {
+
+        $.ajax({
+            url: '@Url.Action("SaveSanitoryPayment", "Home")',
+                  data: {
+                      SchoolID: $('#SchoolID').val(), SanitoryDevelopmentType: $('#ConstructionType').val(), PaymentNo: $('#PaymentNoVal').val(),
+                      PaymentDate: $('#PaymentDateVal').val(), Bank: $('#BankNameVal').val(), ChequeNo: $('#ChequeNoVal').val(), Amount: $('#AmountVal').val(), ConstructionID: $("#ConstructionID").val()
+                  },
+                  success: function (data) {
+                      //call is successfully completed and we got result in data
+                  },
+                  error: function (xhr, ajaxOptions, thrownError) {
+                      //some errror, some show err msg to user and log the error  
+                      alert(xhr.responseText);
+
+                  }
+              });
+
+
+          }
+
+          function LoadConstruction(_ConstructionID, _AgreementDate, _StartDate, _Progress) {
+              //var idslist = "";
+              $("#ConstructionID").val(_ConstructionID);
+              $("#AgreementDate").val(_AgreementDate);
+              $("#AgreementStartDate").val(_StartDate);
+              $("#Progress").val(_Progress);
+
+              var req = {
+                  SchoolID: $("#SchoolID").val(), ConstructionType: $("#ConstructionType").val(), ConstructionID: $("#ConstructionID").val(),
+                  AgreementDate: _AgreementDate, StartDate: _StartDate, Progress: _Progress
+              }
+
+              var url = '/Home/SanitoryConstructionSel/';
+
+              window.location.href = '/Home/SanitoryConstructionSel?SchoolID=' + $('#SchoolID').val() + '&&ConstructionType='
+                  + $("#ConstructionType").val() + '&&ConstructionID=' + $('#ConstructionID').val() + '&&AgreementDate=' + _AgreementDate + '&&StartDate=' + _StartDate + '&&Progress=' + _Progress
+
+          }
+
+          function ShowImage(_ImageSrc) {
+
+              document.getElementById("imgConstType").src = "\\Images\\" + _ImageSrc + ".jpg";
+
+              var url = "/Home/GetSanitoryDevelopmentsPaymentDetails/";
+
+              //Load Payments done
+              $.ajax({
+                  url: url,
+                  data: {
+                      SchoolID: Viewbag.SchoolID, SanitoryDevType: document.getElementById("ConstructionType").val(), ConstructionID: document.getElementById("ConstructionID").val()
+                  },
+                  cache: false,
+                  type: "POST",
+                  success: function (data) {
+                      $('#PaymentDetails').append('');
+                      //for (var x = 0; x < data.length; x++) {
+                      //    var mod = data[x];
+                      //    $('#agDate')
+                      //}
+                  },
+                  ERROR: function (reponse) {
+                      alert("error : " + reponse);
+                  }
+              });
+          }
+
+
+
+</script>
+<div class="container">
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Sanitory Development Facility</h2>
+        </div>
+        @using (Html.BeginForm("SanitoryConstruction", "Home"))
+        {
+            @Html.ValidationSummary(true)
+
+            <table class="details_container_table">
+                <tbody>
+
+                    <tr>
+
+                        <td style="width: 12%; text-align: right;">Censors ID</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBox("CensorsID", (string)ViewBag.CensorsID, new { disabled = "true" })
+                        @Html.Hidden("SchoolID", (string)ViewBag.SchoolID)
+                    </tr>
+
+                    <tr>
+
+                        <td style="width: 12%; text-align: right;">School Name</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBox("SchoolName", (string)ViewBag.SchoolName, new { disabled = "true" })
+                    </tr>
+
+
+                    <tr>
+
+                        <td style="width: 12%; text-align: right;">Construction Type</td>
+                        @*                        <td style="width: 38%; text-align: left;">@Html.DropDownList("ConstructionType", (List<SelectListItem>)ViewBag.SanitoryDevelopmentTypes, "Select Construction Type", new { onchange = "redirect(this.value);" } ) *@
+                        <td style="width: 38%; text-align: left;">@Html.DropDownListFor(x => x.ConstructionType, (List<SelectListItem>)ViewBag.SanitoryDevelopmentTypes, "Select Construction Type", new { onchange = "redirect(this.value);" })
+
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td>
+                            <img id="imgConstType" src= "@ViewBag.SanitoryDevelopmentType" alt="" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Construction ID</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBoxFor(model => model.ConstructionID, new { disabled = "true" })
+                        @Html.HiddenFor(model => model.ConstructionID)
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Agreement Date</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBoxFor(model => model.AgreementDate, new { id = "agDate" })
+                        @Html.ValidationMessageFor(model => model.AgreementDate)
+                    </tr>
+
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Construction Start Date</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBoxFor(model => model.AgreementStartDate, new { id = "agstDate" })
+                        @Html.ValidationMessageFor(model => model.AgreementStartDate)
+                    </tr>
+
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Progress</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBoxFor(model => model.Progress)
+                            @Html.ValidationMessageFor(model => model.Progress)
+                            %
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+  
+    
+            <div class="form-sub-headers">
+                <h2>Payment Details</h2>
+            </div>
+            <table class="details_container_table">
+                <tbody>
+
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Payment No</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBox("PaymentNoVal") </td>
+                        <tr>
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Payment Date</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBox("PaymentDateVal") </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Bank Name</td>
+                        <td style="width: 38%; text-align: left;">@Html.DropDownList("BankNameVal", (List<SelectListItem>)ViewBag.Banks, "Select Bank") </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Cheque No</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBox("ChequeNoVal") </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Amount</td>
+                        <td style="width: 38%; text-align: left;">@Html.TextBox("AmountVal")
+                            <input type="submit" value="Save Payment" onclick="SavePayment();" class="blue-btn" /></td>
+                    </tr>
+                    <tr>
+                        <td style="width: 12%; text-align: right;"></td>
+                        <td style="width: 38%;"></td>
+                    </tr>
+
+
+
+                </tbody>
+            </table>  
+    
+   
+            
+           
+    
+            <table id="PaymentDetails" class="datatable sortable" cellpadding="0" style="width: 100%">
+                <thead>
+                    <tr>
+
+
+                        <th>
+                            @Html.DisplayName("Payment No")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Payment Date")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Bank")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Cheque No")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Amount")
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in (List<SchoolHealthManagement.Models.SanitoryDevPayments>)ViewBag.PaymentDetails)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PaymentNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PaymentDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Bank)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ChequeNo)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+     
+    
+    
+    
+            <table id="Constructions" class="datatable sortable" cellpadding="0" style="width: 100%">
+                <thead>
+                    <tr>
+
+
+                        <th>
+                            @Html.DisplayName("Construction ID")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Agreement Date")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Started Date")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Progress")
+                        </th>
+
+                        <th>
+                            @Html.DisplayName("Edit")
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in (List<SchoolHealthManagement.Models.SanitoryConstructionModel>)ViewBag.Constructions)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ConstructionID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AgreementDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AgreementStartDate)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Progress)
+                            </td>
+                            <td>
+
+                                <a id="sg" href="javascript:LoadConstruction('@item.ConstructionID', '@item.AgreementDate', '@item.AgreementStartDate', '@item.Progress')" >Edit</a>
+
+                            </td>
+                            <td></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+    
+            <table class="details_container_table">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%; text-align: right;"></td>
+                        <td style="width: 30%;"></td>
+                        <td style="width: 20%;"></td>
+                        <td style="width: 30%; text-align: right">
+                            <input type="submit" value="Save" class="blue-btn" /></td>
+                    </tr>
+
+                </tbody>
+            </table>   
+      
+   
+        }
+
+
+    </div>
+</div>

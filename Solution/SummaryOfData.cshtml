@@ -1,0 +1,255 @@
+﻿@model SchoolHealthManagement.Models.SummaryOfDataModel
+@{
+    ViewBag.Title = "SummaryOfData";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<div class="container">
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Summary Of Data</h2>
+        </div>
+
+        <script type="text/javascript">
+            function GradeChanged(_SchoolID, _Grade, _Trimester) {
+
+                var url = "/Home/SummaryOfData?iYear=2016";
+
+                var model = @Html.Raw(Json.Encode(Model)) //Convert Model to JSON 
+                    $.post(url, model);
+                $("form").submit();
+
+        }
+
+        </script>
+
+@using (Html.BeginForm("SummaryOfData", "Home", FormMethod.Post))
+{
+        <table class="details_container_table">
+            <tr>
+
+                        <td style="width: 0%; text-align: left">@Html.Label("Year") 
+                            @Html.DropDownListFor(item =>item.YearConsidered,(List<SelectListItem>)ViewBag.Years, "Select Year",  new { onchange = "form.submit();" })
+                            </td>
+                        </tr>
+            <tr>
+                <td style="width: 50%; vertical-align: top; padding-right: 17px;">
+                       
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                         
+                            <tr>
+                                <th style="width: 100px">
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th style="width: 83px">
+                                    @Html.DisplayName("No Of Schools")
+                                </th>
+
+                                 <th style="width: 83px">
+                                    @Html.DisplayName("Total Student Count")
+                                </th>
+
+                                 <th style="width: 83px">
+                                    @Html.DisplayName("Entered")
+                                </th>
+
+                                <th style="width: 83px">
+                                    @Html.DisplayName("%")
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @{int iiTotal = 0; }
+
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfDataProvinces)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left">
+                                        @Html.DisplayFor(modelItem => item.Province)
+                                    </td>
+                                    <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.NumberOfSchools)
+                                    </td>
+                                    
+                                    <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.TotalStudentCount)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.Entered)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.Per)
+                                    </td>
+
+                                    @{iiTotal += item.Entered;}
+
+                                </tr>
+                            }
+
+                            <tr>
+                                <td>
+                                    @Html.Label("Total")
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td class="tb-val-right">
+                                    @Html.Label(@iiTotal.ToString())
+                                </td>
+                            </tr>
+                            </table>
+                </td>
+            </tr>
+
+            <tr>
+
+
+
+                <td style="width: 50%; vertical-align: top; padding-right: 17px;">
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+
+
+
+                                <th style="width: 100px">
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th style="width: 200px">
+                                    @Html.DisplayName("Zone")
+                                </th>
+                                <th style="width: 83px">
+                                    @Html.DisplayName("No Of Schools")
+                                </th>
+
+                                 <th style="width: 83px">
+                                    @Html.DisplayName("Total Student Count")
+                                </th>
+
+                                 <th style="width: 83px">
+                                    @Html.DisplayName("Entered")
+                                </th>
+
+                                <th style="width: 83px">
+                                    @Html.DisplayName("%")
+                                </th>
+
+
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @{int iTotal = 0; }
+
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfDataZones)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left">
+                                        @Html.DisplayFor(modelItem => item.Province)
+                                    </td>
+                                    <td class="tb-val-left">
+                                        @Html.DisplayFor(modelItem => item.Zone)
+                                    </td>
+                                    <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.NumberOfSchools)
+                                    </td>
+                                    
+                                    <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.TotalStudentCount)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.Entered)
+                                    </td>
+
+                                     <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.Per)
+                                    </td>
+
+                                    @{iTotal += item.Entered;}
+
+                                </tr>
+                            }
+                            <tr>
+                                <td></td>
+                                <td>
+                                    @Html.Label("Total")
+                                </td>
+                                <td></td>
+                                <td></td>
+
+                                <td class="tb-val-right">
+                                    @Html.Label(@iTotal.ToString())
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </td>
+
+                <td style="width: 50%; text-align: right; vertical-align: top; padding-left: 17px;">
+
+                    <table class="datatable sortable" cellpadding="0" style="width: 100%">
+                        <thead>
+                            <tr>
+
+
+
+                                <th>
+                                    @Html.DisplayName("Province")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("Zone")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("School")
+                                </th>
+                                <th>
+                                    @Html.DisplayName("No Of Students")
+                                </th>
+
+
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in (List<SchoolHealthManagement.Models.SummaryOfDataModel>)ViewBag.SummaryOfData)
+                            {
+                                <tr>
+
+                                    <td class="tb-val-left">
+                                        @Html.DisplayFor(modelItem => item.Province)
+                                    </td>
+                                    <td class="tb-val-left">
+                                        @Html.DisplayFor(modelItem => item.Zone)
+                                    </td>
+                                    <td class="tb-val-left">
+                                        @Html.DisplayFor(modelItem => item.School)
+                                    </td>
+                                    <td class="tb-val-right">
+                                        @Html.DisplayFor(modelItem => item.NoOfStudents)
+                                    </td>
+
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </td>
+
+
+
+
+            </tr>
+        </table>
+}
+    </div>
+</div>

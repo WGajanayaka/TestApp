@@ -1,0 +1,410 @@
+﻿@model SchoolHealthManagement.Models.StudentModel
+
+@{
+    ViewBag.Title = "Add Student";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+
+
+
+        @if (ViewData.ModelState["Error"] != null) //    @if (!ViewData.ModelState.IsValid)
+        {
+   
+            <div style="background-color: #ffeeee; border: 1px solid #de8181; color: #b55858; font-size: 12px; font-weight: 900; padding: 9px 9px 11px 22px; width: 97%;">
+
+
+                @Html.ValidationMessage("Error")
+
+            </div>
+}
+
+
+<div class="container">
+    <style type="text/css">
+        #dialog-form {
+            display: none;
+        }
+    </style>
+    <div class="row index-top-box">
+        <div class="form-sub-headers">
+            <h2>Student Information</h2>
+        </div>
+
+        <script src="~/Content/assets/js/jquery-migrate-1.0.0.js"></script>
+        <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+        <script language="javascript" type="text/javascript">
+
+            function GetCensorsID(_SchoolId) {
+                var procemessage = "Please wait...";
+                $("#CensorsID").val(procemessage);
+                var url = "/Home/GetCensorsIDBySchoolID/";
+
+                $.ajax({
+                    url: url,
+                    data: { SchoolId: _SchoolId },
+                    cache: false,
+                    type: "POST",
+                    success: function (data) {
+
+                        SetGender(_SchoolId);
+
+                        $("#CensorsID").val(data);
+                    },
+                    ERROR: function (reponse) {
+                        alert("error : " + reponse);
+                    }
+                });
+
+            }
+
+
+            $(function () {
+                $("#SchName").change(function () {
+                    var selectedItem = $(this).val();
+                    $("#School").val(selectedItem);
+
+                });
+
+            });
+
+
+
+
+            function SetGender(_SchoolId) {
+
+
+                var url = "/Home/GetSchoolSex/";
+
+                $.ajax({
+                    url: url,
+                    data: { SchoolId: _SchoolId },
+                    cache: false,
+                    type: "POST",
+                    success: function (data) {
+
+                        if (data == "Boys")
+                            $("#Gender").val("Male");
+                        else if (data == "Girls")
+                            $("#Gender").val("Female");
+                    },
+                    ERROR: function (reponse) {
+                        alert("error : " + reponse);
+                    }
+                });
+
+            }
+
+
+            function LoadStudent(_AddmisionNo, _CurrentGrade, _NameWithInitials, _NameInFull, _DOB, _Gender, _ParentName, _ParentAddress, _NIC, _ContactNo) {
+                //var idslist = "";
+                //alert(_DOB);
+                $("#AddmisionNo").val(_AddmisionNo);
+                $("#CurrentGrade").val(_CurrentGrade);
+                $("#NameWithInitials").val(_NameWithInitials);
+                $("#NameInFull").val(_NameInFull);
+                $("#datetimepicker1").val(_DOB);
+                $("#Gender").val(_Gender);
+                $("#ParentName").val(_ParentName);
+                $("#ParentAddress").val(_ParentAddress);
+                $("#NIC").val(_NIC);
+                $("#ContactNo").val(_ContactNo);
+
+
+                $("#AddmisionNo").attr("readonly", "readonly");
+                //alert(_SuppName);
+
+            };
+
+        </script>
+        <script type="text/javascript">
+            $(function () {
+                var new_dialog = function (type, row) {
+                    var dlg = $("#dialog-form").clone();
+
+                    reason = dlg.find(("#reason")),
+
+                    type = type || 'Create';
+                    var config = {
+                        autoOpen: true,
+                        height: 200,
+                        width: 450,
+                        modal: true,
+                        buttons: {
+                            "Save": save_data,
+                            "Cancel": function () {
+                                dlg.dialog("close");
+                            }
+                        },
+                        close: function () {
+                            dlg.remove();
+                        }
+                    };
+
+                    dlg.dialog(config);
+                    function get_data() {
+
+                    }
+                    function save_data() {
+
+                        var url = "/Home/DeleteStudent/";
+                        var formData = @Html.Raw(Json.Encode(Model))
+
+                    $.ajax({
+                        url: url,
+                        data: { AdmNo: $("#AddmisionNo").val(), SchID: $("#SchoolID").val(), reason: reason.val() },
+                        //data: JSON.stringify({ model: formData, reason: reason.val() }),
+                        cache: false,
+                        type: "POST",
+                        success: function (data) {
+                            window.location.reload();
+                            //document.getElementById("form1").submit();
+                        },
+                        ERROR: function (reponse) {
+                            alert("error : " + reponse);
+                        }
+                    });
+                        $("#AcmissionNo").val("");
+                    //$("#resTb tbody").append("<tr>" + "<td>" + reason.val() + "</td>"  + "</tr>");
+                    dlg.dialog("close");
+                }
+            };
+
+
+            $("#delete_student").button("option", "disabled", true).click(new_dialog);
+        });
+
+        </script>
+
+        @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <table class="details_container_table">
+                <tbody>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Year</td>
+                        <td style="width: 38%;">@Html.TextBox("Year", @DateTime.Today.Year, new { disabled = "true" })</td>
+                        <td style="width: 12%; text-align: right;">Censors ID</td>
+                        <td style="width: 38%;">@Html.TextBox("CensorsID", (string)ViewBag.CensorsID, new { disabled = "true" })
+                    </tr>
+
+                    <tr>
+
+                        <td style="width: 12%; text-align: right;">School</td>
+                        <td style="width: 38%;">
+                            @*@Html.DropDownList("SchoolID", (List<SelectListItem>)ViewBag.Schools, "Select School",  new { disabled = "true" })*@
+                            @Html.TextBox("School", (String)ViewBag.School, new { disabled = "true" })
+                            @Html.DropDownListFor(m => m.SchoolID, (List<SelectListItem>)ViewBag.Schools, "Select School", new { style = "display:none" })
+                            @Html.ValidationMessageFor(m => m.SchoolID)
+                        </td>
+                        <td style="width: 12%; text-align: right;">Addmision No</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.AddmisionNo)
+                            @Html.ValidationMessageFor(m => m.AddmisionNo)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Grade</td>
+                        <td style="width: 38%;">@Html.DropDownList("CurrentGrade", (List<SelectListItem>)ViewBag.SchoolGrades, "Current Grade")
+                            @Html.ValidationMessageFor(m => m.CurrentGrade)</td>
+                        <td style="width: 12%; text-align: right;">Name With Initials</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.NameWithInitials)
+                            @Html.ValidationMessageFor(m => m.NameWithInitials)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Name In Full</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.NameInFull)
+                            @Html.ValidationMessageFor(m => m.NameInFull)</td>
+                        <td style="width: 12%; text-align: right;">Date Of Birth</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.DOB, new { id = "datetimepicker1" })
+                            @Html.ValidationMessageFor(m => m.DOB)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Gender</td>
+                        <td style="width: 38%;">@Html.DropDownList("Gender", new List<SelectListItem>{
+                new SelectListItem{Text="Male", Value="Male"},
+                new SelectListItem{Text="Female", Value="Female"}            
+                }, "Select Gender")
+                            @Html.ValidationMessageFor(m => m.Gender)</td>
+                        <td style="width: 12%; text-align: right;">Parent Name</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.ParentName)
+                            @Html.ValidationMessageFor(m => m.ParentName)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Parent Address</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.ParentAddress)
+                            @Html.ValidationMessageFor(m => m.ParentAddress)</td>
+                        <td style="width: 12%; text-align: right;">NIC</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.NIC)
+                            @Html.ValidationMessageFor(m => m.NIC)</td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;">Contact No</td>
+                        <td style="width: 38%;">@Html.TextBoxFor(m => m.ContactNo)
+                            @Html.ValidationMessageFor(m => m.ContactNo)</td>
+                        <td style="width: 12%; text-align: right;"></td>
+                        <td style="width: 38%;"></td>
+                    </tr>
+
+                    <tr>
+                        <td style="width: 12%; text-align: right;"></td>
+                        <td style="width: 38%;">
+                            <input type="submit" value="Save" name="button" class="blue-btn" />
+                        </td>
+
+                        <td style="width: 12%; text-align: right;"></td>
+                        <td style="width: 38%;">
+                            <input type="button" name="button" id="delete_student" value="Delete Student" class="blue-btn " style="text-align: center;" />
+                        </td>
+
+
+                </tbody>
+            </table>
+       
+     
+   
+
+
+
+    
+    
+}
+
+
+        <table class="datatable sortable" cellpadding="0">
+            <thead>
+                <tr>
+
+
+                    @*<th>
+            @Html.DisplayName("School")
+        </th>*@
+                    <th>
+                        @Html.DisplayName("Addmision No")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Current Grade")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Name With Initials")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Name In Full")
+                    </th>
+                    <th>
+                        @Html.DisplayName("DOB")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Gender")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Parent Name")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Parent Address")
+                    </th>
+                    <th>
+                        @Html.DisplayName("NIC")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Contact No")
+                    </th>
+
+                    <th>Edit Student
+                    </th>
+
+
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in (List<SchoolHealthManagement.Models.StudentModel>)ViewBag.Students)
+                {
+                    <tr>
+                        @*<td>
+            @Html.DisplayFor(modelItem => item.SchoolID)
+        </td>*@
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AddmisionNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CurrentGrade)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NameWithInitials)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NameInFull)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DOB)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Gender)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ParentName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ParentAddress)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.NIC)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ContactNo)
+                        </td>
+                        @* <td>
+              @Html.ActionLink("Edit" , "AddStudent", new { iSchoolID = item.SchoolID }, new {@style="color:#000aaa;" })
+        </td>*@
+                        <td>
+                            <a id="st" href="javascript:LoadStudent('@item.AddmisionNo', '@item.CurrentGrade','@item.NameWithInitials','@item.NameInFull','@item.DOB','@item.Gender', '@item.ParentName', '@item.ParentAddress', '@item.NIC', '@item.ContactNo')" >Edit</a>
+
+                        </td>
+                        @* <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.EmpID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.EmpID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.EmpID })
+        </td>*@
+                    </tr>
+}
+            </tbody>
+        </table>
+
+        <div id="dialog-form" title="Reason for Deletion of Student ">
+
+            <form>
+                <fieldset>
+
+                    <label for="reason">
+                        Reason</label>
+                    <input type="text" name="reason" id="reason" value="" class="text ui-widget-content ui-corner-all" />
+
+                </fieldset>
+            </form>
+        </div>
+
+
+        @*dummy *@
+        @*<div>
+        <table id="resTb">
+            <thead>
+                <tr>
+                    <th style="color:red">Reasons</th>
+                   
+                </tr>
+            </thead>
+            <tbody style="color:red">
+               
+            </tbody>
+        </table>
+    </div>*@
+        @*dummy *@
+
+    </div>
+</div>

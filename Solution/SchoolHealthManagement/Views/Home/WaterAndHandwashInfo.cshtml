@@ -1,0 +1,133 @@
+﻿@model SchoolHealthManagement.Models.WaterNHandwashModel
+
+@{
+    ViewBag.Title = "WaterAndHandwashInfo";
+    Layout = "~/Views/Shared/_FormLayout.cshtml";
+}
+<div class="container">
+<div class="row index-top-box">
+<div class="form-sub-headers">
+<h2>Water And Handwash Information</h2>
+</div>
+
+    <script type="text/javascript" language="javascript">    
+
+        //function StateChange() {
+        //    alert('Changed!');
+        //    var intVal = $("#Coverage").val();
+        //    $("#progressbar").progressbar({ value: intVal });
+        //}
+
+        $('#Coverage').change(function () {
+            alert('Changed!');
+        });
+        
+        //$(document).ready(function () {
+        //    $('#Coverage').on("change", function () {
+        //        //alert('Changed!');
+        //            var intVal = $("#Coverage").val();
+        //            $("#progressbar").progressbar({ value: intVal });
+
+        //    });
+        //});
+
+        //$('#ExternalVenderNo').change(function(){
+        //    alert('Changed!');
+@*            @Model.IsChanged = true;*@
+        //});
+
+        //$(document).ready(function () {
+        
+        //    var intVal = $("#Coverage").val();
+        //    alert('Changed!');
+        //    $("#progressbar").progressbar({ value: intVal });
+            
+        //        //return false;
+        //    });
+        
+        </script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <div id="progressbar"></div>   
+    
+   <table class="details_container_table" style="width:50%">
+<tbody>
+<tr>
+    <td style="width:20%; text-align:right">    @Html.Label("Water Source") </td>
+    <td style="width:30%"> 
+        @Html.HiddenFor(model=>model.SchoolID)
+            @Html.DropDownListFor(model => model.WaterSource, (List<SelectListItem>)ViewBag.WaterSources,"Select Water Source")
+            @Html.ValidationMessageFor(model => model.WaterSource) </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.Availability)  </td>
+    <td style="width:30%">  @Html.DropDownListFor(model => model.Availability, (List<SelectListItem>)ViewBag.Availabilities,"Select Availability")
+            @Html.ValidationMessageFor(model => model.Availability) </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">  @Html.LabelFor(model => model.Quality)  </td>
+    <td style="width:30%">  @Html.DropDownListFor(model => model.Quality, (List<SelectListItem>)ViewBag.Qualities,"Select Quality")
+            @Html.ValidationMessageFor(model => model.Quality) </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right"> @Html.Label("Drinking Water")  </td>
+    <td style="width:30%">  @Html.DropDownListFor(model => model.DrinkingWater, (List<SelectListItem>)ViewBag.DrinkingWaterBrands,"Select Drinking Water")
+            @Html.ValidationMessageFor(model => model.DrinkingWater) </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.Label("Waste Water Management") </td>
+    <td style="width:30%">@Html.DropDownListFor(model => model.WasteWaterManagement, (List<SelectListItem>)ViewBag.WasteWaterManagementMethods,"Select Waste Water Management")
+            @Html.ValidationMessageFor(model => model.WasteWaterManagement)  </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right"> @Html.LabelFor(model => model.Note)  </td>
+    <td style="width:30%"> @Html.EditorFor(model => model.Note)
+            @Html.ValidationMessageFor(model => model.Note)  </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">     @Html.Label("No Of Taps Available") </td>
+    <td style="width:30%">  @Html.EditorFor(model => model.NoOfTapsAvailable)
+            @Html.ValidationMessageFor(model => model.NoOfTapsAvailable) </td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">   @Html.Label("Soap Available") </td>
+    <td style="width:30%">  @Html.DropDownListFor(model => model.SoapAvailable, new List<SelectListItem>{
+                        new SelectListItem{Text="Yes", Value="Yes"},
+                        new SelectListItem{Text="No", Value="No"}           
+                        }, "Soap Available")
+            @Html.ValidationMessageFor(model => model.SoapAvailable)</td>
+</tr>
+    <tr>
+    <td style="width:20%; text-align:right">    @Html.LabelFor(model => model.Coverage) </td>
+    <td style="width:30%">    @Html.EditorFor(model => model.Coverage)   @*, new{@onchange = "javascript:StateChange();" }*@
+            @Html.ValidationMessageFor(model => model.Coverage)</td>
+</tr>
+
+    <tr>
+        
+
+    <td style="width:20%; text-align:right">  </td>
+    <td style="width:30%">   <input type="submit" value="Save" class="blue-btn" /> </td>
+</tr>
+</tbody>
+
+       </table>
+    
+
+      @*  <div class="editor-label">
+            @Html.LabelFor(model => model.SchoolID)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.SchoolID)
+            @Html.ValidationMessageFor(model => model.SchoolID)
+        </div>*@
+
+   
+  
+}
+
+
+    </div>
+    </div>
