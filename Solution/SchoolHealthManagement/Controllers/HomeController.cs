@@ -1055,7 +1055,19 @@ namespace SchoolHealthManagement.Controllers
         public ActionResult DisplayFolderPDFs(string strMenuItem, string sFolder)
         {
 
-            List<string> Pdfs = Directory.GetFiles(Path.Combine(Server.MapPath("~/" + strMenuItem), sFolder), "*.pdf", System.IO.SearchOption.TopDirectoryOnly).ToList();
+            //List<string> Pdfs = Directory.GetFiles(Path.Combine(Server.MapPath("~/" + strMenuItem), sFolder), "*.pdf", System.IO.SearchOption.TopDirectoryOnly).ToList();
+            List<string> Pdfs;
+
+            if (sFolder == "All")
+            {
+                Pdfs = Directory.GetFiles(Path.Combine(Server.MapPath("~/" + strMenuItem), sFolder), "*.xlsx", System.IO.SearchOption.TopDirectoryOnly).ToList();
+
+            }
+            else
+            {
+                Pdfs = Directory.GetFiles(Path.Combine(Server.MapPath("~/" + strMenuItem), sFolder), "*.pdf", System.IO.SearchOption.TopDirectoryOnly).ToList();
+            }
+
             List<FileModel> OutPdfs = new List<FileModel>();
             for (int i = 0; i < Pdfs.Count; i++)
             {
@@ -1883,6 +1895,9 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
+
+
+                /*
                 cmd.CommandText = "SELECT  " +
                                             "TOP (100) PERCENT A.ProvinceID, m_Provinces.ProvinceName, SUM(A.NumberOfSchools) AS NumberOfSchools, SUM(A.TotalStudentCount) " +
                                             " AS TotalStudents, Province_DataEntery_Count.Entered, (Province_DataEntery_Count.Entered/SUM(A.TotalStudentCount))*100 AS Per, " +
@@ -1897,6 +1912,25 @@ namespace SchoolHealthManagement.Controllers
                                     "WHERE A.Year = " + iYear.ToString() + " " +
                                     "GROUP BY  A.ProvinceID, m_Provinces.ProvinceName, Province_DataEntery_Count.Entered " +
                                     "ORDER BY Per DESC, m_Provinces.ProvinceName, Province_DataEntery_Count.Entered";
+                 
+                 */
+
+                cmd.CommandText = "SELECT  " +
+                                            "A.ProvinceID, m_Provinces.ProvinceName, SUM(A.NumberOfSchools) AS NumberOfSchools, SUM(A.TotalStudentCount) " +
+                                            " AS TotalStudents, ISNULL(dbo.Province_DataEntery_Count.Entered, 0) AS Entered, (Province_DataEntery_Count.Entered/SUM(A.TotalStudentCount))*100 AS Per, " +
+                                            "(SELECT COUNT(BMIInformation.AdmissionNo) FROM m_Schools INNER JOIN BMIInformation ON m_Schools.SchoolID = BMIInformation.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID AND (BMIInformation.Trimester = " + iYear.ToString() + "1)) AS BMI1, " +
+                                            "(SELECT COUNT(BMIInformation.AdmissionNo) FROM m_Schools INNER JOIN BMIInformation ON m_Schools.SchoolID = BMIInformation.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID AND (BMIInformation.Trimester = " + iYear.ToString() + "2)) AS BMI2, " +
+                                            "(SELECT COUNT(BMIInformation.AdmissionNo) FROM m_Schools INNER JOIN BMIInformation ON m_Schools.SchoolID = BMIInformation.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID AND (BMIInformation.Trimester = " + iYear.ToString() + "3)) AS BMI3, " +
+                                            "(SELECT COUNT(m_SupplierInformation.SupplierName) FROM m_SupplierInformation INNER JOIN m_Schools ON m_SupplierInformation.SchoolID = m_Schools.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID) AS SupCount, " +
+                                            "(SELECT COUNT(SanitoryFacilityInfo.NoOfMaleToilets) FROM SanitoryFacilityInfo INNER JOIN m_Schools ON SanitoryFacilityInfo.SchoolID = m_Schools.SchoolID WHERE m_Schools.ProvinceID =  A.ProvinceID) AS SanitoryCount " +
+                                   " FROM " +
+                                            " ZoneWiseStudentCount A INNER JOIN Province_DataEntery_Count ON A.ProvinceID = dbo.Province_DataEntery_Count.ProvinceID " +
+                                             "INNER JOIN m_Provinces ON A.ProvinceID = m_Provinces.ProvinceID " +
+                                    "WHERE A.Year = " + iYear.ToString() + " AND (Province_DataEntery_Count.Year = " + iYear.ToString() + " ) " +
+                                    "GROUP BY  A.ProvinceID, m_Provinces.ProvinceName, Province_DataEntery_Count.Entered " +
+                                    "ORDER BY Per DESC, m_Provinces.ProvinceName, Province_DataEntery_Count.Entered";
+
+
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -1935,6 +1969,24 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
+
+                cmd.CommandText = "SELECT  " +
+                                       "TOP (100) PERCENT m_Provinces.ProvinceID, m_Zones.ZoneID, dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName, A.SchoolName, COUNT(dbo.StudentInfo.AddmisionNo)  AS NoOfStudents, " +
+                                       "(SELECT COUNT(BMIInformation.AdmissionNo) FROM BMIInformation WHERE BMIInformation.SchoolID = A.SchoolID AND (BMIInformation.Trimester = " + iYear.ToString() + "1)) AS BMI1, " +
+                                       "(SELECT COUNT(BMIInformation.AdmissionNo) FROM BMIInformation WHERE BMIInformation.SchoolID = A.SchoolID AND  (BMIInformation.Trimester = " + iYear.ToString() + "2)) AS BMI2, " +
+                                       "(SELECT COUNT(BMIInformation.AdmissionNo) FROM BMIInformation WHERE BMIInformation.SchoolID = A.SchoolID AND  (BMIInformation.Trimester = " + iYear.ToString() + "3)) AS BMI3, " +
+                                       "(SELECT COUNT(m_SupplierInformation.SupplierName) FROM m_SupplierInformation WHERE m_SupplierInformation.SchoolID = A.SchoolID) AS SupCount, " +
+                                       "(SELECT COUNT(SanitoryFacilityInfo.NoOfMaleToilets) FROM SanitoryFacilityInfo WHERE SanitoryFacilityInfo.SchoolID = A.SchoolID) AS SanitoryCount " +
+                                  " FROM " +
+                                        "m_Schools A INNER JOIN StudentInfo ON A.SchoolID = dbo.StudentInfo.SchoolID INNER JOIN " +
+                                        "m_Provinces ON A.ProvinceID = dbo.m_Provinces.ProvinceID INNER JOIN " +
+                                        "m_Zones ON A.ZoneID = dbo.m_Zones.ZoneID " +
+                                        "INNER JOIN ZoneWiseStudentCount ON ZoneWiseStudentCount.ProvinceID = m_Provinces.ProvinceID AND ZoneWiseStudentCount.ZoneID = A.ZoneID " +
+                                   "WHERE ZoneWiseStudentCount.Year = " + iYear + " AND m_Zones.ZoneID = '" + ZoneID + "' " +
+                                   "GROUP BY  m_Provinces.ProvinceID, m_Zones.ZoneID, A.SchoolID, A.SchoolName, dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName " +
+                                   "ORDER BY dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName";
+
+                /*
                 cmd.CommandText = "SELECT  " +
                                         "TOP (100) PERCENT m_Provinces.ProvinceID, m_Zones.ZoneID, dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName, A.SchoolName, COUNT(dbo.StudentInfo.AddmisionNo)  AS NoOfStudents, " +
                                         "(SELECT COUNT(BMIInformation.AdmissionNo) FROM BMIInformation WHERE BMIInformation.SchoolID = A.SchoolID AND (BMIInformation.Trimester = " + iYear.ToString() + "1)) AS BMI1, " +
@@ -1950,6 +2002,8 @@ namespace SchoolHealthManagement.Controllers
                                     "WHERE ZoneWiseStudentCount.Year = " + iYear + " AND m_Zones.ZoneID = '" + ZoneID + "' " +
                                     "GROUP BY  m_Provinces.ProvinceID, m_Zones.ZoneID, A.SchoolID, A.SchoolName, dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName " +
                                     "ORDER BY dbo.m_Provinces.ProvinceName, dbo.m_Zones.ZoneName";
+                      */
+
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -2978,7 +3032,7 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
-                cmd.CommandText = "SELECT  SchoolID FROM  StudentInfo WHERE SchoolID = '" + SchoolID + "' AND AddmisionNo  = '" + strAdmissionNo + "'";
+                cmd.CommandText = "SELECT  SchoolID FROM  StudentInfo WHERE SchoolID = '" + SchoolID + "' AND AddmisionNo  = '" + strAdmissionNo + "' AND YEAR =  " + DateTime.Today.Year;
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -3392,11 +3446,12 @@ namespace SchoolHealthManagement.Controllers
                 }
 
                 cmd.CommandText = "SELECT " +
-                                        "NameOfOfficer, Designation, ContactNo " +
-                                   "FROM " +
-                                        "MonitoringOfficerInformation " +
-                                   " WHERE " +
-                                        "CensorsID = '" + CensorsID + "'";
+                                         "NameOfOfficer, Designation, ContactNo " +
+                                    "FROM " +
+                                         "MonitoringOfficerInformation " +
+                                    " WHERE " +
+                                         "CensorsID = '" + CensorsID + "' ORDER BY YEAR DESC";
+
                 SqlDataAdapter da2 = new SqlDataAdapter(cmd);
                 DataTable dt2 = new DataTable();
                 da2.Fill(dt2);
