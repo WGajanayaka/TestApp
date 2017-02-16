@@ -49,5 +49,7 @@ namespace SchoolHealthManagement.Models
 
         public string Devision { get; set; }
 
+
+        public string ID { get; set; }
     }
 }

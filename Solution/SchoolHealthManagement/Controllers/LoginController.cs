@@ -37,7 +37,7 @@ namespace SchoolHealthManagement.Controllers
             HomeController homeCtrl = new HomeController();
             ViewBag.Provinces = homeCtrl.GetProvinces();
             ViewBag.Zones = homeCtrl.GetZones();
-            ViewBag.Devisions = homeCtrl.GetDevisions();
+            ViewBag.Devisions = homeCtrl.GetDevisions(usrProf.DevisionID);
             ViewBag.Roles = GetRoles(Convert.ToInt32(Session["LoginRoleID"]));
             ViewBag.Schools = homeCtrl.GetSchools();
 

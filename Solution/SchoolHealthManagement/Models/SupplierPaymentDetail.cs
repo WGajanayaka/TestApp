@@ -11,9 +11,9 @@ namespace SchoolHealthManagement.Models
         public int PaymentRequestId;
         public int SupplierId;
         public SupplierInfoModel Supplier = new SupplierInfoModel();
-        public int Amount;
+        public Decimal Amount;
 
-        public string MAXAmount { get; set; }
+        public Decimal MAXAmount { get; set; }
 
         public string BranchName { get; set; }
     }

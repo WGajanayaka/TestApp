@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="~/Content/assets/font-awesome/css/font-awesome.min.css">
 		<link rel="stylesheet" href="~/Content/assets/css/form-elements.css">
         <link rel="stylesheet" href="~/Content/assets/css/style.css">
-         <link href="~/Content/assets/css/animations.css" rel="stylesheet" type="text/css" />
+        <link href="~/Content/assets/css/animations.css" rel="stylesheet" type="text/css" />
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -25,12 +25,7 @@
         <link rel="apple-touch-icon-precomposed" sizes="114x114" href="~/Content/assets/ico/apple-touch-icon-114-precomposed.png">
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="~/Content/assets/ico/apple-touch-icon-72-precomposed.png">
         <link rel="apple-touch-icon-precomposed" href="~/Content/assets/ico/apple-touch-icon-57-precomposed.png">
-
-    <script>
-
-  
-
-    </script>
+     <script src="/Content/assets/js/jquery-1.11.1.min.js"></script>
      <style>
          .backstretch {
              display: none;
@@ -68,7 +63,6 @@
              padding: 2px 12px 3px 10px;
          }
      </style>
-
 </head>
 <body>
        <nav class="navbar navbar-default navbar-fixed-top">
@@ -80,7 +74,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-        <img src="../Content/assets/img/backgrounds/header-logo.jpg" class="img-responsive"></div>
+        <img src="/Content/assets/img/backgrounds/header-logo.jpg" class="img-responsive"></div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="@Url.Action("Index", "Home")">Home</a></li>
@@ -119,8 +113,14 @@
                         }
 </ul>
               </li>
-
-                        <li class="dropdown dropdown-submenu""><a href="#" class="dropdown-toggle" data-toggle="dropdown">Circulars</a>
+                        <li class="dropdown dropdown-submenu" >
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Supplier Payments</a>
+                            <ul class="dropdown-menu">
+                                <li><a href="@Url.Action("SupplierPayments", "Home")">Payments</a></li>
+                                <li><a href="@Url.Action("SupplierPaymentMOE", "Home")">Payments MOE</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Circulars</a>
                   <ul class="dropdown-menu">
                        
                                 <li><a >Sinhala</a></li>
@@ -152,7 +152,7 @@
 
            
          
-       <!-- <img src="../Content/assets/img/backgrounds/header-logo-sponsers.jpg" class="img-responsive"/>-->
+       <!-- <img src="/Content/assets/img/backgrounds/header-logo-sponsers.jpg" class="img-responsive"/>-->
         </div><!--/.nav-collapse -->
       </div>
     </nav>
@@ -163,6 +163,7 @@
 
     <div style="height:500px">
         @RenderBody()
+        <br /><br />
     </div>
              <footer class="footer form-layout">
       <div class="container">
@@ -174,10 +175,10 @@
 <a style="color:White">www.shpp.edu.gov.lk</a> 
       </div>
     </footer>
-    <script src="../Content/assets/js/jquery-1.11.1.min.js"></script>
-        <script src="../Content/assets/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../Content/assets/js/jquery.backstretch.min.js"></script>
-        <script src="../Content/assets/js/scripts.js"></script>
+    
+        <script src="/Content/assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/Content/assets/js/jquery.backstretch.min.js"></script>
+        <script src="/Content/assets/js/scripts.js"></script>
 
 </body>
 </html>

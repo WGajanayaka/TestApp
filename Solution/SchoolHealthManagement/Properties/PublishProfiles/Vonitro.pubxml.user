@@ -9,6 +9,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <LastUsedPlatform>Any CPU</LastUsedPlatform>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword />
+    <_PublishTargetUrl>E:\SchoolHealthManagement\Publish</_PublishTargetUrl>
   </PropertyGroup>
   <ItemGroup>
     <File Include="bin/ClosedXML.dll">
@@ -24,7 +25,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/05/2016 15:06:08</publishTime>
     </File>
     <File Include="bin/Microsoft.ReportViewer.Common.dll">
-      <publishTime>03/17/2015 23:30:47</publishTime>
+      <publishTime>10/06/2015 00:29:05</publishTime>
     </File>
     <File Include="bin/Microsoft.ReportViewer.WebForms.DLL">
       <publishTime>08/04/2016 13:36:44</publishTime>
@@ -39,10 +40,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/04/2016 13:36:44</publishTime>
     </File>
     <File Include="bin/SchoolHealthManagement.dll">
-      <publishTime>01/12/2017 20:32:23</publishTime>
+      <publishTime>02/07/2017 10:38:52</publishTime>
     </File>
     <File Include="bin/SchoolHealthManagement.pdb">
       <publishTime>01/12/2017 20:32:23</publishTime>
+    </File>
+    <File Include="bin/System.Data.SqlServerCe.dll">
+      <publishTime>12/09/2010 17:12:46</publishTime>
     </File>
     <File Include="bin/System.Web.Helpers.dll">
       <publishTime>12/07/2015 12:00:36</publishTime>
@@ -117,7 +121,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/05/2015 23:28:19</publishTime>
     </File>
     <File Include="Content/assets/css/style.css">
-      <publishTime>04/27/2016 23:07:36</publishTime>
+      <publishTime>02/07/2017 06:46:20</publishTime>
     </File>
     <File Include="Content/assets/font-awesome/css/font-awesome.css">
       <publishTime>12/05/2015 23:28:19</publishTime>
@@ -612,13 +616,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/07/2016 09:56:24</publishTime>
     </File>
     <File Include="Views/Home/SupplierInformation.cshtml">
-      <publishTime>03/02/2016 14:08:22</publishTime>
+      <publishTime>01/29/2017 14:55:56</publishTime>
     </File>
     <File Include="Views/Home/SupplierInformationProvince.cshtml">
       <publishTime>09/15/2016 09:47:12</publishTime>
     </File>
     <File Include="Views/Home/SupplierInformationZoneProvince.cshtml">
       <publishTime>09/15/2016 09:51:08</publishTime>
+    </File>
+    <File Include="Views/Home/SupplierPaymentMOE.cshtml">
+      <publishTime>02/07/2017 06:33:03</publishTime>
+    </File>
+    <File Include="Views/Home/SupplierPayments.cshtml">
+      <publishTime>02/07/2017 06:46:53</publishTime>
     </File>
     <File Include="Views/Home/ViewBMIHistory.cshtml">
       <publishTime>05/22/2016 23:52:30</publishTime>
@@ -648,19 +658,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>03/04/2016 10:43:46</publishTime>
     </File>
     <File Include="Views/Shared/_HomeLayout.cshtml">
-      <publishTime>12/27/2016 14:45:54</publishTime>
+      <publishTime>02/07/2017 07:35:23</publishTime>
     </File>
     <File Include="Views/Shared/_IndexWeb.cshtml">
       <publishTime>09/01/2016 11:19:01</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>01/01/2016 18:03:38</publishTime>
+      <publishTime>02/07/2017 06:29:09</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>12/07/2015 11:59:10</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>01/16/2017 23:23:14</publishTime>
+      <publishTime>02/07/2017 06:54:08</publishTime>
     </File>
   </ItemGroup>
 </Project>

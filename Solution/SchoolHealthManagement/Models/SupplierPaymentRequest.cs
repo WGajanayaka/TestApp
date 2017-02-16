@@ -28,5 +28,19 @@ namespace SchoolHealthManagement.Models
         public string ProvinceName { get; set; }
 
         public string ZoneName { get; set; }
+
+        public Dictionary<int, decimal> Details { get; set; }
+    }
+
+    public class SupplierPaymentMOE : SupplierPaymentRequest
+    {
+        public string PaymentNo = "N/A";
+        public string PaymentDate = DateTime.Now.ToShortDateString();
+        public List<SupplierPaymentSummary> PaymentSummary = new List<SupplierPaymentSummary>();
+        public Decimal PaymentSummaryTot;
+        public string BankName;
+        public string ChequeNumber;
+        public DateTime? ChequeDate;
+        public Decimal Amount;
     }
 }

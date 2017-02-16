@@ -305,7 +305,7 @@ namespace SchoolHealthManagement.Controllers
             ZoneList.OrderBy(x=>x.Text);
             ViewBag.Zones = ZoneList;
 
-            List<SelectListItem> DivList = GetDevisions();
+            List<SelectListItem> DivList = GetDevisions("");
             DivList.Add(new SelectListItem { Text = "All", Value = "All" });
             DivList.OrderBy(x => x.Text);
             ViewBag.Devisions = DivList;
@@ -354,7 +354,7 @@ namespace SchoolHealthManagement.Controllers
             ZoneList.OrderBy(x => x.Text);
             ViewBag.Zones = ZoneList;
 
-            List<SelectListItem> DivList = GetDevisions();
+            List<SelectListItem> DivList = GetDevisions(DevisionID);
             DivList.Add(new SelectListItem { Text = "All", Value = "All" });
             DivList.OrderBy(x => x.Text);
             ViewBag.Devisions = DivList;
@@ -796,7 +796,7 @@ namespace SchoolHealthManagement.Controllers
         {
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions("");
 
             ViewBag.Suppliers = new List<SupplierInfoModel>();
 
@@ -809,7 +809,7 @@ namespace SchoolHealthManagement.Controllers
         {
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions(DevisionID);
             ViewBag.Suppliers = GetSupplierInfo(ProvinceID, ZoneID, DevisionID);
             return View();
 
@@ -869,7 +869,7 @@ namespace SchoolHealthManagement.Controllers
         {
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions("");
 
             ViewBag.MoniteringOfficers = new List<MonitoringOfficerModel>();
 
@@ -882,7 +882,7 @@ namespace SchoolHealthManagement.Controllers
         {
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions(DevisionID);
             ViewBag.MoniteringOfficers = GetMonOffrInfo(ProvinceID, ZoneID, DevisionID);
             return View();
 
@@ -1570,7 +1570,7 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
-                cmd.CommandText = "SELECT Bank FROM m_Banks";
+                cmd.CommandText = "SELECT BankName as Bank FROM m_Banks";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -1595,7 +1595,7 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
-                cmd.CommandText = "SELECT ID, BankName  FROM m_Banks";
+                cmd.CommandText = "SELECT ID, BankName  FROM m_Banks ORDER BY BankName";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -1623,7 +1623,7 @@ namespace SchoolHealthManagement.Controllers
             using (var cmd = conn.CreateCommand())
             {
                 conn.Open();
-                cmd.CommandText = "SELECT ID, BranchName  FROM m_BanksBranch WHERE BankID=" + BankId;
+                cmd.CommandText = "SELECT ID, BranchName  FROM m_BanksBranch WHERE BankID=" + BankId + " ORDER BY BranchName";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -3706,22 +3706,24 @@ namespace SchoolHealthManagement.Controllers
             if (paymentReq==null)
             {
                 paymentReq = new SupplierPaymentRequest();
+                paymentReq.RequestDate = DateTime.Now.ToString("yyyy/MM/dd");
+                paymentReq.Status = "New";
             }
 
-            paymentReq.PaymentDetails = LoadSuppliersForPayment(paymentReq.ProvinceID, paymentReq.ZoneID, paymentReq.Year);
+            paymentReq.PaymentDetails = LoadSuppliersForPayment(paymentReq.ProvinceID, paymentReq.ZoneID, paymentReq.Year, paymentReq.Month, paymentReq.Id);
             ViewBag.SupplierPaymentRequestList = PaymentRequestList;
-            ViewBag.Month = GetMonths();
-            ViewBag.Year = GetResentYears();
-            ViewBag.ProvinceID = GetProvincesByUser("Admin");
-            ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID);
+            ViewBag.Month = GetMonths(paymentReq.Month);
+            ViewBag.Year = GetResentYears(paymentReq.Year.ToString());
+            ViewBag.ProvinceID = GetProvincesByUser("Admin", paymentReq.ProvinceID.ToString());
+            ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID, paymentReq.ZoneID);
             return View(paymentReq);
         }
-        public JsonResult LoadSuppliersForPaymentJson(int ProvinceID, string ZoneID, int year)
+        public JsonResult LoadSuppliersForPaymentJson(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
         {
-            var data = LoadSuppliersForPayment(ProvinceID, ZoneID, year);
+            var data = LoadSuppliersForPayment(ProvinceID, ZoneID, year, Month, PaymentReqNo);
             return Json(data);
         }
-        public List<SupplierPaymentRequestDetail> LoadSuppliersForPayment(int ProvinceID, string ZoneID, int year)
+        public List<SupplierPaymentRequestDetail> LoadSuppliersForPayment(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
         {
             // Here you are free to do whatever data access code you like
             // You can invoke direct SQL queries, stored procedures, whatever 
@@ -3731,7 +3733,7 @@ namespace SchoolHealthManagement.Controllers
             {
                 string UserName = "";
                 conn.Open();
-                cmd.CommandText = "EXEC LoadSuppliers " + ProvinceID + ", '" + ZoneID + "', " + year;
+                cmd.CommandText = "EXEC LoadSuppliers " + ProvinceID + ", '" + ZoneID + "', " + year + ", '" + Month + "', " + PaymentReqNo;
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -3745,17 +3747,19 @@ namespace SchoolHealthManagement.Controllers
                 {
                     SupplierPaymentRequestDetail supInfo = new SupplierPaymentRequestDetail();
 
-                    supInfo.CensorsID = mydataRow["CensorsID"].ToString().Trim(); ;
+                    supInfo.CensorsID = mydataRow["CensorsID"].ToString().Trim();
+                    supInfo.Supplier.ID = mydataRow["ID"].ToString().Trim();
                     supInfo.Supplier.SupplierName = mydataRow["SupplierName"].ToString().Trim();
                     supInfo.Supplier.BankAccountNo = mydataRow["BankAccountNo"].ToString().Trim();
                     supInfo.Supplier.BankName = mydataRow["BankName"].ToString().Trim();
                     supInfo.BranchName = mydataRow["BranchName"].ToString().Trim();
                     if (mydataRow["BankID"]!=DBNull.Value)
                         supInfo.Supplier.BankID = Convert.ToInt16(mydataRow["BankID"]);
-                    if (mydataRow["BankID"] != DBNull.Value)
+                    if (mydataRow["BankBranchID"] != DBNull.Value)
                         supInfo.Supplier.BankBranchID = Convert.ToInt16(mydataRow["BankBranchID"]);
                     //supInfo.Supplier.BranchCode = mydataRow["BranchCode"].ToString().Trim();
-                    supInfo.MAXAmount = mydataRow["MAXAmount"].ToString().Trim();
+                    supInfo.MAXAmount = Convert.ToDecimal(mydataRow["MAXAmount"]);
+                    supInfo.Amount = Convert.ToDecimal(mydataRow["Amount"]);
                     MyList.Add(supInfo);
                 }
 
@@ -3765,37 +3769,149 @@ namespace SchoolHealthManagement.Controllers
 
 
         [HttpPost]
-        public ActionResult SupplierPayments(SupplierPaymentRequest model)
+        public ActionResult SupplierPayments(FormCollection FormData)
         {
-            return View(model);
+            string action = FormData["Action"];
+            SupplierPaymentRequest modal = MakeSupplierPaymentRequest(FormData);
+            if (action == "Save")
+            {
+                if (ValidatePaymentRequest(modal))
+                {
+                    SavePaymentRequest(modal);
+                }
+            }
+
+            modal.PaymentDetails = LoadSuppliersForPayment(modal.ProvinceID, modal.ZoneID, modal.Year, modal.Month, modal.Id);
+            ViewBag.SupplierPaymentRequestList = GetSupplierPaymentRequest();
+            ViewBag.Month = GetMonths(modal.Month);
+            ViewBag.Year = GetResentYears(modal.Year.ToString());
+            ViewBag.ProvinceID = GetProvincesByUser("Admin", modal.ProvinceID.ToString());
+            ViewBag.ZoneID = GetZonesByUserProvice("Admin", modal.ProvinceID,modal.ZoneID);
+            return View(modal);
         }
 
-        private List<SelectListItem> GetMonths()
+        private SupplierPaymentRequest MakeSupplierPaymentRequest(FormCollection FormData)
+        {          
+            SupplierPaymentRequest modal = new SupplierPaymentRequest();
+            modal.Id = Convert.ToInt16(FormData["Id"]);
+            modal.ProvinceID = Convert.ToInt16(FormData["ProvinceID"]);
+            modal.ZoneID = FormData["ZoneID"];
+            modal.Year = Convert.ToInt16(FormData["Year"]);
+            modal.Month = FormData["Month"];
+            modal.RequestDate = FormData["RequestDate"];
+            modal.CreateBy = "Admin";
+            modal.Status = "New";
+            modal.Details  = new Dictionary<int,decimal>();
+
+            foreach(var item in FormData.AllKeys)
+            {
+                if(item.IndexOf('-') > 0)
+                {
+                    var arr = item.Split('-');
+                    modal.Details.Add(Convert.ToInt16(arr[1]), Convert.ToDecimal(FormData[item]));
+                }
+            }
+            return modal;
+        }
+
+        private bool ValidatePaymentRequest(SupplierPaymentRequest paymentReq)
+        {
+            return true;
+        }
+
+        private bool SavePaymentRequest(SupplierPaymentRequest model)
+        {
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandText = "Update_SupplierPaymentReq_Header";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@PaymentReqNo", model.Id);
+                cmd.Parameters.AddWithValue("@ReqDate", model.RequestDate);
+                cmd.Parameters.AddWithValue("@ProvinceID", model.ProvinceID);
+                cmd.Parameters.AddWithValue("@ZoneID", model.ZoneID);
+                cmd.Parameters.AddWithValue("@Year", (model.Year));
+                cmd.Parameters.AddWithValue("@Month", model.Month);
+                cmd.Parameters.AddWithValue("@CreateUser", model.CreateBy);
+                cmd.Parameters.AddWithValue("@TotalAmount", model.Total);
+                cmd.Parameters.AddWithValue("@Status", model.Status);
+                cmd.Parameters.AddWithValue("@TranType", model.Id == 0 ? "NEW" : "Update");
+
+                SqlParameter outPutVal = new SqlParameter("@New_PaymentReqNo", SqlDbType.Int);
+                outPutVal.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outPutVal);
+
+                cmd.ExecuteNonQuery();
+
+                if (outPutVal.Value != DBNull.Value)
+                {
+                    model.Id = Convert.ToInt32(outPutVal.Value);
+                    SavePaymentRequestDetails(model);
+                }
+                
+            }
+            return true;
+        }
+
+        private bool SavePaymentRequestDetails(SupplierPaymentRequest model)
+        {
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            {
+                conn.Open();
+                foreach(var item in model.Details)
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "Update_SupplierPaymentReq_Details";
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@PaymentReqNo", model.Id);
+                        cmd.Parameters.AddWithValue("@SupplyerID", item.Key);
+                        cmd.Parameters.AddWithValue("@Amount", item.Value);
+                        cmd.Parameters.AddWithValue("@Year", model.Year);
+                        cmd.Parameters.AddWithValue("@Month", model.Month);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                return true;
+            }
+        }
+
+        private List<SelectListItem> GetMonths(string selected)
         {
             List<SelectListItem> MyList = new List<SelectListItem>();
-            MyList.Add(new SelectListItem { Text = "January", Value = "1" });
-            MyList.Add(new SelectListItem { Text = "February", Value = "2" });
-            MyList.Add(new SelectListItem { Text = "March", Value = "3" });
-            MyList.Add(new SelectListItem { Text = "April", Value = "4" });
-            MyList.Add(new SelectListItem { Text = "May", Value = "5" });
-            MyList.Add(new SelectListItem { Text = "June", Value = "6" });
-            MyList.Add(new SelectListItem { Text = "July", Value = "7" });
-            MyList.Add(new SelectListItem { Text = "August", Value = "8" });
-            MyList.Add(new SelectListItem { Text = "September", Value = "9" });
-            MyList.Add(new SelectListItem { Text = "October", Value = "10" });
-            MyList.Add(new SelectListItem { Text = "November", Value = "11" });
-            MyList.Add(new SelectListItem { Text = "December", Value = "12" });
+            MyList.Add(new SelectListItem { Text = "January", Value = "January" });
+            MyList.Add(new SelectListItem { Text = "February", Value = "February" });
+            MyList.Add(new SelectListItem { Text = "March", Value = "March" });
+            MyList.Add(new SelectListItem { Text = "April", Value = "April" });
+            MyList.Add(new SelectListItem { Text = "May", Value = "May" });
+            MyList.Add(new SelectListItem { Text = "June", Value = "June" });
+            MyList.Add(new SelectListItem { Text = "July", Value = "July" });
+            MyList.Add(new SelectListItem { Text = "August", Value = "August" });
+            MyList.Add(new SelectListItem { Text = "September", Value = "September" });
+            MyList.Add(new SelectListItem { Text = "October", Value = "October" });
+            MyList.Add(new SelectListItem { Text = "November", Value = "November" });
+            MyList.Add(new SelectListItem { Text = "December", Value = "December" });
 
+            var data = MyList.Find(i=>i.Value==selected);
+            if (data != null)
+                data.Selected = true;
             return MyList;
         }
 
-        private List<SelectListItem> GetResentYears()
+        private List<SelectListItem> GetResentYears(string selected)
         {
             List<SelectListItem> MyList = new List<SelectListItem>();
             for (int i = 2016; i < 2020; i++ )
             {
                 MyList.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
             }
+            var data = MyList.Find(i => i.Value == selected);
+            if (data != null)
+                data.Selected = true;
             return MyList;
         }
 
@@ -3831,12 +3947,12 @@ namespace SchoolHealthManagement.Controllers
                     supInfo.CreateBy = mydataRow["CreateUser"].ToString().Trim();
                     if(mydataRow["CreateDate"]!=DBNull.Value)
                         supInfo.CreateDate = Convert.ToDateTime(mydataRow["CreateDate"]);
-                    supInfo.ZonalApprovedBy = mydataRow["AprovedUser"].ToString().Trim();
-                    if (mydataRow["ApprovedDate"] != DBNull.Value)
-                        supInfo.ZonalApprovedDate = Convert.ToDateTime(mydataRow["ApprovedDate"]);
-                    supInfo.ProvincialApprovedBy = mydataRow["ProvincialApp_User"].ToString().Trim(); ;
-                    if (mydataRow["ProvincialApp_Date"] != DBNull.Value)
-                        supInfo.ProvincialApprovedDate = Convert.ToDateTime(mydataRow["ProvincialApp_Date"]);
+                    //supInfo.ZonalApprovedBy = mydataRow["AprovedUser"].ToString().Trim();
+                    //if (mydataRow["ApprovedDate"] != DBNull.Value)
+                    //    supInfo.ZonalApprovedDate = Convert.ToDateTime(mydataRow["ApprovedDate"]);
+                    //supInfo.ProvincialApprovedBy = mydataRow["ProvincialApp_User"].ToString().Trim(); ;
+                    //if (mydataRow["ProvincialApp_Date"] != DBNull.Value)
+                    //    supInfo.ProvincialApprovedDate = Convert.ToDateTime(mydataRow["ProvincialApp_Date"]);
                     supInfo.Status = mydataRow["Status"].ToString().Trim();
                     MyList.Add(supInfo);
                 }
@@ -3866,7 +3982,7 @@ namespace SchoolHealthManagement.Controllers
                 ViewBag.SchoolsInfo = lstSch;
                 ViewBag.Provinces = GetProvinces();
                 ViewBag.Zones = GetZones();
-                ViewBag.Devisions = GetDevisions();
+                ViewBag.Devisions = GetDevisions(model.DevisionID);
                 model = FillSchoolInfoModel(model, iSchoolID);
                 ViewBag.SchoolID = iSchoolID;
                 return View("SchoolInfo", model);
@@ -3877,7 +3993,7 @@ namespace SchoolHealthManagement.Controllers
                 ViewBag.SchoolsInfo = lstSch;
                 ViewBag.Provinces = GetProvinces();
                 ViewBag.Zones = GetZones();
-                ViewBag.Devisions = GetDevisions();
+                ViewBag.Devisions = GetDevisions("");
                 //ViewBag.MonitoringOfficers = GetMonitoringOfficers();
                 return View("SchoolInfo");
             }
@@ -3954,7 +4070,7 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.SchoolsInfo = lstSch;
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions(model.DevisionID);
 
             return View("SchoolInfo", model);
         }
@@ -4106,7 +4222,7 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.SchoolsInfo = lstSch;
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions("");
             //ViewBag.MonitoringOfficers = GetMonitoringOfficers();
             return View();
         }
@@ -4158,7 +4274,7 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.SchoolsInfo = lstSch;
             ViewBag.Provinces = GetProvinces();
             ViewBag.Zones = GetZones();
-            ViewBag.Devisions = GetDevisions();
+            ViewBag.Devisions = GetDevisions(model.DevisionID);
             model = new SchoolInfoModel();
 
 
@@ -6099,7 +6215,7 @@ namespace SchoolHealthManagement.Controllers
 
         }
 
-        private List<SelectListItem> GetProvincesByUser(string userName)
+        private List<SelectListItem> GetProvincesByUser(string userName, string selected)
         {
             // Here you are free to do whatever data access code you like
             // You can invoke direct SQL queries, stored procedures, whatever 
@@ -6119,7 +6235,9 @@ namespace SchoolHealthManagement.Controllers
                 {
                     MyList.Add(new SelectListItem { Text = mydataRow["ProvinceName"].ToString().Trim(), Value = Convert.ToString(mydataRow["ProvinceID"]) });
                 }
-
+                var data = MyList.Find(i => i.Value == selected);
+                if (data != null)
+                    data.Selected = true;
                 return MyList;
             }
         }
@@ -6153,11 +6271,11 @@ namespace SchoolHealthManagement.Controllers
 
         public JsonResult GetZonesByProvinceJson(int provinceID)
         {
-            var data =  GetZonesByUserProvice("Admin", provinceID);
+            var data =  GetZonesByUserProvice("Admin", provinceID, "");
             return Json(data);
         }
 
-        public List<SelectListItem> GetZonesByUserProvice(string Username, int provinceID)
+        public List<SelectListItem> GetZonesByUserProvice(string Username, int provinceID, string selected)
         {
             // Here you are free to do whatever data access code you like
             // You can invoke direct SQL queries, stored procedures, whatever 
@@ -6178,12 +6296,15 @@ namespace SchoolHealthManagement.Controllers
                     MyList.Add(new SelectListItem { Text = mydataRow["ZoneName"].ToString().Trim(), Value = Convert.ToString(mydataRow["ZoneID"]) });
                 }
 
+                var data = MyList.Find(i => i.Value == selected);
+                if (data != null)
+                    data.Selected = true;
                 return MyList;
             }
 
         }
 
-        public List<SelectListItem> GetDevisions()
+        public List<SelectListItem> GetDevisions(string selected)
         {
             // Here you are free to do whatever data access code you like
             // You can invoke direct SQL queries, stored procedures, whatever 
@@ -6204,6 +6325,9 @@ namespace SchoolHealthManagement.Controllers
                     MyList.Add(new SelectListItem { Text = mydataRow["DevisionName"].ToString().Trim(), Value = Convert.ToString(mydataRow["DevisionID"]) });
                 }
 
+                var data  = MyList.Find(i => i.Value == selected);
+                if (data != null)
+                    data.Selected = true;
                 return MyList;
             }
 
@@ -6264,6 +6388,162 @@ namespace SchoolHealthManagement.Controllers
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 return dt;
+            }
+
+        }
+
+        public ActionResult SupplierPaymentMOE()
+        {
+            SupplierPaymentMOE model = new SupplierPaymentMOE();
+            
+            //ViewBag.Provinces = GetProvinces();
+
+            //List<SelectListItem> Zones = GetZones();
+
+            //Zones.Clear();
+
+            //ViewBag.Zones = Zones;
+
+            //ViewBag.Years = GetYearsInt();
+
+            List<SupplierPaymentMOE> PaymentRequestList = getSavedSupplierPaymentMOEs();
+
+            //SupplierPaymentRequest paymentReq = PaymentRequestList.FirstOrDefault(p => p.Id == id);
+            //if (paymentReq == null)
+            //{
+            //    paymentReq = new SupplierPaymentRequest();
+            //}
+
+            //paymentReq.PaymentDetails = LoadSuppliersForPayment(paymentReq.ProvinceID, paymentReq.ZoneID, paymentReq.Year);
+            ViewBag.SupplierPaymentRequestList = PaymentRequestList;
+            ViewBag.Month = GetMonthsString();
+            ViewBag.Year = GetResentYears(model.Year.ToString());
+            ViewBag.Banks = GetBanks();
+            //ViewBag.ProvinceID = GetProvincesByUser("Admin");
+            //ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID);
+
+            model.PaymentSummaryTot = (from od in model.PaymentSummary select od.TotalAmount).Sum();
+
+            return View(model);
+        }
+
+        public JsonResult GETSupplierPaymentSummery(int Year, string Month)
+        {
+            // Here you are free to do whatever data access code you like
+            // You can invoke direct SQL queries, stored procedures, whatever 
+            List<SupplierPaymentSummary> lstPayment = new List<SupplierPaymentSummary>();
+            List<SelectListItem> lstProvinces = GetProvinces();
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "EXEC GET_SupplerPaymentSummery " + Year + ",'" + Month + "'";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SupplierPaymentSummary row = new SupplierPaymentSummary();
+                    string prov = Convert.ToString(dr["ProvinceID"]);
+                    row.Province = lstProvinces.Where(p => p.Value == prov).FirstOrDefault().Text;
+                    row.Year = Convert.ToInt32(dr["Year"]);
+                    row.Month = Convert.ToString(dr["Month"]);
+                    row.TotalAmount = Convert.ToDecimal(dr["ProvinceTotal"]);
+
+                    lstPayment.Add(row);
+                }
+            }
+
+            return Json(lstPayment);
+
+        }
+        private List<SelectListItem> GetMonthsString()
+        {
+            List<SelectListItem> MyList = new List<SelectListItem>();
+            MyList.Add(new SelectListItem { Text = "January", Value = "January" });
+            MyList.Add(new SelectListItem { Text = "February", Value = "February" });
+            MyList.Add(new SelectListItem { Text = "March", Value = "March" });
+            MyList.Add(new SelectListItem { Text = "April", Value = "April" });
+            MyList.Add(new SelectListItem { Text = "May", Value = "May" });
+            MyList.Add(new SelectListItem { Text = "June", Value = "June" });
+            MyList.Add(new SelectListItem { Text = "July", Value = "July" });
+            MyList.Add(new SelectListItem { Text = "August", Value = "August" });
+            MyList.Add(new SelectListItem { Text = "September", Value = "September" });
+            MyList.Add(new SelectListItem { Text = "October", Value = "October" });
+            MyList.Add(new SelectListItem { Text = "November", Value = "November" });
+            MyList.Add(new SelectListItem { Text = "December", Value = "December" });
+
+            return MyList;
+        }
+
+        private List<SupplierPaymentMOE> getSavedSupplierPaymentMOEs()
+        {
+            List<SupplierPaymentMOE> lstPayment = new List<SupplierPaymentMOE>();
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "SELECT  " +
+                                            "* " +
+                                   " FROM " +
+                                            " SupplierPayment_MOE_Header ";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SupplierPaymentMOE row = new SupplierPaymentMOE();
+                    row.PaymentNo = Convert.ToString(dr["PaymentID"]);
+                    row.PaymentDate = Convert.ToString(dr["PaymentDate"]);
+                    row.Year = Convert.ToInt32(dr["Year"]);
+                    row.Month = Convert.ToString(dr["Month"]);
+                    row.Amount = Convert.ToDecimal(dr["Amount"]);
+                    row.ChequeNumber = Convert.ToString(dr["ChequeNumber"]);
+                    row.ChequeDate = Convert.ToDateTime(dr["ChequeDate"]);
+
+                    lstPayment.Add(row);
+                }
+                return lstPayment;
+            }
+
+        }
+
+
+        public List<SupplierPaymentMOE> getSupplierPaymentDetails()
+        {
+            List<SupplierPaymentMOE> lstPayment = new List<SupplierPaymentMOE>();
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "SELECT  " +
+                                            "* " +
+                                   " FROM " +
+                                            " SupplierPayment_MOE_Header ";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SupplierPaymentMOE row = new SupplierPaymentMOE();
+                    row.PaymentNo = Convert.ToString(dr["PaymentID"]);
+                    row.PaymentDate = Convert.ToString(dr["PaymentDate"]);
+                    row.Year = Convert.ToInt32(dr["Year"]);
+                    row.Month = Convert.ToString(dr["Month"]);
+                    row.Amount = Convert.ToDecimal(dr["Amount"]);
+                    row.ChequeNumber = Convert.ToString(dr["ChequeNumber"]);
+                    row.ChequeDate = Convert.ToDateTime(dr["ChequeDate"]);
+
+                    lstPayment.Add(row);
+                }
+                return lstPayment;
             }
 
         }

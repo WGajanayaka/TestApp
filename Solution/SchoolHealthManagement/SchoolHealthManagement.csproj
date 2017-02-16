@@ -167,6 +167,7 @@
     <Compile Include="Models\SupplierInfoModel.cs" />
     <Compile Include="Models\SupplierPaymentDetail.cs" />
     <Compile Include="Models\SupplierPaymentRequest.cs" />
+    <Compile Include="Models\SupplierPaymentSummary.cs" />
     <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Models\WaterNHandwashModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -422,6 +423,9 @@
     <Content Include="Views\Home\MOE_Impress_Summary.cshtml" />
     <Content Include="Views\Home\Impress_Release.cshtml" />
     <Content Include="Views\Home\SupplierPayments.cshtml" />
+    <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />
