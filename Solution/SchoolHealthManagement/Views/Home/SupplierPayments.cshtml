@@ -229,7 +229,7 @@
                                     @Html.DisplayFor(modelItem => item.MAXAmount)
                                 </td>*@
                             <td>
-                                Rs: <input name="Amount[@item.CensorsID]" value="@item.Amount">
+                                Rs: <input name="Amount-@item.Supplier.ID" value="@item.Amount">
                             </td>
                         </tr>
                     }
