@@ -5,9 +5,42 @@
 
 <h2>Supplier Information - Province</h2>
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
-@using (Html.BeginForm("", "Home", FormMethod.Post))
+<script src="src/jquery.table2excel.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+         alert("calling function");
+         $('#btnExport').click(function () 
+         {
+             alert("ok");
+             
+
+       window.location.href = '/Home/Export2ExcelSupplier?ProvinceID=' + @ViewBag.ProvinceID;
+
+             //}
+
+
+
+         });
+     })
+ 
+</script>
+
+
+@using (Html.BeginForm("SummaryOfDataSchoolsInZone", "Home", FormMethod.Post))
 {
+    //Sanka
+
+    
+        <input type="button" id="btnExport" value="Export to Excel" />
+   
+
+    //End Sanka ---
+
         <table class="details_container_table">
            <tr>
                 <td style="width: 50%; text-align: right; vertical-align: top; padding-left: 17px;">
