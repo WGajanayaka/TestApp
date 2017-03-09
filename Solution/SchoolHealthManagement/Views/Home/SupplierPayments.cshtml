@@ -1,4 +1,5 @@
-﻿@model SchoolHealthManagement.Models.SupplierPaymentRequest
+﻿@using SchoolHealthManagement.Controllers
+@model SchoolHealthManagement.Models.SupplierPaymentRequest
 
 @{
     ViewBag.Title = "Supplier Payment Detail";
@@ -88,18 +89,25 @@
                     $("#Month").val('');
                     $("#SuppyerTable tbody tr").remove();
                 });
-
+                
+                $("#Status").change(function () {
+                    $("#Month").val('');
+                    $("#SuppyerTable tbody tr").remove();
+                });
                 $("#Month").change(function () {
                     $("#SuppyerTable tbody tr").remove();
-                    if ($("#Month").val() == "" || $("#ProvinceID").val() == "" || $("#ZoneID").val()=='' || $("#Month").val()=='')
+                    if ($("#Month").val() == "" || $("#ProvinceID").val() == "" || $("#ZoneID").val()=='' || $("#Month").val()=='' || $("#Status").val() == '')
                         return;
-                    $.ajax({
+
+                    var req  = @Html.Action("LoadSuppliersForPayment" ,"Home" ,new { ProvinceID = "province" , ZoneID = "zone" ,year = "year" ,Month ="month", PaymentReqNo = "payemnt" });
+                        req.replace("")
+                    @*$.ajax({
                         type: 'POST',
                         url: '@Url.Action("LoadSuppliersForPaymentJson")', // we are calling json method
 
                         dataType: 'json',
 
-                        data: { ProvinceID: $("#ProvinceID").val(), ZoneID: $("#ZoneID").val(), year: $("#Year").val(), Month: $("#Month").val(), PaymentReqNo: $("#Id").val() },
+                        data: { ProvinceID: $("#ProvinceID").val(), ZoneID: $("#ZoneID").val(), year: $("#Year").val(), Month: $("#Month").val(), PaymentReqNo: $("#Id").val() ,status : $("#Status").val() },
                         // here we are get value of selected country and passing same value as inputto json method GetStates.
 
                         success: function (payments) {
@@ -115,7 +123,7 @@
                         error: function (ex) {
                             alert('Failed to retrieve states.' + ex);
                         }
-                    });
+                    });*@
                 });
 
             });
@@ -172,7 +180,23 @@
                     <tr>
                         <td style="width: 20%; text-align: right">@Html.Label("Status") </td>
                         <td style="width: 30%">
-                            @Html.TextBoxFor(model => model.Status, new { @readonly = "readonly" })
+                            @Html.DropDownList("Status", new List<SelectListItem>()
+                            {new SelectListItem()
+                            {
+                                Text = "New",
+                                Value = "New"
+                            },
+                            new SelectListItem()
+                            {
+                                Text = "Saved",
+                                Value = "Saved"
+                            },
+                            new SelectListItem()
+                            {
+                                Text = "Approved",
+                                Value = "Approved"
+                            }
+                            } ,"Select Status")
                         </td>
 
                         <td style="width: 20%; text-align: right">@Html.Label("Total") </td>
@@ -229,8 +253,18 @@
                                     @Html.DisplayFor(modelItem => item.MAXAmount)
                                 </td>*@
                             <td>
-                                Rs: <input name="Amount-@item.Supplier.ID" value="@item.Amount">
+                                Rs: 
+                                @if (string.Equals(Model.Status, "Approved-Zone", StringComparison.InvariantCultureIgnoreCase))
+                                {
+                                    <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" disabled="disabled"/>
+                                }
+                                else
+                                {
+                                    <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" />
+                                }
                             </td>
+
+
                         </tr>
                     }
                 </tbody>
@@ -250,7 +284,7 @@
                 }
                 else
                 {
-                    <input name="Action" type="submit" value="Approvel" class="blue-btn" disabled />
+                    <input name="Action" type="submit" value="Approvel" class="blue-btn" disabled  style="background-color: grey"/>
                 }
             </td>
             <td style="padding-right:10px">
@@ -260,7 +294,7 @@
                 }
                 else
                 {
-                    <input name="Action" type="submit" value="Forworded" class="blue-btn" disabled />
+                    <input name="Action" type="submit" value="Forworded" class="blue-btn" disabled style="background-color: grey" />
                 }
             </td>
         </tr>

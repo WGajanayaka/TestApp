@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -52,8 +53,10 @@
       <HintPath>..\packages\EPPlus.4.0.5\lib\net20\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -129,8 +132,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="WHOAnthroPlus.BLL.PC">
-      <HintPath>C:\Program Files (x86)\WHO\WHO AnthroPlus\WHOAnthroPlus.BLL.PC.dll</HintPath>
+    <Reference Include="WHOAnthroPlus.BLL.PC, Version=1.0.4.21881, Culture=neutral, PublicKeyToken=316d92125cb992ee, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>DLL\WHOAnthroPlus.BLL.PC.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -272,10 +276,14 @@
     <Content Include="Content\webindex\lightbox\source\jquery.fancybox.css" />
     <Content Include="Content\webindex\lightbox\source\jquery.fancybox.js" />
     <Content Include="Content\webindex\lightbox\source\jquery.fancybox.pack.js" />
+    <Content Include="DLL\WHOAnthroPlus.BLL.PC.dll" />
     <Content Include="Global.asax" />
     <Content Include="ReportViewerWebForm.aspx" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
+    <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Views\Shared\ReportViewerASPX.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -423,9 +431,6 @@
     <Content Include="Views\Home\MOE_Impress_Summary.cshtml" />
     <Content Include="Views\Home\Impress_Release.cshtml" />
     <Content Include="Views\Home\SupplierPayments.cshtml" />
-    <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
-      <SubType>Code</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />

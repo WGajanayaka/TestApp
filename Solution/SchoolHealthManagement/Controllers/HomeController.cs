@@ -3773,10 +3773,15 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID, paymentReq.ZoneID);
             return View(paymentReq);
         }
-        public JsonResult LoadSuppliersForPaymentJson(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
+        public ActionResult LoadSuppliersForPaymentJson(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
         {
+            List<SupplierPaymentRequest> paymentRequestList = GetSupplierPaymentRequest();
+           var paymentReq =  paymentRequestList.SingleOrDefault(x => x.Id == PaymentReqNo); 
+
             var data = LoadSuppliersForPayment(ProvinceID, ZoneID, year, Month, PaymentReqNo);
-            return Json(data);
+
+            paymentReq?.PaymentDetails = data;
+            return View("SupplierInformation", paymentReq); 
         }
         public List<SupplierPaymentRequestDetail> LoadSuppliersForPayment(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
         {
@@ -3828,12 +3833,20 @@ namespace SchoolHealthManagement.Controllers
         {
             string action = FormData["Action"];
             SupplierPaymentRequest modal = MakeSupplierPaymentRequest(FormData);
-            if (action == "Save")
+            if (string.Equals("Save", action, StringComparison.InvariantCultureIgnoreCase))
             {
-                if (ValidatePaymentRequest(modal))
-                {
+                    modal.Status = "New";
                     SavePaymentRequest(modal);
-                }
+                
+            }else if (string.Equals("Approvel", action, StringComparison.InvariantCultureIgnoreCase))
+            {
+                modal.Status = "Approved-Zone";
+                SavePaymentRequest(modal);
+            }
+            else
+            {
+                modal.Status = "Forwarded";
+                SavePaymentRequest(modal);
             }
 
             modal.PaymentDetails = LoadSuppliersForPayment(modal.ProvinceID, modal.ZoneID, modal.Year, modal.Month, modal.Id);
@@ -3916,6 +3929,11 @@ namespace SchoolHealthManagement.Controllers
             using (var conn = new SqlConnection(strConnection))
             {
                 conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = string.Format("DELETE SupplierPaymentReq_Details WHERE PaymentReqNo = {0}",model.Id);
+                    cmd.ExecuteNonQuery();
+                }
                 foreach(var item in model.Details)
                 {
                     using (var cmd = conn.CreateCommand())
