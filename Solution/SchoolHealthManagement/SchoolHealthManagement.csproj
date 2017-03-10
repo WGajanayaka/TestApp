@@ -190,6 +190,7 @@
     <Content Include="Content\assets\bootstrap\js\npm.js" />
     <Content Include="Content\assets\css\animations.css" />
     <Content Include="Content\assets\css\form-elements.css" />
+    <Content Include="Content\assets\css\jquery-confirm.min.css" />
     <Content Include="Content\assets\css\style.css" />
     <Content Include="Content\assets\font-awesome\css\font-awesome.css" />
     <Content Include="Content\assets\font-awesome\css\font-awesome.min.css" />
@@ -217,6 +218,7 @@
     <Content Include="Content\assets\img\backgrounds\search.jpg" />
     <Content Include="Content\assets\js\jquery-1.11.1.js" />
     <Content Include="Content\assets\js\jquery-1.11.1.min.js" />
+    <Content Include="Content\assets\js\jquery-confirm.min.js" />
     <Content Include="Content\assets\js\jquery-migrate-1.0.0.js" />
     <Content Include="Content\assets\js\jquery-ui.js" />
     <Content Include="Content\assets\js\jquery-ui.min.js" />
@@ -431,6 +433,8 @@
     <Content Include="Views\Home\MOE_Impress_Summary.cshtml" />
     <Content Include="Views\Home\Impress_Release.cshtml" />
     <Content Include="Views\Home\SupplierPayments.cshtml" />
+    <Content Include="Views\Home\_SupplierDetailView.cshtml" />
+    <Content Include="Views\Home\_SupplierHeaderPaymentView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />

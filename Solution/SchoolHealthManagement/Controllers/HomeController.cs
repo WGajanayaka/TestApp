@@ -35,9 +35,15 @@ namespace SchoolHealthManagement.Controllers
     {
         //
         // GET: /Home/
+        private readonly string _strConnection;
 
+        public HomeController()
+        {
+            _strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+        }
         public ActionResult Home()
         {
+            
             //string ParentFolder = Server.MapPath("~/Circulars");
             //string[] SubDirs = Directory.GetDirectories(ParentFolder);
 
@@ -48,7 +54,7 @@ namespace SchoolHealthManagement.Controllers
             //}
 
             //ViewBag.SubDirs = subDirs;
-           
+
 
             return View();
 
@@ -3762,7 +3768,7 @@ namespace SchoolHealthManagement.Controllers
             {
                 paymentReq = new SupplierPaymentRequest();
                 paymentReq.RequestDate = DateTime.Now.ToString("yyyy/MM/dd");
-                paymentReq.Status = "New";
+                paymentReq.Status = "Open";
             }
 
             paymentReq.PaymentDetails = LoadSuppliersForPayment(paymentReq.ProvinceID, paymentReq.ZoneID, paymentReq.Year, paymentReq.Month, paymentReq.Id);
@@ -3773,16 +3779,49 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID, paymentReq.ZoneID);
             return View(paymentReq);
         }
-        public ActionResult LoadSuppliersForPaymentJson(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
+
+        public ActionResult LoadSuppliersForPaymentJson(int provinceId, string zoneId, int year, string month,
+            int paymentReqNo)
         {
-            List<SupplierPaymentRequest> paymentRequestList = GetSupplierPaymentRequest();
-           var paymentReq =  paymentRequestList.SingleOrDefault(x => x.Id == PaymentReqNo); 
+            if (paymentReqNo <= 0)
+            {
+               var paymentId = GetAlreadySupplierPaymentFor(provinceId, zoneId, year, month);
+                if (paymentId > 0)
+                {
+                    return Json(
+                        new {message = "Payment has been initiated, please follow with that.!", status = false , id = paymentId },
+                        JsonRequestBehavior.AllowGet);
+                }
+            }
+            var data = LoadSuppliersForPayment(provinceId, zoneId, year, month, paymentReqNo);
+            
+            return View("_SupplierDetailView", data);
 
-            var data = LoadSuppliersForPayment(ProvinceID, ZoneID, year, Month, PaymentReqNo);
-
-            paymentReq?.PaymentDetails = data;
-            return View("SupplierInformation", paymentReq); 
         }
+
+        private int GetAlreadySupplierPaymentFor(int provinceId, string zoneId, int year, string month)
+        {
+            using (var conn = new SqlConnection(_strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+                conn.Open();
+                cmd.CommandText =
+                    string.Format(
+                        "SELECT * FROM SupplierPaymentReq_Header WHERE ProvinceID ={0} AND ZoneID = {1} AND Year = {2} AND  Month = '{3}'"
+                        , provinceId, zoneId, year, month);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                var data = dt.Rows;
+
+                if (data != null && data.Count > 0)
+                {
+                    return Convert.ToInt32(data[0]["PaymentReqNo"]);
+                }
+                return 0;
+            }
+        }
+
         public List<SupplierPaymentRequestDetail> LoadSuppliersForPayment(int ProvinceID, string ZoneID, int year, string Month, int PaymentReqNo)
         {
             // Here you are free to do whatever data access code you like
@@ -3809,6 +3848,7 @@ namespace SchoolHealthManagement.Controllers
 
                     supInfo.CensorsID = mydataRow["CensorsID"].ToString().Trim();
                     supInfo.Supplier.ID = mydataRow["ID"].ToString().Trim();
+                    supInfo.PaymentHeaderStatus = Convert.ToString(mydataRow["Status"]);
                     supInfo.Supplier.SupplierName = mydataRow["SupplierName"].ToString().Trim();
                     supInfo.Supplier.BankAccountNo = mydataRow["BankAccountNo"].ToString().Trim();
                     supInfo.Supplier.BankName = mydataRow["BankName"].ToString().Trim();
@@ -3879,6 +3919,7 @@ namespace SchoolHealthManagement.Controllers
                     modal.Details.Add(Convert.ToInt16(arr[1]), Convert.ToDecimal(FormData[item]));
                 }
             }
+            modal.Total = (float)modal.Details.Values.Sum(c => Convert.ToDecimal(c)); 
             return modal;
         }
 
@@ -3926,31 +3967,37 @@ namespace SchoolHealthManagement.Controllers
         private bool SavePaymentRequestDetails(SupplierPaymentRequest model)
         {
             string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
-            using (var conn = new SqlConnection(strConnection))
+
+            if (model.Details != null && model.Details.Any())
             {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (var conn = new SqlConnection(strConnection))
                 {
-                    cmd.CommandText = string.Format("DELETE SupplierPaymentReq_Details WHERE PaymentReqNo = {0}",model.Id);
-                    cmd.ExecuteNonQuery();
-                }
-                foreach(var item in model.Details)
-                {
+                    conn.Open();
                     using (var cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = "Update_SupplierPaymentReq_Details";
-                        cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@PaymentReqNo", model.Id);
-                        cmd.Parameters.AddWithValue("@SupplyerID", item.Key);
-                        cmd.Parameters.AddWithValue("@Amount", item.Value);
-                        cmd.Parameters.AddWithValue("@Year", model.Year);
-                        cmd.Parameters.AddWithValue("@Month", model.Month);
-
+                        cmd.CommandText = string.Format("DELETE SupplierPaymentReq_Details WHERE PaymentReqNo = {0}", model.Id);
                         cmd.ExecuteNonQuery();
                     }
+                    foreach (var item in model.Details)
+                    {
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = "Update_SupplierPaymentReq_Details";
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@PaymentReqNo", model.Id);
+                            cmd.Parameters.AddWithValue("@SupplyerID", item.Key);
+                            cmd.Parameters.AddWithValue("@Amount", item.Value);
+                            cmd.Parameters.AddWithValue("@Year", model.Year);
+                            cmd.Parameters.AddWithValue("@Month", model.Month);
+
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    return true;
                 }
-                return true;
             }
+            return false;
+
         }
 
         private List<SelectListItem> GetMonths(string selected)

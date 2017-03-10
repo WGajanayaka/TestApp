@@ -1,0 +1,72 @@
+﻿@model IEnumerable<SchoolHealthManagement.Models.SupplierPaymentRequest>
+
+
+
+<h3>All Payment Details</h3>
+<table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Payment #")
+            </th>
+            <th>
+                @Html.DisplayName("RequestDate")
+            </th>
+            <th>
+                @Html.DisplayName("Province")
+            </th>
+            <th>
+                @Html.DisplayName("Zone")
+            </th>
+            <th>
+                @Html.DisplayName("Year")
+            </th>
+            <th>
+                @Html.DisplayName("Month")
+            </th>
+            <th>
+                @Html.DisplayName("Total")
+            </th>
+            <th>
+                @Html.DisplayName("Status")
+            </th>
+            <th>
+                @Html.DisplayName("Action")
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProvinceName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ZoneName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Year)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Month)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "SupplierPayments", new { id = @item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

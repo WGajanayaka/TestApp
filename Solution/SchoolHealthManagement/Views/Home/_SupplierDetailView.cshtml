@@ -1,0 +1,67 @@
+﻿@model IEnumerable<SchoolHealthManagement.Models.SupplierPaymentRequestDetail>
+
+
+<h3>Supplyer Payment Details</h3>
+<table class="datatable sortable" id="SuppyerTable" style="width: 100%; padding-top: 6px;">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Censors ID")
+            </th>
+            <th>
+                @Html.DisplayName("Supplier Name")
+            </th>
+            <th>
+                @Html.DisplayName("Bank Account No")
+            </th>
+            <th>
+                @Html.DisplayName("Bank")
+            </th>
+            <th>
+                @Html.DisplayName("Branch Name")
+            </th>
+            <th>
+                @Html.DisplayName("Amount")
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CensorsID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.BankAccountNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.BankName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BranchName)
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.MAXAmount)
+                    </td>*@
+                <td>
+                    Rs:
+                    @if (string.Equals(item.PaymentHeaderStatus, "Approved-Zone", StringComparison.InvariantCultureIgnoreCase) || string.Equals(item.PaymentHeaderStatus, "Forwarded", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" readonly="readonly" min="0"/>
+                    }
+                    else
+                    {
+                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" min="0" />
+                    }
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table><br/><br/>
+
