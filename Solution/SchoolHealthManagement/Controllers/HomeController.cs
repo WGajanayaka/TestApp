@@ -6667,5 +6667,14 @@ namespace SchoolHealthManagement.Controllers
             }
 
         }
+
+        public ActionResult SupplierPaymentForwardedPdfGenerate( int proviceId , string zoneId , int year , string month ,int payReqNo)
+        {
+            var data = LoadSuppliersForPayment(proviceId, zoneId, year, month, payReqNo);
+            return new Rotativa.PartialViewAsPdf("_SupplierPaymentPdfView", data)
+            {
+                FileName = string.Format("payement_details_{0}.pdf" ,DateTime.Now.ToString("d"))
+            };
+        }
     }
 }

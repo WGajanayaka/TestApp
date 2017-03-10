@@ -40,6 +40,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Antlr3.Runtime, Version=3.3.1.7705, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.1.0\lib\Antlr3.Runtime.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ClosedXML">
       <HintPath>..\packages\ClosedXML.0.76.0\lib\net40-client\ClosedXML.dll</HintPath>
     </Reference>
@@ -70,6 +74,10 @@
     <Reference Include="ReportViewerForMvc">
       <HintPath>..\packages\ReportViewerForMvc.1.0.1\lib\net45\ReportViewerForMvc.dll</HintPath>
     </Reference>
+    <Reference Include="Rotativa, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Rotativa.1.6.4\lib\net40\Rotativa.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -79,6 +87,10 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Optimization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.0.0\lib\net40\System.Web.Optimization.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -132,12 +144,21 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebActivatorEx.2.0\lib\net40\WebActivatorEx.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WebGrease, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebGrease.1.1.0\lib\WebGrease.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WHOAnthroPlus.BLL.PC, Version=1.0.4.21881, Culture=neutral, PublicKeyToken=316d92125cb992ee, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL\WHOAnthroPlus.BLL.PC.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\FontAwesomeBundleConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="DS4Rpts.Designer.cs">
@@ -281,6 +302,7 @@
     <Content Include="DLL\WHOAnthroPlus.BLL.PC.dll" />
     <Content Include="Global.asax" />
     <Content Include="ReportViewerWebForm.aspx" />
+    <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
     <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
@@ -300,7 +322,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -380,6 +401,7 @@
     <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.woff" />
     <Content Include="Content\webindex\fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="App_Browsers\qt.browser" />
     <None Include="DS4Rpts.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>DS4Rpts.Designer.cs</LastGenOutput>
@@ -435,6 +457,7 @@
     <Content Include="Views\Home\SupplierPayments.cshtml" />
     <Content Include="Views\Home\_SupplierDetailView.cshtml" />
     <Content Include="Views\Home\_SupplierHeaderPaymentView.cshtml" />
+    <Content Include="Views\Home\_SupplierPaymentPdfView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />

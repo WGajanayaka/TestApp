@@ -119,11 +119,15 @@
                         <td style="padding-right: 10px">
                             @if (Model.Status == "Open" || Model.Status == "New")
                             {
-                                <input name="Action" type="submit" value="Save" class="blue-btn"/>
+                                <button name="Action" type="submit" value="Save" class="blue-btn">
+                                    <i class="fa fa-save"> Save</i>
+                                </button>
                             }
                             else
                             {
-                                <input name="Action" type="submit" value="Save" class="blue-btn" disabled style="background-color: grey"/>
+                                <button name="Action" type="submit" value="Save" class="blue-btn" disabled style="background-color: grey">
+                                    <i class="fa fa-save"> Save</i>
+                                </button>
                             }
 
                         </td>
@@ -131,34 +135,44 @@
                         <td style="padding-right: 10px">
                             @if (Model.Status == "New")
                             {
-                                <input name="Action" type="submit" value="Approvel" class="blue-btn"/>
+                                <button name="Action" type="submit" value="Approvel" class="blue-btn">
+                                    <i class="fa fa-thumbs-up"> Approve</i>
+                                </button>
                             }
                             else
                             {
-                                <input name="Action" type="submit" value="Approvel" class="blue-btn" disabled style="background-color: grey"/>
+                                <button name="Action" type="submit" value="Approvel" class="blue-btn" disabled style="background-color: grey">
+                                    <i class="fa fa-thumbs-up"> Approve</i>
+                                </button>
                             }
                         </td>
                         <td style="padding-right: 10px">
                             @if (Model.Status == "Approved-Zone")
                             {
-                                <input name="Action" type="submit" value="Forwarded" class="blue-btn"/>
+                                <button name="Action" type="submit" value="Forwarded" class="blue-btn">
+                                    <i class="fa fa-forward"> Forward</i>
+                                </button>
                             }
                             else
                             {
-                                <input name="Action" type="submit" value="Forwarded" class="blue-btn" disabled style="background-color: grey"/>
+                                <button name="Action" type="submit" value="Forwarded" class="blue-btn" disabled style="background-color: grey">
+                                    <i class="fa fa-forward"> Forward</i>
+                                </button>
                             }
                         </td>
                         <td style="padding-right: 10px">
                         @if (Model.Status == "Forwarded")
                         {
-
-                            <input name="Action" type="submit" value="Print" class="blue-btn"/>
+                            <button name="Action" type="submit" value="Print" class="blue-btn" id="pdf_btn">
+                                <i class="fa fa-file-pdf-o"> Print</i>
+                            </button>
 
                         }
                         else
                         {
-
-                            <input name="Action" type="submit" value="Print" class="blue-btn" style="background-color: grey" disabled="disabled"/>
+                            <button name="Action" type="submit" value="Print" class="blue-btn" style="background-color: grey" disabled="disabled">
+                                <i class="fa fa-file-pdf-o"> Print</i>
+                            </button>
 
                         }
 
@@ -184,105 +198,128 @@
     </div>
 </div>
 <script type="text/javascript">
-    
-            $(document).ready(function () {
-                //Dropdownlist Selectedchange event
-                debugger;
-                if ($("#suplierPayTable").children('table').length >0) {
-                    $("#btn_div").removeClass('hidden');
-                }
-                $("#ProvinceID").change(function () {
-                    $("#ZoneID").empty();
-                    $("#ZoneID").append('<option value="">Select Zone</option>');
-                    $("#Month").val('');
-                    $("#SuppyerTable tbody tr").remove();
-                    $.ajax({
-                        type: 'POST',
-                        url: '@Url.Action("GetZonesByProvinceJson")', // we are calling json method
 
-                        dataType: 'json',
+    function generatePdf() {
+        var link = "@Url.Action("SupplierPaymentForwardedPdfGenerate", "Home")?";
+       
+        var year = $("#Year").val();
+        var provice = $("#ProvinceID").val();
+        var zone = $("#ZoneID").val();
+        var month = $("#Month").val();
+        var paymenNo = $("#Id").val();
+        if (year && provice && zone && month) {
+            link = link + "proviceId=" + provice + "&&zoneId=" + zone + "&&year=" + year + "&&month=" + month + "&&payReqNo=" + paymenNo;
+            location.href = link;
+            return false;
+        } else {
+            $.alert({
+                title: 'Alert!',
+                icon: 'fa fa-warning',
+                content: 'Required data is not matching, please re-try in few minutes!'
+            });
+        }
+        return false;
+    }
 
-                        data: { ProvinceID: $("#ProvinceID").val() },
-                        // here we are get value of selected country and passing same value as inputto json method GetStates.
+    $(document).ready(function() {
+        //Dropdownlist Selectedchange event
+        $("#pdf_btn").on("click", generatePdf);
 
-                        success: function (zones) {
-                            // branches contains the JSON formatted list
-                            // of branches passed from the controller
-                            $.each(zones, function (i, zone) {
-                                $("#ZoneID").append('<option value="' + zone.Value + '">' +
-                                     zone.Text + '</option>');
-                                // here we are adding option for States
+        if ($("#suplierPayTable").children('table').length > 0) {
+            $("#btn_div").removeClass('hidden');
+        }
+        $("#ProvinceID").change(function() {
+            $("#ZoneID").empty();
+            $("#ZoneID").append('<option value="">Select Zone</option>');
+            $("#Month").val('');
+            $("#SuppyerTable tbody tr").remove();
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetZonesByProvinceJson")', // we are calling json method
 
-                            });
-                        },
-                        error: function (ex) {
-                            alert('Failed to retrieve states.' + ex);
-                        }
+                dataType: 'json',
+
+                data: { ProvinceID: $("#ProvinceID").val() },
+                // here we are get value of selected country and passing same value as inputto json method GetStates.
+
+                success: function(zones) {
+                    // branches contains the JSON formatted list
+                    // of branches passed from the controller
+                    $.each(zones, function(i, zone) {
+                        $("#ZoneID").append('<option value="' + zone.Value + '">' +
+                            zone.Text + '</option>');
+                        // here we are adding option for States
+
                     });
-                    return false;
-                });
+                },
+                error: function(ex) {
+                    alert('Failed to retrieve states.' + ex);
+                }
+            });
+            return false;
+        });
 
-                $("#Year").change(function () {
-                    $("#Month").val('');
-                    $("#SuppyerTable tbody tr").remove();
-                });
+        $("#Year").change(function() {
+            $("#Month").val('');
+            $("#SuppyerTable tbody tr").remove();
+        });
 
-                $("#ZoneID").change(function () {
-                    $("#Month").val('');
-                    $("#SuppyerTable tbody tr").remove();
-                });
+        $("#ZoneID").change(function() {
+            $("#Month").val('');
+            $("#SuppyerTable tbody tr").remove();
+        });
 
-                $("#Status").change(function () {
-                    $("#Month").val('');
-                    $("#SuppyerTable tbody tr").remove();
-                });
-                $("#Month").change(function () {
-                    $("#SuppyerTable tbody tr").remove();
-                    debugger;
-                    if ($("#Month").val() === "" || $("#ProvinceID").val() === "" || $("#ZoneID").val() ==='' || $("#Month").val() === '') {
-                        return;
-                    }
-                    @*debugger;
+        $("#Status").change(function() {
+            $("#Month").val('');
+            $("#SuppyerTable tbody tr").remove();
+        });
+        $("#Month").change(function() {
+            $("#SuppyerTable tbody tr").remove();
+            debugger;
+            if ($("#Year").val() === "" || $("#ProvinceID").val() === "" || $("#ZoneID").val() === '' || $("#Month").val() === '') {
+                return;
+            }
+            @*debugger;
                     var req  = "@Url.Action("LoadSuppliersForPaymentJson", "Home")";
                     req = req + "?ProvinceID="+ $("#ProvinceID").val() +"&ZoneID="+$("#ZoneID").val() + "&year=" + $("#Year").val() +
                         "&Month="+ $("#Month").val() + "&PaymentReqNo="+ $("#Id").val();
 
                     location.href = req;*@
-                    $.ajax({
-                        type: 'POST',
-                        url: '@Url.Action("LoadSuppliersForPaymentJson")', // we are calling json method
-                        data: { provinceID: $("#ProvinceID").val(), zoneID: $("#ZoneID").val(), year: $("#Year").val(), month: $("#Month").val(), paymentReqNo: $("#Id").val(), status: $("#Status").val() },
-                        // here we are get value of selected country and passing same value as inputto json method GetStates.
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("LoadSuppliersForPaymentJson")', // we are calling json method
+                data: { provinceID: $("#ProvinceID").val(), zoneID: $("#ZoneID").val(), year: $("#Year").val(), month: $("#Month").val(), paymentReqNo: $("#Id").val(), status: $("#Status").val() },
+                // here we are get value of selected country and passing same value as inputto json method GetStates.
 
-                        success: function(payments) {
-                            // branches contains the JSON formatted list
-                            // of branches passed from the controller
-                            //$.each(payments, function (i, payment) {
-                            //    console.log(payment);
-                            //    $("#SuppyerTable tbody").append('<tr><td>' + payment.CensorsID + '</td><td>' + payment.Supplier.SupplierName + '</td><td>' + payment.Supplier.BankAccountNo + '</td><td>' + payment.Supplier.BankName + '</td><td>' + payment.BranchName + '</td><td><input name="Amount-' + payment.Supplier.ID + '" value = "' + payment.Amount + '"></td></tr>');
-                            //    // here we are adding option for States
+                success: function(payments) {
+                    // branches contains the JSON formatted list
+                    // of branches passed from the controller
+                    //$.each(payments, function (i, payment) {
+                    //    console.log(payment);
+                    //    $("#SuppyerTable tbody").append('<tr><td>' + payment.CensorsID + '</td><td>' + payment.Supplier.SupplierName + '</td><td>' + payment.Supplier.BankAccountNo + '</td><td>' + payment.Supplier.BankName + '</td><td>' + payment.BranchName + '</td><td><input name="Amount-' + payment.Supplier.ID + '" value = "' + payment.Amount + '"></td></tr>');
+                    //    // here we are adding option for States
 
-                            //});
-                            if (payments.status === undefined) {
-                                $("#suplierPayTable").empty().append(payments);
-                                $("#btn_div").removeClass('hidden');
-                                return;
-                            }
-                            if (payments.status != undefined && !payments.status) {
-                                $.confirm({
-                                    icon: 'fa fa-spinner fa-spin',
-                                    title: 'Warning',
-                                    content: payments.message,
-                                    type: 'orange',
-                                    animationSpeed: 1200,
-                                    animation: 'opacity',
-                                    typeAnimated: true,
-                                    buttons: {
-                                        tryAgain: {
-                                            text: 'Re-direct',
-                                            btnClass: 'btn-orange',
-                                            action: function () {
-                                                var redirectUrl = "@Url.Action("SupplierPayments","Home")/";
+                    //});
+                    if (payments.status === undefined) {
+                        $("#suplierPayTable").empty().append(payments);
+                        $("#btn_div").removeClass('hidden');
+                        return;
+                    }
+                    if (payments.status != undefined && !payments.status) {
+                        $.confirm({
+                            icon: 'fa fa-spinner fa-spin',
+                            title: 'Warning',
+                            content: payments.message,
+                            type: 'orange',
+                            animationSpeed: 1200,
+                            animation: 'opacity',
+                            typeAnimated: true,
+                            buttons: {
+                                tryAgain: {
+                                    text: 'Re-direct',
+                                    btnClass: 'btn-orange',
+                                    action: function() {
+                                        var redirectUrl = "@Url.Action("SupplierPayments", "Home")/";
                                                 redirectUrl = redirectUrl + payments.id;
                                                 location.href = redirectUrl;
                                             }
