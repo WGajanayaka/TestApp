@@ -3801,19 +3801,24 @@ namespace SchoolHealthManagement.Controllers
 
         private int GetAlreadySupplierPaymentFor(int provinceId, string zoneId, int year, string month)
         {
+            ;
             using (var conn = new SqlConnection(_strConnection))
-            using (var cmd = conn.CreateCommand())
             {
+                var cmd = conn.CreateCommand();
                 conn.Open();
-                cmd.CommandText =
-                    string.Format(
-                        "SELECT * FROM SupplierPaymentReq_Header WHERE ProvinceID ={0} AND ZoneID = {1} AND Year = {2} AND  Month = '{3}' AND Status = {4}"
-                        , provinceId, zoneId, year, month ,"New");
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                var data = dt.Rows;
+                cmd.CommandText = string.Format("SELECT PaymentReqNo FROM SupplierPaymentReq_Header WHERE " +
+                                                "ProvinceID =@provinceId AND ZoneID = @zoneId AND Year = @year AND  Month = @month AND Status = @status");
+                cmd.CommandType =CommandType.Text;
+                cmd.Parameters.AddWithValue("@provinceId", provinceId);
+                cmd.Parameters.AddWithValue("@zoneId", zoneId);
+                cmd.Parameters.AddWithValue("@year", year);
+                cmd.Parameters.AddWithValue("@month", month);
+                cmd.Parameters.AddWithValue("@status", "New");
 
+                var dataReader  = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+                dt.Load(dataReader);
+                var data = dt.Rows;
                 if (data != null && data.Count > 0)
                 {
                     return Convert.ToInt32(data[0]["PaymentReqNo"]);
@@ -4063,6 +4068,7 @@ namespace SchoolHealthManagement.Controllers
                     supInfo.ZoneID = mydataRow["ZoneID"].ToString().Trim();
                     supInfo.ZoneName = mydataRow["ZoneName"].ToString().Trim();
                     supInfo.Year = Convert.ToInt16(mydataRow["Year"]);
+                    supInfo.Total = Convert.ToInt16(mydataRow["TotalAmount"]);
                     supInfo.Month = mydataRow["Month"].ToString().Trim();
                     supInfo.CreateBy = mydataRow["CreateUser"].ToString().Trim();
                     if(mydataRow["CreateDate"]!=DBNull.Value)

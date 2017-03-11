@@ -6,22 +6,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayName("Censors ID")
+                Censors ID
             </th>
             <th>
-                @Html.DisplayName("Supplier Name")
+                Supplier Name 
             </th>
             <th>
-                @Html.DisplayName("Bank Account No")
+                Bank Account No 
             </th>
             <th>
-                @Html.DisplayName("Bank")
+                Bank 
             </th>
             <th>
-                @Html.DisplayName("Branch Name")
+                Branch Name 
             </th>
             <th>
-                @Html.DisplayName("Amount")
+                Amount (Rs:)
             </th>
         </tr>
     </thead>
@@ -30,25 +30,22 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CensorsID)
+                    @item.CensorsID
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Supplier.SupplierName)
+                    @item.Supplier.SupplierName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Supplier.BankAccountNo)
+                    @item.Supplier.BankAccountNo
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Supplier.BankName)
+                    @item.Supplier.BankName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.BranchName)
+                    @item.BranchName
                 </td>
-                @*<td>
-                        @Html.DisplayFor(modelItem => item.MAXAmount)
-                    </td>*@
                 <td>
-                    Rs:
+                    
                     @if (string.Equals(item.PaymentHeaderStatus, "Approved-Zone", StringComparison.InvariantCultureIgnoreCase) || string.Equals(item.PaymentHeaderStatus, "Forwarded", StringComparison.InvariantCultureIgnoreCase))
                     {
                         <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" readonly="readonly" min="0"/>

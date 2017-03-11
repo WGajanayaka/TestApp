@@ -7,31 +7,31 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayName("Payment #")
+                Payment
             </th>
             <th>
-                @Html.DisplayName("RequestDate")
+                RequestDate
             </th>
             <th>
-                @Html.DisplayName("Province")
+                Province
             </th>
             <th>
-                @Html.DisplayName("Zone")
+                Zone
             </th>
             <th>
-                @Html.DisplayName("Year")
+                Year
             </th>
             <th>
-                @Html.DisplayName("Month")
+                Month
             </th>
             <th>
-                @Html.DisplayName("Total")
+                Total
             </th>
             <th>
-                @Html.DisplayName("Status")
+                Status
             </th>
             <th>
-                @Html.DisplayName("Action")
+                Action
             </th>
         </tr>
     </thead>
@@ -40,31 +40,31 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Id)
+                   @item.Id
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RequestDate)
+                   @item.RequestDate
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ProvinceName)
+                   @item.ProvinceName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ZoneName)
+                   @item.ZoneName
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Year)
+                   @item.Year
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Month)
+                   @item.Month
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Total)
+                   @item.Total
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Status)
+                   @item.Status
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "SupplierPayments", new { id = @item.Id })
+                    <a href="@Url.Action("SupplierPayments", "Home", new { id = @item.Id })" title="Edit"><i class="fa fa-edit"></i></a>
                 </td>
             </tr>
         }
