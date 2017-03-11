@@ -3807,8 +3807,8 @@ namespace SchoolHealthManagement.Controllers
                 conn.Open();
                 cmd.CommandText =
                     string.Format(
-                        "SELECT * FROM SupplierPaymentReq_Header WHERE ProvinceID ={0} AND ZoneID = {1} AND Year = {2} AND  Month = '{3}'"
-                        , provinceId, zoneId, year, month);
+                        "SELECT * FROM SupplierPaymentReq_Header WHERE ProvinceID ={0} AND ZoneID = {1} AND Year = {2} AND  Month = '{3}' AND Status = {4}"
+                        , provinceId, zoneId, year, month ,"New");
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
