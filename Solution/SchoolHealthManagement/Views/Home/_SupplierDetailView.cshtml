@@ -1,0 +1,64 @@
+﻿@model IEnumerable<SchoolHealthManagement.Models.SupplierPaymentRequestDetail>
+
+
+<h3>Supplyer Payment Details</h3>
+<table class="datatable sortable" id="SuppyerTable" style="width: 100%; padding-top: 6px;">
+    <thead>
+        <tr>
+            <th>
+                Censors ID
+            </th>
+            <th>
+                Supplier Name 
+            </th>
+            <th>
+                Bank Account No 
+            </th>
+            <th>
+                Bank 
+            </th>
+            <th>
+                Branch Name 
+            </th>
+            <th>
+                Amount (Rs:)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.CensorsID
+                </td>
+                <td>
+                    @item.Supplier.SupplierName
+                </td>
+                <td>
+                    @item.Supplier.BankAccountNo
+                </td>
+                <td>
+                    @item.Supplier.BankName
+                </td>
+                <td>
+                    @item.BranchName
+                </td>
+                <td>
+                    
+                    @if (string.Equals(item.PaymentHeaderStatus, "Approved-Zone", StringComparison.InvariantCultureIgnoreCase) || string.Equals(item.PaymentHeaderStatus, "Forwarded", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" readonly="readonly" min="0"/>
+                    }
+                    else
+                    {
+                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" min="0" />
+                    }
+                </td>
+
+
+            </tr>
+        }
+    </tbody>
+</table><br/><br/>
+

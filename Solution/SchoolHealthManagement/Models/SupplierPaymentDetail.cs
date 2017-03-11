@@ -16,5 +16,8 @@ namespace SchoolHealthManagement.Models
         public Decimal MAXAmount { get; set; }
 
         public string BranchName { get; set; }
+
+        public string PaymentHeaderStatus { get; set; }
+
     }
 }

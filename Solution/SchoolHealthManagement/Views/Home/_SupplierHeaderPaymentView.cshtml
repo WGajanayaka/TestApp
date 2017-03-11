@@ -1,0 +1,72 @@
+﻿@model IEnumerable<SchoolHealthManagement.Models.SupplierPaymentRequest>
+
+
+
+<h3>All Payment Details</h3>
+<table class="datatable sortable" style="width: 100%; padding-top: 6px;">
+    <thead>
+        <tr>
+            <th>
+                Payment
+            </th>
+            <th>
+                RequestDate
+            </th>
+            <th>
+                Province
+            </th>
+            <th>
+                Zone
+            </th>
+            <th>
+                Year
+            </th>
+            <th>
+                Month
+            </th>
+            <th>
+                Total
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                   @item.Id
+                </td>
+                <td>
+                   @item.RequestDate
+                </td>
+                <td>
+                   @item.ProvinceName
+                </td>
+                <td>
+                   @item.ZoneName
+                </td>
+                <td>
+                   @item.Year
+                </td>
+                <td>
+                   @item.Month
+                </td>
+                <td>
+                   @item.Total
+                </td>
+                <td>
+                   @item.Status
+                </td>
+                <td>
+                    <a href="@Url.Action("SupplierPayments", "Home", new { id = @item.Id })" title="Edit"><i class="fa fa-edit"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
