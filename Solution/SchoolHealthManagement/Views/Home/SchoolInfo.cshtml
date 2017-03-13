@@ -670,6 +670,7 @@
                             <li><a id="scbi" href="/Home/BMIInformation?SchoolID=@ViewBag.SchoolID">BMI Information</a></li>
                             <li><a id="ssd" href="/Home/SanitoryConstruction?SchoolID=@ViewBag.SchoolID">Sanitory Development Facility</a></li>
                             <li><a id="shpp" href="/Home/SchoolHealthPromotionProgramme?SchoolID=@ViewBag.SchoolID">School Health Promotion Programme</a></li>
+                           @* <li><a id="shpp" href="/Home/YearAndProcess?SchoolID=@ViewBag.SchoolID"> Year And process </a></li>*@
 
 @*                            <li><a id="scai" href="/Home/SchoolAttendance?SchoolID=@ViewBag.SchoolID&CensusID=@Model.SchoolID&SchoolName=@Model.SchoolName">School Attendance</a></li>*@
 
@@ -1113,6 +1114,50 @@
             var vSchiID = $("#SchID").val();
             //alert(vSchiID);
             var urlS = "/Home/SchoolHealthPromotionProgramme?SchoolID=" + vSchiID;
+            window.location.href = urlS;
+        }
+    });
+
+    $("#shpp").click(function (e) {
+        var targetUrl = $(this).attr("href");
+        //var ss = $("#CensID").val();
+        //alear(ss);
+        //if (ss = null) {
+
+
+        e.preventDefault();
+
+
+        // var ss = $("#CensID").val();
+        //alear(ss);
+        if ($("#SchID").val().length == 0) {
+            var targetUrl = $(this).attr("href");
+
+            $("#dialog2").dialog({
+                buttons: {
+                    //"Confirm": function () {
+                    //    window.location.href = targetUrl;
+                    //},
+                    "Ok": function () {
+
+                        $(this).dialog("close");
+                        //$("#dialog2").dialog("close");
+
+                    }
+                }
+            });
+
+            //else {
+            //    window.location.href = targetUrl;
+
+            $("#dialog2").dialog("open");
+        }
+
+        else {
+
+            var vSchiID = $("#SchID").val();
+            //alert(vSchiID);
+            var urlS = "/Home/?SchoolID=" + vSchiID;
             window.location.href = urlS;
         }
     });

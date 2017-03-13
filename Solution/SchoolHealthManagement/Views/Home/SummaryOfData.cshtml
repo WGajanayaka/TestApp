@@ -318,9 +318,14 @@
                                     @Html.Raw(@iTotal.ToString("#,##0"))
                                 </td>
                                 
-                                 <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                 @*<td class="tb-val-right" colspan="3" style="font-weight:bold">
                                     @Html.Raw((iProvCount == 0?"":Decimal.Divide(iAverageStudentCount, iProvCount).ToString("#0.00")))
+                                </td>*@
+
+                                <td class="tb-val-right" colspan="3" style="font-weight:bold">
+                                    @Html.Raw(" ")
                                 </td>
+
                                 <td colspan="3"></td>
                                 <td class="tb-val-right" colspan="3" style="font-weight:bold">
                                     @Html.Raw(@iTotalSupCount.ToString("#,##0"))

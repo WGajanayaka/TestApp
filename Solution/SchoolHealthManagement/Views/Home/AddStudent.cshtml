@@ -68,8 +68,6 @@
             });
 
 
-
-
             function SetGender(_SchoolId) {
 
 
@@ -109,7 +107,6 @@
                 $("#NIC").val(_NIC);
                 $("#ContactNo").val(_ContactNo);
 
-
                 $("#AddmisionNo").attr("readonly", "readonly");
                 //alert(_SuppName);
 
@@ -118,6 +115,26 @@
         </script>
         <script type="text/javascript">
             $(function () {
+                //ADDED TO GET THE YEAR WASANTHA
+
+                $('#Export_info').on('click', function () {
+
+                    var vschoolid = $('#SchoolID').val();
+                    var vGrade = $('#Grade').val();
+                    var vTrimester = $('#Trimester').val();
+                    if (vGrade != '' && vTrimester != '') {
+
+                        window.location.href = '/Home/Export2Excelsidyear?iSchoolID=' + $("#SchoolID").val() + '&Year=' + $("#Year").val();;
+
+                    }
+
+                });
+                $("#Year").change(function(){
+
+                    window.location.href = '/Home/AddStudent?iSchoolID=' + $("#SchoolID").val() + '&Year=' + $("#Year").val();
+                })
+
+
                 var new_dialog = function (type, row) {
                     var dlg = $("#dialog-form").clone();
 
@@ -144,6 +161,14 @@
                     function get_data() {
 
                     }
+
+                    //________
+
+
+
+                    //_______
+
+
                     function save_data() {
 
                         var url = "/Home/DeleteStudent/";
@@ -185,7 +210,8 @@
 
                     <tr>
                         <td style="width: 12%; text-align: right;">Year</td>
-                        <td style="width: 38%;">@Html.TextBox("Year", @DateTime.Today.Year, new { disabled = "true" })</td>
+                        @*<td style="width: 38%;">@Html.TextBox("Year", @DateTime.Today.Year, new { disabled = "true" })</td>*@
+                        <td style="width: 38%;">@Html.DropDownList("Year", (List<SelectListItem>)ViewBag.Years, "Select Year")</td>
                         <td style="width: 12%; text-align: right;">Censors ID</td>
                         <td style="width: 38%;">@Html.TextBox("CensorsID", (string)ViewBag.CensorsID, new { disabled = "true" })
                     </tr>
@@ -196,7 +222,7 @@
                         <td style="width: 38%;">
                             @*@Html.DropDownList("SchoolID", (List<SelectListItem>)ViewBag.Schools, "Select School",  new { disabled = "true" })*@
                             @Html.TextBox("School", (String)ViewBag.School, new { disabled = "true" })
-                            @Html.DropDownListFor(m => m.SchoolID, (List<SelectListItem>)ViewBag.Schools, "Select School", new { style = "display:none" })
+                            @Html.HiddenFor(m => m.SchoolID);
                             @Html.ValidationMessageFor(m => m.SchoolID)
                         </td>
                         <td style="width: 12%; text-align: right;">Addmision No</td>
@@ -224,10 +250,7 @@
 
                     <tr>
                         <td style="width: 12%; text-align: right;">Gender</td>
-                        <td style="width: 38%;">@Html.DropDownList("Gender", new List<SelectListItem>{
-                new SelectListItem{Text="Male", Value="Male"},
-                new SelectListItem{Text="Female", Value="Female"}            
-                }, "Select Gender")
+                        <td style="width: 38%;">@Html.DropDownList("Gender", (List<SelectListItem>)ViewBag.Gender, "Select Gender")
                             @Html.ValidationMessageFor(m => m.Gender)</td>
                         <td style="width: 12%; text-align: right;">Parent Name</td>
                         <td style="width: 38%;">@Html.TextBoxFor(m => m.ParentName)
@@ -262,16 +285,16 @@
                             <input type="button" name="button" id="delete_student" value="Delete Student" class="blue-btn " style="text-align: center;" />
                         </td>
 
+                        <td style="width: 10%; text-align: right;"></td>
+                        <td style="width: 60%;">
+                            <input type="button" name="button" id="Export_info" value="Exp Std Info" class="blue-btn " style="text-align: center;" />
+
+                        </td>
+
 
                 </tbody>
             </table>
        
-     
-   
-
-
-
-    
     
 }
 

@@ -390,6 +390,16 @@ border: medium none;
 }
 .blue-btn:hover {background-color:#094B75;
 }
+
+blue-btnNEW {color: #FFF;
+font-size: 13px;
+background-color: #0070BA;
+width: 120px;
+border: medium none;
+
+}
+.blue-btnNEW:hover {background-color:#094B75;
+}
    .about-us-wrp{text-align:justify}
    .about-us-wrp p{color: #313131;
     font-size: 15px;

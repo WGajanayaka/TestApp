@@ -20,6 +20,8 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,6 +31,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +40,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClosedXML">
@@ -69,17 +74,15 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -129,6 +132,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WHOAnthroPlus.BLL.PC">
       <HintPath>C:\Program Files (x86)\WHO\WHO AnthroPlus\WHOAnthroPlus.BLL.PC.dll</HintPath>
     </Reference>
@@ -136,6 +140,7 @@
   <ItemGroup>
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\YearEndProcessController.cs" />
     <Compile Include="DS4Rpts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -170,6 +175,7 @@
     <Compile Include="Models\SupplierPaymentSummary.cs" />
     <Compile Include="Models\UserProfileModel.cs" />
     <Compile Include="Models\WaterNHandwashModel.cs" />
+    <Compile Include="Models\ZonalSchoolStudentSummery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -378,7 +384,9 @@
     <Content Include="DS4Rpts.xss">
       <DependentUpon>DS4Rpts.xsd</DependentUpon>
     </Content>
-    <None Include="Properties\PublishProfiles\Vonitro.pubxml" />
+    <None Include="Properties\PublishProfiles\Vonitro.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Views\Home\AboutUs.cshtml" />
     <Content Include="Views\Login\ChangePassword.cshtml" />
     <Content Include="Views\Home\SearchSchoolInfo.cshtml" />
@@ -426,6 +434,8 @@
     <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="Views\Home\YearendProcess.cshtml" />
+    <Content Include="Views\Home\ZonalSchoolStudentSummery.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />
