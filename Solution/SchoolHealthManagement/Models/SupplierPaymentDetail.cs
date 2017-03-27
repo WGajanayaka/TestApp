@@ -19,5 +19,74 @@ namespace SchoolHealthManagement.Models
 
         public string PaymentHeaderStatus { get; set; }
 
+        public string SupplierName { get; set; }
+
+        public string BankAccountNo { get; set; }
+
+        public string BankName { get; set; }
+
+        public string BankCode { get; set; }
+
+        public string ZoneName { get; set; }
+
+        public string ProvinceName { get; set; }
+
+        public decimal SupplierPaymentReqHeaderId { get; set; }  
+        
+    }
+
+    public class SupplierPaymentRequestDetailMoe
+    {
+        public decimal PaymentId { get; set; } 
+        public string CensorsId  { get; set; }
+        public string SupplierName { get; set; }
+        public int SupplierId { get; set; } 
+        public string BankAccountNo { get; set; }
+        public string BankName { get; set; }
+        public string BranchName { get; set; } 
+        public string BankCode { get; set; }
+        public decimal Amount { get; set; }
+        public int Year { get; set; } 
+        public string Month { get; set; }
+        public decimal SupplierPaymentReqHeaderId { get; set; } 
+    }
+    public class SupplierDetailPayModel
+    {
+        public List<SupplierDetailProvinceLevel> Detail { get; set; }
+        public decimal FullTotal { get; set; }
+
+        public SupplierDetailPayModel()
+        {
+            Detail = new List<SupplierDetailProvinceLevel>();
+            
+        }
+    }
+
+    public class SupplierDetailProvinceLevel 
+    {
+        public string ProvinceName { get; set; }
+        public decimal ProvincialTotal { get; set; }
+
+        public List<SupplierDetailZoneLevel> SupplierDetailZoneLevel { get; set; }
+
+        public SupplierDetailProvinceLevel()
+        {
+
+            SupplierDetailZoneLevel = new List<SupplierDetailZoneLevel>();
+        }
+    }
+
+    public class SupplierDetailZoneLevel
+    {
+        public string ZoneName { get; set; }
+        public decimal ZoneTotal { get; set; }
+
+        public List<SupplierPaymentRequestDetailMoe> SupplierPaymentRequestDetails { get; set; }
+
+        public SupplierDetailZoneLevel()
+        {
+            SupplierPaymentRequestDetails = new List<SupplierPaymentRequestDetailMoe>();
+
+        }
     }
 }

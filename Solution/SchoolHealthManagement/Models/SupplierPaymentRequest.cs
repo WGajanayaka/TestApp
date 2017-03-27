@@ -18,8 +18,8 @@ namespace SchoolHealthManagement.Models
         public DateTime? CreateDate;
         public string CreateBy;
         public bool IsZonalApproved;
-        public string ZonalApprovedBy;
-        public DateTime? ZonalApprovedDate;
+        public string ApprovedBy;
+        public DateTime? ApprovedDate;
         public bool IsProvincialApproved;
         public string ProvincialApprovedBy;
         public DateTime? ProvincialApprovedDate;
@@ -42,5 +42,12 @@ namespace SchoolHealthManagement.Models
         public string ChequeNumber;
         public DateTime? ChequeDate;
         public Decimal Amount;
+    }
+
+    public class FilterModel
+    {
+        public int ProvinceId; 
+        public int Year;
+        public string Month;
     }
 }

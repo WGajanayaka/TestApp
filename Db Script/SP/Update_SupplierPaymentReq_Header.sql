@@ -1,6 +1,6 @@
 USE [SHPP_TST]
 GO
-/****** Object:  StoredProcedure [dbo].[Update_SupplierPaymentReq_Header]    Script Date: 2017-03-11 12:13:55 PM ******/
+/****** Object:  StoredProcedure [dbo].[Update_SupplierPaymentReq_Header]    Script Date: 2017-03-26 10:19:09 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -13,6 +13,11 @@ ALTER   procedure [dbo].[Update_SupplierPaymentReq_Header]
 	@Year int,
 	@Month  nvarchar(15),
 	@CreateUser  nvarchar(50),
+	@CreateDate datetime,
+	@AprovedUser nvarchar(50),
+	@ApprovedDate datetime,
+	@ProvincialApp_User nvarchar(50),
+	@ProvincialApp_Date datetime,
 	@TotalAmount as decimal(18,2),
 	@Status  nvarchar(15),
 	@TranType as nvarchar(10),
@@ -24,8 +29,9 @@ BEGIN
 
 	If UPPER(@TranType) = 'NEW'
 	Begin
-		INSERT INTO SupplierPaymentReq_Header(ReqDate, ProvinceID, ZoneID, Year, Month, CreateUser, CreateDate, TotalAmount,  Status)
-		VALUES (CONVERT(DATETIME, @ReqDate, 102), @ProvinceID, @ZoneID, @Year,@Month , @CreateUser, GETDATE(), @TotalAmount, @Status)
+		INSERT INTO SupplierPaymentReq_Header(ReqDate, ProvinceID, ZoneID, Year, Month, CreateUser, CreateDate,AprovedUser,ApprovedDate,ProvincialApp_User ,ProvincialApp_Date, TotalAmount,  Status)
+		VALUES (CONVERT(DATETIME, @ReqDate, 102), @ProvinceID, @ZoneID, @Year,@Month , @CreateUser, @CreateDate,@AprovedUser,@ApprovedDate,@ProvincialApp_User ,@ProvincialApp_Date
+		 ,@TotalAmount, @Status)
 		
 		SET @New_PaymentReqNo=  SCOPE_IDENTITY()
 	
@@ -36,6 +42,10 @@ BEGIN
 				TotalAmount = @TotalAmount,
 				Status = @Status,
 				UpdateUser = @CreateUser,
+				AprovedUser =@AprovedUser,
+				ApprovedDate = @ApprovedDate,
+				ProvincialApp_Date = @ProvincialApp_Date,
+				ProvincialApp_User = @ProvincialApp_User,
 				UpdateDate = GETDATE()
 			WHERE  (PaymentReqNo = @PaymentReqNo)
 		

@@ -26,8 +26,7 @@ using System.Drawing;
 using System.Collections;
 using WHOAnthroPlus.BLL;
 using System.Web.Helpers;
-
-
+using Newtonsoft.Json;
 
 namespace SchoolHealthManagement.Controllers
 {
@@ -3881,16 +3880,22 @@ namespace SchoolHealthManagement.Controllers
             if (string.Equals("Save", action, StringComparison.InvariantCultureIgnoreCase))
             {
                     modal.Status = "New";
+                    modal.CreateBy = User.Identity.Name;
+                    modal.CreateDate = DateTime.Now;
                     SavePaymentRequest(modal);
                 
             }else if (string.Equals("Approvel", action, StringComparison.InvariantCultureIgnoreCase))
             {
                 modal.Status = "Approved-Zone";
+                modal.ApprovedBy = User.Identity.Name;
+                modal.ApprovedDate = DateTime.Now;
                 SavePaymentRequest(modal);
             }
             else
             {
                 modal.Status = "Forwarded";
+                modal.ProvincialApprovedBy = User.Identity.Name;
+                modal.ProvincialApprovedDate = DateTime.Now;
                 SavePaymentRequest(modal);
             }
 
@@ -3949,6 +3954,11 @@ namespace SchoolHealthManagement.Controllers
                 cmd.Parameters.AddWithValue("@Year", (model.Year));
                 cmd.Parameters.AddWithValue("@Month", model.Month);
                 cmd.Parameters.AddWithValue("@CreateUser", model.CreateBy);
+                cmd.Parameters.AddWithValue("@CreateDate", model.CreateDate);
+                cmd.Parameters.AddWithValue("@AprovedUser", model.ApprovedBy);
+                cmd.Parameters.AddWithValue("@ApprovedDate", model.ApprovedDate);
+                cmd.Parameters.AddWithValue("@ProvincialApp_User", model.ProvincialApprovedBy);
+                cmd.Parameters.AddWithValue("@ProvincialApp_Date", model.ProvincialApprovedDate);
                 cmd.Parameters.AddWithValue("@TotalAmount", model.Total);
                 cmd.Parameters.AddWithValue("@Status", model.Status);
                 cmd.Parameters.AddWithValue("@TranType", model.Id == 0 ? "NEW" : "Update");
@@ -6548,12 +6558,12 @@ namespace SchoolHealthManagement.Controllers
             //ViewBag.ProvinceID = GetProvincesByUser("Admin");
             //ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID);
 
-            model.PaymentSummaryTot = (from od in model.PaymentSummary select od.TotalAmount).Sum();
+             ViewBag.GrantTotal = (from od in model.PaymentSummary select od.TotalAmount).Sum();
 
             return View(model);
         }
 
-        public JsonResult GETSupplierPaymentSummery(int Year, string Month)
+        public JsonResult GetSupplierPaymentSummery(int year, string month)
         {
             // Here you are free to do whatever data access code you like
             // You can invoke direct SQL queries, stored procedures, whatever 
@@ -6565,7 +6575,7 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
-                cmd.CommandText = "EXEC GET_SupplerPaymentSummery " + Year + ",'" + Month + "'";
+                cmd.CommandText = "EXEC GET_SupplerPaymentSummery " + year + ",'" + month + "'";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -6574,7 +6584,8 @@ namespace SchoolHealthManagement.Controllers
                 {
                     SupplierPaymentSummary row = new SupplierPaymentSummary();
                     string prov = Convert.ToString(dr["ProvinceID"]);
-                    row.Province = lstProvinces.Where(p => p.Value == prov).FirstOrDefault().Text;
+                    row.Province = lstProvinces.FirstOrDefault(p => p.Value == prov)?.Text;
+                    row.ProvinceId = prov;
                     row.Year = Convert.ToInt32(dr["Year"]);
                     row.Month = Convert.ToString(dr["Month"]);
                     row.TotalAmount = Convert.ToDecimal(dr["ProvinceTotal"]);
@@ -6582,10 +6593,237 @@ namespace SchoolHealthManagement.Controllers
                     lstPayment.Add(row);
                 }
             }
-
-            return Json(lstPayment);
+           var grantTotal = lstPayment.Sum(x => x.TotalAmount);
+            return Json(new {data = lstPayment , grantTotal = grantTotal }, JsonRequestBehavior.AllowGet);
 
         }
+
+        [HttpPost]
+        public ActionResult GetPaymentDetailMoe(string model)
+        {
+            try
+            {
+                var filters  = JsonConvert.DeserializeObject<List<FilterModel>>(model);
+                List<SupplierPaymentRequestDetail> lstPayment = new List<SupplierPaymentRequestDetail>();
+                var zonedataDic = new Dictionary<string,SupplierDetailZoneLevel>();
+                var year = filters.Select(x => x.Year).FirstOrDefault();
+                var month = filters.Select(x => x.Month).FirstOrDefault(); 
+                using (var conn = new SqlConnection(_strConnection))
+                using (var cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    foreach (var filter  in filters)
+                    {
+                        cmd.CommandText = "EXEC GET_SupplerPaymentDetails " + filter.Year + ",'" + filter.Month + "'," + filter.ProvinceId;
+                        SqlDataAdapter da = new SqlDataAdapter(cmd);
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
+
+                        foreach (DataRow dr in dt.Rows)
+                        {
+                            SupplierPaymentRequestDetail row = new SupplierPaymentRequestDetail();
+                            row.CensorsID = Convert.ToString(dr["CensusID"]);
+                            row.SupplierId = Convert.ToInt32(dr["SupplierId"]);
+                            row.SupplierName = Convert.ToString(dr["SupplierName"]);
+                            row.Amount = Convert.ToDecimal(dr["Amount"]);
+                            row.SupplierPaymentReqHeaderId = Convert.ToDecimal(dr["supplierPaymentReq_HeaderId"]);
+                            row.BankAccountNo = Convert.ToString(dr["BankAccountNo"]);
+                            row.BankName = Convert.ToString(dr["BankName"]);
+                            row.BranchName = Convert.ToString(dr["BranchName"]);
+                            row.BankCode = Convert.ToString(dr["BankCode"]);
+                            row.ZoneName = Convert.ToString(dr["ZoneName"]);
+                            row.ProvinceName = Convert.ToString(dr["ProvinceName"]);
+
+                            lstPayment.Add(row);
+                        }
+                    }
+
+                    var provinceGroup = lstPayment.GroupBy(x => x.ProvinceName);
+                    var returnModel = new SupplierDetailPayModel();
+                    returnModel.FullTotal = lstPayment.Sum(x => x.Amount);
+                    
+                    foreach (var prov in provinceGroup)
+                    {
+                        var provinceLevel = new SupplierDetailProvinceLevel();
+                        provinceLevel.ProvincialTotal = prov.Sum(x => x.Amount);
+                        provinceLevel.ProvinceName = prov.Key;
+                        var zoneGroup = prov.GroupBy(x => x.ZoneName);
+                        foreach (var zone in zoneGroup)
+                        {
+                            var zoneLevel = new SupplierDetailZoneLevel();
+                            zoneLevel.ZoneTotal = zone.Sum(x => x.Amount);
+                            zoneLevel.ZoneName = zone.Key;
+                            var details  = zone.ToList().Select(c => new SupplierPaymentRequestDetailMoe()
+                            {
+                                Amount = c.Amount,
+                                BankName = c.BankName,
+                                BankCode = c.BankCode,
+                                BranchName = c.BranchName,
+                                SupplierName = c.SupplierName,
+                                BankAccountNo = c.BankAccountNo,
+                                CensorsId = c.CensorsID,
+                                Year = year,
+                                Month = month,
+                                SupplierId = c.SupplierId,
+                                SupplierPaymentReqHeaderId = c.SupplierPaymentReqHeaderId
+
+                            }).ToList();
+                            zoneLevel.SupplierPaymentRequestDetails = details; 
+                            provinceLevel.SupplierDetailZoneLevel.Add(zoneLevel);
+                            zonedataDic.Add(zone.Key ,zoneLevel);
+                        }
+                        returnModel.Detail.Add(provinceLevel);
+
+                    }
+                    ViewBag.TableData = zonedataDic;
+                    return PartialView("_SupplierPaymentMOEGroupLevel" ,returnModel);
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new{status = false} ,JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SaveSupplyerPaymentMoe(string model ,string chequeNo, string chequeDate)
+        {
+            try
+            {
+                var chequeDateConverted = Convert.ToDateTime(chequeDate);
+                var savedPayments = JsonConvert.DeserializeObject<List<SupplierPaymentRequestDetailMoe>>(model);
+
+                var grandotal = savedPayments.Sum(x => x.Amount);
+                var result=    Insert_SupplierPayment_MOE_Header(chequeNo, chequeDateConverted, savedPayments , grandotal);
+                if (result)
+                {
+                    UpdateSupplierPaymentReq_Detail(savedPayments);
+                }
+
+                return Json(new { status = true, mes = "Success" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { status = false, mes = e.Message }, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        private void UpdateSupplierPaymentReq_Detail(List<SupplierPaymentRequestDetailMoe> model)
+        {
+            var supplierPaymentReqHeaderIds = model.Select(x => x.SupplierPaymentReqHeaderId).Distinct().ToList();
+
+            using (var conn = new SqlConnection(_strConnection))
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    conn.Open();
+                    foreach (var id in supplierPaymentReqHeaderIds)
+                    {
+                        cmd.Parameters.Clear();
+                        cmd.CommandText = "UPDATE SupplierPaymentReq_Details SET Paid= @paied WHERE PaymentReqNo = @PaymentReqNo";
+                        cmd.CommandType = CommandType.Text;
+                        cmd.Parameters.AddWithValue("@paied", true);
+                        cmd.Parameters.AddWithValue("@PaymentReqNo", id);
+
+                        cmd.ExecuteNonQuery();
+                    }
+                    
+                }
+            }
+
+        }
+
+        private bool Insert_SupplierPayment_MOE_Header(string chequeNo, DateTime chequeDateConverted, List<SupplierPaymentRequestDetailMoe> savedPayments ,decimal grandotal)
+        {
+            try
+            {
+                var year = savedPayments.FirstOrDefault()?.Year;
+                var month = savedPayments.FirstOrDefault()?.Month;
+                
+                using (var conn = new SqlConnection(_strConnection))
+                {
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        conn.Open();
+                        
+                            cmd.Parameters.Clear();
+                            cmd.CommandText = "Insert_SupplierPayment_MOE_Header";
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@PaymentDate", DateTime.Now);
+                            cmd.Parameters.AddWithValue("@Year", year);
+                            cmd.Parameters.AddWithValue("@Month", month);
+                            cmd.Parameters.AddWithValue("@BankCode", "");
+                            cmd.Parameters.AddWithValue("@BankName", "");
+                            cmd.Parameters.AddWithValue("@ChequeNumber", chequeNo);
+                            cmd.Parameters.AddWithValue("@ChequeDate", chequeDateConverted);
+                            cmd.Parameters.AddWithValue("@Amount", grandotal);
+                            cmd.Parameters.AddWithValue("@Status", "paied");
+                            cmd.Parameters.AddWithValue("@CreateUser", User.Identity.Name);
+                            cmd.Parameters.AddWithValue("@CreateDate", DateTime.Now);
+                            cmd.Parameters.AddWithValue("@AprovedUser", User.Identity.Name);
+                            cmd.Parameters.AddWithValue("@ApprovedDate", DateTime.Now);
+
+                            SqlParameter outPutVal = new SqlParameter("@New_PaymentReqNo", SqlDbType.Int);
+                            outPutVal.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(outPutVal);
+
+                            cmd.ExecuteNonQuery();
+
+                            if (outPutVal.Value != DBNull.Value) 
+                            {
+                                var paymentId = Convert.ToDecimal(outPutVal.Value);
+                                SaveSupplierPayment_MOE_Details(savedPayments, paymentId);
+                            }
+                        }
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+
+            }
+        }
+
+        private bool SaveSupplierPayment_MOE_Details(List<SupplierPaymentRequestDetailMoe> model ,decimal paymentId)
+        {
+            try
+            {
+                if (model != null)
+                {
+                    using (var conn = new SqlConnection(_strConnection))
+                    {
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            conn.Open();
+                            foreach (var m in model)
+                            {
+                                cmd.Parameters.Clear();
+                                cmd.CommandText = "Insert_SupplierPayment_MOE_Details";
+                                cmd.CommandType = CommandType.StoredProcedure;
+                                cmd.Parameters.AddWithValue("@PaymentID", paymentId);
+                                cmd.Parameters.AddWithValue("@CensusID", m.CensorsId);
+                                cmd.Parameters.AddWithValue("@SupplierId", m.SupplierId);
+                                cmd.Parameters.AddWithValue("@BankCode", m.BankCode);
+                                cmd.Parameters.AddWithValue("@AccountNo", m.BankAccountNo);
+                                cmd.Parameters.AddWithValue("@Amount", m.Amount);
+                                
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                  
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+
         private List<SelectListItem> GetMonthsString()
         {
             List<SelectListItem> MyList = new List<SelectListItem>();
@@ -6679,7 +6917,7 @@ namespace SchoolHealthManagement.Controllers
             var data = LoadSuppliersForPayment(proviceId, zoneId, year, month, payReqNo);
             return new Rotativa.PartialViewAsPdf("_SupplierPaymentPdfView", data)
             {
-                FileName = string.Format("payement_details_{0}.pdf" ,DateTime.Now.ToString("d"))
+                FileName = $"payement_details_{proviceId}_{zoneId}_{year}_{month}.pdf"
             };
         }
     }
