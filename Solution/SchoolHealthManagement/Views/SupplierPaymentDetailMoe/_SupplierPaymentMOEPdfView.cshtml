@@ -1,0 +1,97 @@
+﻿@model SchoolHealthManagement.Models.SupplierDetailPayModel
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+<div class="row col-xs-12" style="margin-left:40px">
+    <h4>Supplier Payment Details MOE - PAID</h4>
+    <br/>
+    <div class="row col-xs-12">
+        @if (Model.Detail.Any())
+        {
+            foreach (var supplierDetailProvinceLevel in Model.Detail)
+            {
+                <div class="row col-xs-12 fa-border">
+                    <div class="row col-xs-12">
+                        <span style="margin-left: 40px">Province Name  : <strong> @supplierDetailProvinceLevel.ProvinceName</strong></span>
+                    </div>
+                    @if (supplierDetailProvinceLevel.SupplierDetailZoneLevel.Any())
+                    {
+                        <div class="row">
+                            @foreach (var zone in supplierDetailProvinceLevel.SupplierDetailZoneLevel)
+                            {
+                                <div class="row col-xs-12">
+                                    <div class="row col-xs-12">
+                                        <span style="margin-left: 80px"> Zone Name : <strong>@zone.ZoneName</strong></span>
+                                    </div>
+                                    <div class="row col-xs-12" style="margin-left: 14px;">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Censors Id</th>
+                                                    <th>Supplier Name</th>
+                                                    <th>Account No</th>
+                                                    <th>Bank Name</th>
+                                                    <th>Branch Name</th>
+                                                    <th>Amount</th>
+                                                    <th>Paid</th>
+
+                                                </tr>
+                                            <tbody>
+                                                @foreach (var item in @zone.SupplierPaymentRequestDetails)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @item.CensorsId
+                                                        </td>
+                                                        <td>
+                                                            @item.SupplierName
+                                                        </td>
+                                                        <td>
+                                                            @item.BankAccountNo
+                                                        </td>
+                                                        <td>
+                                                            @item.BankName
+                                                        </td>
+                                                        <td>
+                                                            @item.BranchName
+                                                        </td>
+
+                                                        <td>
+                                                            @item.Amount
+
+                                                        </td>
+                                                        <td>
+                                                            @item.Paid
+
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>  
+                                        </table>
+
+
+                                    </div>
+                                    <div class="row col-xs-12">
+                                        <span style="margin-left: 700px">Zone Total <strong >@zone.ZoneTotal</strong></span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    <div class="row">
+                        <span style="margin-left: 700px">Provincial Total  <strong>@supplierDetailProvinceLevel.ProvincialTotal</strong></span>
+                    </div>
+                </div>
+                <div class="row clear both">
+                    <br />
+                </div><br />
+            }
+            <div class="row">
+                <span style="margin-left: 700px">Grand Total <strong>@Model.FullTotal</strong></span>
+            </div>
+        }
+    </div>
+</div>
+<div class="row clear both"><br /></div>
