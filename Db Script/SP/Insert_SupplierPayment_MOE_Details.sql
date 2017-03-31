@@ -9,15 +9,16 @@ CREATE  procedure [dbo].[Insert_SupplierPayment_MOE_Details]
 	@PaymentID as decimal(18,2),
 	@CensusId as nvarchar(50) ,
 	@SupplierID as int,
-	@BankCode  nvarchar(50),
-	@AccountNo as nvarchar(50),
+	@BankCode  nvarchar(20),
+	@BranchCode  nvarchar(20),
+	@AccountNo as nvarchar(30),
 	@Amount as decimal(18,2)
 	
 	AS
 BEGIN
 
-		INSERT INTO SupplierPayment_MOE_Details (PaymentID ,CensusID,SupplierID,BankCode,AccountNo,Amount)
-		VALUES (@PaymentID, @CensusID,@SupplierID ,@BankCode,@AccountNo,@Amount)							
+		INSERT INTO SupplierPayment_MOE_Details (PaymentID ,CensusID,SupplierID,BankCode,AccountNo,Amount,BranchCode)
+		VALUES (@PaymentID, @CensusID,@SupplierID ,@BankCode,@AccountNo,@Amount,@BranchCode)							
 END
 
 
