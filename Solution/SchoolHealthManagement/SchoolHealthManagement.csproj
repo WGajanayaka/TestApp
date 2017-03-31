@@ -170,6 +170,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Helper.cs" />
     <Compile Include="Models\22CriteriasModel.cs" />
     <Compile Include="Models\BankModel.cs" />
     <Compile Include="Models\BanksBranchModel.cs" />
@@ -308,9 +309,6 @@
     <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
-    <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="Views\Shared\ReportViewerASPX.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
