@@ -161,6 +161,7 @@
     <Compile Include="App_Start\FontAwesomeBundleConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\SupplierPaymentDetailMoeController.cs" />
     <Compile Include="DS4Rpts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -169,6 +170,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\Helper.cs" />
     <Compile Include="Models\22CriteriasModel.cs" />
     <Compile Include="Models\BankModel.cs" />
     <Compile Include="Models\BanksBranchModel.cs" />
@@ -201,11 +203,13 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="Content\assets\bootstrap\css\bootstrap-table.min.css" />
     <Content Include="Content\assets\bootstrap\css\bootstrap-theme.css" />
     <Content Include="Content\assets\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="Content\assets\bootstrap\css\bootstrap.css" />
     <Content Include="Content\assets\bootstrap\css\bootstrap.min.css" />
     <Content Include="Content\assets\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Content\assets\bootstrap\js\bootstrap-table.min.js" />
     <Content Include="Content\assets\bootstrap\js\bootstrap.js" />
     <Content Include="Content\assets\bootstrap\js\bootstrap.min.js" />
     <Content Include="Content\assets\bootstrap\js\npm.js" />
@@ -305,9 +309,6 @@
     <Content Include="Rotativa\wkhtmltopdf.exe" />
     <Content Include="Scripts\Chart.js" />
     <Content Include="Scripts\Chart.min.js" />
-    <Content Include="Views\Home\SupplierPaymentMOE.cshtml">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="Views\Shared\ReportViewerASPX.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -458,6 +459,10 @@
     <Content Include="Views\Home\_SupplierDetailView.cshtml" />
     <Content Include="Views\Home\_SupplierHeaderPaymentView.cshtml" />
     <Content Include="Views\Home\_SupplierPaymentPdfView.cshtml" />
+    <Content Include="Views\SupplierPaymentDetailMoe\_SupplierPaymentMOEGroupLevel.cshtml" />
+    <Content Include="Views\SupplierPaymentDetailMoe\_SupplierPaymentMOEPdfView.cshtml" />
+    <Content Include="Views\SupplierPaymentDetailMoe\Index.cshtml" />
+    <Content Include="Views\SupplierPaymentDetailMoe\_SupplierPaymentPaidMOEView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\ListMonitoringOfficers.rdlc" />

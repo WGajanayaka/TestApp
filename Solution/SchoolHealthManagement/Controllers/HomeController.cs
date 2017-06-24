@@ -24,10 +24,10 @@ using ClosedXML.Excel;
 using System.IO;
 using System.Drawing;
 using System.Collections;
+using System.Globalization;
 using WHOAnthroPlus.BLL;
 using System.Web.Helpers;
-
-
+using Newtonsoft.Json;
 
 namespace SchoolHealthManagement.Controllers
 {
@@ -3881,16 +3881,22 @@ namespace SchoolHealthManagement.Controllers
             if (string.Equals("Save", action, StringComparison.InvariantCultureIgnoreCase))
             {
                     modal.Status = "New";
+                    modal.CreateBy = User.Identity.Name;
+                    modal.CreateDate = DateTime.Now;
                     SavePaymentRequest(modal);
                 
             }else if (string.Equals("Approvel", action, StringComparison.InvariantCultureIgnoreCase))
             {
                 modal.Status = "Approved-Zone";
+                modal.ApprovedBy = User.Identity.Name;
+                modal.ApprovedDate = DateTime.Now;
                 SavePaymentRequest(modal);
             }
             else
             {
                 modal.Status = "Forwarded";
+                modal.ProvincialApprovedBy = User.Identity.Name;
+                modal.ProvincialApprovedDate = DateTime.Now;
                 SavePaymentRequest(modal);
             }
 
@@ -3949,6 +3955,11 @@ namespace SchoolHealthManagement.Controllers
                 cmd.Parameters.AddWithValue("@Year", (model.Year));
                 cmd.Parameters.AddWithValue("@Month", model.Month);
                 cmd.Parameters.AddWithValue("@CreateUser", model.CreateBy);
+                cmd.Parameters.AddWithValue("@CreateDate", model.CreateDate);
+                cmd.Parameters.AddWithValue("@AprovedUser", model.ApprovedBy);
+                cmd.Parameters.AddWithValue("@ApprovedDate", model.ApprovedDate);
+                cmd.Parameters.AddWithValue("@ProvincialApp_User", model.ProvincialApprovedBy);
+                cmd.Parameters.AddWithValue("@ProvincialApp_Date", model.ProvincialApprovedDate);
                 cmd.Parameters.AddWithValue("@TotalAmount", model.Total);
                 cmd.Parameters.AddWithValue("@Status", model.Status);
                 cmd.Parameters.AddWithValue("@TranType", model.Id == 0 ? "NEW" : "Update");
@@ -3994,6 +4005,7 @@ namespace SchoolHealthManagement.Controllers
                             cmd.Parameters.AddWithValue("@Amount", item.Value);
                             cmd.Parameters.AddWithValue("@Year", model.Year);
                             cmd.Parameters.AddWithValue("@Month", model.Month);
+                            cmd.Parameters.AddWithValue("@Paid",false);
 
                             cmd.ExecuteNonQuery();
                         }
@@ -6548,44 +6560,11 @@ namespace SchoolHealthManagement.Controllers
             //ViewBag.ProvinceID = GetProvincesByUser("Admin");
             //ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID);
 
-            model.PaymentSummaryTot = (from od in model.PaymentSummary select od.TotalAmount).Sum();
+             ViewBag.GrantTotal = (from od in model.PaymentSummary select od.TotalAmount).Sum();
 
             return View(model);
         }
 
-        public JsonResult GETSupplierPaymentSummery(int Year, string Month)
-        {
-            // Here you are free to do whatever data access code you like
-            // You can invoke direct SQL queries, stored procedures, whatever 
-            List<SupplierPaymentSummary> lstPayment = new List<SupplierPaymentSummary>();
-            List<SelectListItem> lstProvinces = GetProvinces();
-            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
-            using (var conn = new SqlConnection(strConnection))
-            using (var cmd = conn.CreateCommand())
-            {
-
-                conn.Open();
-                cmd.CommandText = "EXEC GET_SupplerPaymentSummery " + Year + ",'" + Month + "'";
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    SupplierPaymentSummary row = new SupplierPaymentSummary();
-                    string prov = Convert.ToString(dr["ProvinceID"]);
-                    row.Province = lstProvinces.Where(p => p.Value == prov).FirstOrDefault().Text;
-                    row.Year = Convert.ToInt32(dr["Year"]);
-                    row.Month = Convert.ToString(dr["Month"]);
-                    row.TotalAmount = Convert.ToDecimal(dr["ProvinceTotal"]);
-
-                    lstPayment.Add(row);
-                }
-            }
-
-            return Json(lstPayment);
-
-        }
         private List<SelectListItem> GetMonthsString()
         {
             List<SelectListItem> MyList = new List<SelectListItem>();
@@ -6679,7 +6658,7 @@ namespace SchoolHealthManagement.Controllers
             var data = LoadSuppliersForPayment(proviceId, zoneId, year, month, payReqNo);
             return new Rotativa.PartialViewAsPdf("_SupplierPaymentPdfView", data)
             {
-                FileName = string.Format("payement_details_{0}.pdf" ,DateTime.Now.ToString("d"))
+                FileName = $"payement_details_{proviceId}_{zoneId}_{year}_{month}.pdf"
             };
         }
     }
