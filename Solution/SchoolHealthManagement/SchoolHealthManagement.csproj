@@ -175,6 +175,7 @@
     <Compile Include="Models\BankModel.cs" />
     <Compile Include="Models\BanksBranchModel.cs" />
     <Compile Include="Models\BMIInfoModel.cs" />
+    <Compile Include="Models\ZonalSchoolStudentSummery.cs" />
     <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\FundsReceivedModel.cs" />
     <Compile Include="Models\ImpressRequestModel.cs" />
