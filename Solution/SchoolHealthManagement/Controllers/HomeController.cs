@@ -2159,6 +2159,47 @@ namespace SchoolHealthManagement.Controllers
 
         }
 
+        public ActionResult Export2Excelsidyear(string iSchoolID, int year)
+        {
+            //TODO
+
+            var StudentInfo = GetStudentsInfoDT(iSchoolID, year);
+            String strCensorID = GetCensorsID(iSchoolID);
+
+
+            //List<SelectListItem> lstProvinces = GetProvinces();
+            //string ProvinceName = lstProvinces.Where(p => p.Value == ProvinceID).FirstOrDefault().Text;
+
+            var grid = new GridView();
+            grid.DataSource = StudentInfo;
+            grid.DataBind();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(null, "Grade Information");
+                wb.Worksheets.Add(StudentInfo, "Student Information");
+                wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                wb.Style.Font.Bold = true;
+
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.Charset = "";
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;filename= Student_Information_" + strCensorID + ".xlsx");
+
+                using (MemoryStream MyMemoryStream = new MemoryStream())
+                {
+                    wb.SaveAs(MyMemoryStream);
+                    MyMemoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                }
+            }
+
+            return null;
+        }
+
         public void Export2ExcelSDS(string ProvinceID)
         {
 
@@ -3097,6 +3138,23 @@ namespace SchoolHealthManagement.Controllers
 
         }
 
+        //public ActionResult ZonalSchoolStudentSummery()
+        //{
+        //    ZonalSchoolStudentSummery ZonalSumm = new ZonalSchoolStudentSummery();
+
+        //    return View(ZonalSumm);
+        //}
+
+        public ActionResult ZonalSchoolStudentSummery()
+        {
+            int iYear = DateTime.Today.Year;
+
+            ZonalSchoolStudentSummery ZonalSumm = new ZonalSchoolStudentSummery();
+
+            ViewBag.Years = LoadYears(iYear);
+
+            return View(ZonalSumm);
+        }
 
         public ActionResult FundsReceived()
         {
@@ -5277,7 +5335,31 @@ namespace SchoolHealthManagement.Controllers
             return MyList;
         }
 
-        public ActionResult AddStudent(string iSchoolID)
+        //public ActionResult AddStudentYear(string iSchoolID, int Year)
+        //{
+        //    if (CheckAccessCanBeGranted(iSchoolID))
+        //    {
+        //        StudentModel StdInf = new StudentModel();
+
+        //        StdInf.SchoolID = iSchoolID;
+        //        List<SelectListItem> lstSchls = GetSchools();
+        //        ViewBag.Schools = lstSchls;
+        //        ViewBag.Students = GetStudentsInfo(iSchoolID, Year);
+        //        ViewBag.SchoolGrades = GetGradesInfoList(iSchoolID);
+        //        ViewBag.CensorsID = GetCensorsID(iSchoolID);
+        //        ViewBag.School = lstSchls.Where(s => s.Value == iSchoolID.ToString()).First().Text;
+        //        ViewBag.Years = LoadYears();
+        //        return View("AddStudent",StdInf);
+
+        //    }
+        //    else
+        //    {
+        //        @ViewBag.ErrorMessage = "User not granted";
+        //        return View("../Login/Error");
+        //    }
+        //}
+
+        public ActionResult Yearend(string iSchoolID)
         {
             if (CheckAccessCanBeGranted(iSchoolID))
             {
@@ -5290,6 +5372,7 @@ namespace SchoolHealthManagement.Controllers
                 ViewBag.SchoolGrades = GetGradesInfoList(iSchoolID);
                 ViewBag.CensorsID = GetCensorsID(iSchoolID);
                 ViewBag.School = lstSchls.Where(s => s.Value == iSchoolID.ToString()).First().Text;
+                ViewBag.Years = LoadYears(0);
                 return View(StdInf);
             }
             else
@@ -5297,6 +5380,69 @@ namespace SchoolHealthManagement.Controllers
                 @ViewBag.ErrorMessage = "User not granted";
                 return View("../Login/Error");
             }
+        }
+
+        public ActionResult AddStudent(string iSchoolID, int? Year)
+        {
+            if (!Year.HasValue)
+            {
+                Year = DateTime.Now.Year;
+            }
+
+            if (CheckAccessCanBeGranted(iSchoolID))
+            {
+                StudentModel StdInf = new StudentModel();
+
+                StdInf.SchoolID = iSchoolID;
+                // List<SelectListItem> lstSchls = GetSchools();
+                //ViewBag.Schools = lstSchls;
+                ViewBag.Students = GetStudentsInfo(iSchoolID, Year.Value);
+                ViewBag.SchoolGrades = GetGradesInfoList(iSchoolID);
+                ViewBag.CensorsID = GetCensorsID(iSchoolID);
+                ViewBag.School = GetSchoolNameByID(iSchoolID);
+                ViewBag.Years = LoadYears(Year.Value);
+                ViewBag.Gender = LoadGender(null);
+                return View(StdInf);
+            }
+            else
+            {
+                @ViewBag.ErrorMessage = "User not granted";
+                return View("../Login/Error");
+            }
+        }
+
+        private List<SelectListItem> LoadGender(string selected)
+        {
+            var list = new List<SelectListItem>{
+                new SelectListItem{Text="MALE", Value="MALE"},
+                new SelectListItem{Text="FEMALE", Value="FEMALE"}
+                };
+            var g = list.FirstOrDefault(x => x.Value == selected);
+            if (g != null)
+            {
+                g.Selected = true;
+            }
+
+            return list;
+        }
+
+        private List<SelectListItem> LoadYears(int SelectedYear)
+        {
+            int EndYear = DateTime.Now.Year;  //Add any number 
+            List<SelectListItem> MyList = new List<SelectListItem>();
+            for (int i = 2016; i <= EndYear; i++)
+            {
+                if (i == SelectedYear)
+                {
+                    MyList.Add(new SelectListItem { Text = i.ToString().Trim(), Value = i.ToString(), Selected = true });
+                }
+                else
+                {
+                    MyList.Add(new SelectListItem { Text = i.ToString().Trim(), Value = i.ToString() });
+                }
+            }
+
+            return MyList;
         }
 
         [HttpPost]
@@ -5317,8 +5463,13 @@ namespace SchoolHealthManagement.Controllers
 
 
         [HttpPost]
-        public ActionResult AddStudent(StudentModel model, string button)
+        public ActionResult AddStudent(StudentModel model, string button, int? Year)
         {
+            if (!Year.HasValue)
+            {
+                Year = DateTime.Now.Year;
+            }
+            
             string SchID = model.SchoolID;
 
             switch (button)
@@ -5347,12 +5498,14 @@ namespace SchoolHealthManagement.Controllers
                 }
 
                 ViewBag.CensorsID = GetCensorsID(model.SchoolID);
-                List<SelectListItem> lstSchls = GetSchools();
-                ViewBag.Schools = lstSchls;
+                //List<SelectListItem> lstSchls = GetSchools();
+                //ViewBag.Schools = lstSchls;
                 ViewBag.Students = GetStudentsInfo(model.SchoolID);
                 ViewBag.SchoolGrades = GetGradesInfoList(model.SchoolID);
-                ViewBag.School = lstSchls.Where(s => s.Value == model.SchoolID.ToString()).First().Text;
-                break;
+                    ViewBag.School = GetSchoolNameByID(model.SchoolID); ;
+                    ViewBag.Years = LoadYears(Year.Value);
+                    ViewBag.Gender = LoadGender(model.Gender);
+                    break;
 
                 case "Delete Student":
                     //if (Delete_Student(model))
@@ -5368,6 +5521,76 @@ namespace SchoolHealthManagement.Controllers
 
             return View(model);
         }
+
+        private string GetSchoolNameByID(string id)
+        {
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "SELECT SchoolName FROM  m_Schools WHERE SchoolID = " + id;
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt.Rows[0]["SchoolName"].ToString();
+
+            }
+        }
+
+        //[HttpPost]
+        //public ActionResult AddStudent(StudentModel model, string button)
+        //{
+        //    string SchID = model.SchoolID;
+
+        //    switch (button)
+        //    {
+
+        //        case "Save":
+
+        //            SetCustomMessagesStudentInfo();
+
+        //            if (ModelState.IsValid)
+        //            {
+
+
+        //                if (Save_Student(model))
+        //                {
+        //                    ModelState.Clear();
+        //                    //ViewBag.Schools = GetSchools();
+        //                    //ViewBag.Students = GetStudentsInfo();
+        //                    model = new StudentModel();
+        //                    model.SchoolID = SchID;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                ModelState.AddModelError("", "Please fill all the fields which is mandatory.");
+        //            }
+
+        //            ViewBag.CensorsID = GetCensorsID(model.SchoolID);
+        //            List<SelectListItem> lstSchls = GetSchools();
+        //            ViewBag.Schools = lstSchls;
+        //            ViewBag.Students = GetStudentsInfo(model.SchoolID);
+        //            ViewBag.SchoolGrades = GetGradesInfoList(model.SchoolID);
+        //            ViewBag.School = lstSchls.Where(s => s.Value == model.SchoolID.ToString()).First().Text;
+        //            break;
+
+        //        case "Delete Student":
+        //            //if (Delete_Student(model))
+        //            //{
+        //            //    ModelState.Clear();
+        //            //    //ViewBag.Schools = GetSchools();
+        //            //    //ViewBag.Students = GetStudentsInfo();
+        //            //    model = new StudentModel();
+        //            //    model.SchoolID = SchID;
+        //            //}
+        //            break;
+        //    }
+
+        //    return View(model);
+        //}
 
         private bool Validate_Delete_StudentInfo(StudentModel model)
         {
@@ -5738,6 +5961,90 @@ namespace SchoolHealthManagement.Controllers
 
         }
 
+        private DataTable GetStudentsInfoDT(string iSchoolID, int Year)
+        {
+            // Here you are free to do whatever data access code you like
+            // You can invoke direct SQL queries, stored procedures, whatever 
+
+            DataTable dt;
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                // CensusID, Grade, AdmissionNo, NameWithInitials, NameInFull, DateofBirth, Gender, ParentName, ParentAddress, NIC, ContactNo
+
+                cmd.CommandText = "SELECT m_Schools.CensorsID AS CensusID, StudentInfo.CurrentGrade AS Grade, StudentInfo.AddmisionNo AS AdmissionNo, " +
+                                    "StudentInfo.NameWithInitials, StudentInfo.NameInFull, StudentInfo.DOB AS DateofBirth, StudentInfo.Gender, " +
+                                    "StudentInfo.ParentName, StudentInfo.ParentAddress, StudentInfo.NIC, StudentInfo.ContactNo " +
+                                    "FROM   StudentInfo INNER JOIN m_Schools ON StudentInfo.SchoolID = m_Schools.SchoolID " +
+                                    "WHERE StudentInfo.SchoolID = '" + iSchoolID + "' AND StudentInfo.Status ='NEW' AND StudentInfo.Year = " + Year.ToString() + " " +
+                                    "ORDER BY CurrentGrade, AddmisionNo";
+
+                /*
+                                SELECT m_Schools.CensorsID AS CensusID, StudentInfo.CurrentGrade AS Grade, StudentInfo.AddmisionNo AS AdmissionNo, 
+                                StudentInfo.NameWithInitials, StudentInfo.NameInFull, StudentInfo.DOB AS DateofBirth, StudentInfo.Gender, 
+                                StudentInfo.ParentName, StudentInfo.ParentAddress, StudentInfo.NIC, StudentInfo.ContactNo
+                FROM   StudentInfo INNER JOIN m_Schools ON StudentInfo.SchoolID = m_Schools.SchoolID
+                WHERE(StudentInfo.SchoolID = '2506017') AND(StudentInfo.Status = N'NEW') AND(StudentInfo.Year = 2016)
+                ORDER BY Grade, AdmissionNo
+                */
+
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                dt = new DataTable();
+                da.Fill(dt);
+            }
+
+            return dt;
+
+        }
+
+        private List<StudentModel> GetStudentsInfo(string iSchoolID, int Year)
+        {
+            // Here you are free to do whatever data access code you like
+            // You can invoke direct SQL queries, stored procedures, whatever 
+
+            List<StudentModel> lstStudents = new List<StudentModel>();
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "SELECT  SchoolID, AddmisionNo, CurrentGrade, NameWithInitials, NameInFull, DOB, Gender, ParentName, " +
+                                    "ParentAddress, NIC, ContactNo FROM  StudentInfo WHERE SchoolID = '" + iSchoolID + "' AND Status = 'NEW' AND Year = " + Year.ToString() + " " +
+                                    "ORDER BY CurrentGrade, AddmisionNo";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    StudentModel Student = new StudentModel();
+                    Student.AddmisionNo = Convert.ToString(dr["AddmisionNo"]);
+                    Student.SchoolID = Convert.ToString(dr["SchoolID"]);
+                    Student.NameInFull = Convert.ToString(dr["NameInFull"]);
+                    Student.NameWithInitials = Convert.ToString(dr["NameWithInitials"]);
+                    Student.NIC = Convert.ToString(dr["NIC"]);
+                    Student.ParentName = Convert.ToString(dr["ParentName"]);
+                    Student.ParentAddress = Convert.ToString(dr["ParentAddress"]);
+                    Student.Gender = Convert.ToString(dr["Gender"]);
+                    Student.DOB = Convert.ToDateTime(dr["DOB"]);
+                    Student.ContactNo = Convert.ToString(dr["ContactNo"]);
+                    Student.CurrentGrade = Convert.ToString(dr["CurrentGrade"]);
+
+                    lstStudents.Add(Student);
+                }
+            }
+
+            return lstStudents;
+
+        }
+
+        //yesterday i have added year as parameter i have commented that 
+
 
         private List<StudentModel> GetStudentsInfo(string iSchoolID)
         {
@@ -5752,7 +6059,7 @@ namespace SchoolHealthManagement.Controllers
 
                 conn.Open();
                 cmd.CommandText = "SELECT  SchoolID, AddmisionNo, CurrentGrade, NameWithInitials, NameInFull, DOB, Gender, ParentName, " +
-                                    "ParentAddress, NIC, ContactNo FROM  StudentInfo WHERE SchoolID = '" + iSchoolID + "' AND Status <>'DELETED'" +
+                                    "ParentAddress, NIC, ContactNo FROM  StudentInfo WHERE SchoolID = '" + iSchoolID + "' AND Status ='NEW' AND Year = Year(getdate()) " +
                                     "ORDER BY CurrentGrade, AddmisionNo";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
@@ -6299,6 +6606,35 @@ namespace SchoolHealthManagement.Controllers
 
         }
 
+        // this one I rename the methode name also 
+        private List<SelectListItem> GetstudentByyear(int yearid, string censorId)
+        {
+            StudentModel model = new StudentModel();
+
+            // Select STATMENT HAS GIVEN IN THE DOCUMENT YOU CAN COPY AND PAST THE SAME TO hear
+
+
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "SELECT m_Schools.CensorsID, StudentInfo.AddmisionNo, StudentInfo.CurrentGrade, " +
+                    "StudentInfo.NameWithInitials, StudentInfo.NameInFull, StudentInfo.DOB, StudentInfo.Gender, StudentInfo.ParentName, " +
+                    "StudentInfo.ParentAddress, StudentInfo.NIC, StudentInfo.ContactNo, StudentInfo.Year, StudentInfo.Status from StudentInfo " +
+                     "inner join m_Schools on m_Schools.SchoolID = StudentInfo.SchoolID " +
+                     "WHERE (m_Schools.CensorsID = '" + censorId + "') AND(StudentInfo.Year = " + yearid + ") AND (StudentInfo.Status = N'NEW')";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+
+
+                return null;
+            }
+        }
+
         public List<SelectListItem> GetSchools()
         {
             // Here you are free to do whatever data access code you like
@@ -6565,6 +6901,40 @@ namespace SchoolHealthManagement.Controllers
             return View(model);
         }
 
+        public JsonResult GETSupplierPaymentSummery(int Year, string Month)
+        {
+            // Here you are free to do whatever data access code you like
+            // You can invoke direct SQL queries, stored procedures, whatever 
+            List<SupplierPaymentSummary> lstPayment = new List<SupplierPaymentSummary>();
+            List<SelectListItem> lstProvinces = GetProvinces();
+            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            using (var conn = new SqlConnection(strConnection))
+            using (var cmd = conn.CreateCommand())
+            {
+
+                conn.Open();
+                cmd.CommandText = "EXEC GET_SupplerPaymentSummery " + Year + ",'" + Month + "'";
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    SupplierPaymentSummary row = new SupplierPaymentSummary();
+                    string prov = Convert.ToString(dr["ProvinceID"]);
+                    row.Province = lstProvinces.Where(p => p.Value == prov).FirstOrDefault().Text;
+                    row.Year = Convert.ToInt32(dr["Year"]);
+                    row.Month = Convert.ToString(dr["Month"]);
+                    row.TotalAmount = Convert.ToDecimal(dr["ProvinceTotal"]);
+
+                    lstPayment.Add(row);
+                }
+            }
+
+            return Json(lstPayment);
+
+        }
+
         private List<SelectListItem> GetMonthsString()
         {
             List<SelectListItem> MyList = new List<SelectListItem>();
@@ -6618,6 +6988,76 @@ namespace SchoolHealthManagement.Controllers
 
         }
 
+        public void Export2ExcelSupplier(string ID)
+        {
+            //We load the data
+
+
+            string ExpType = "Province";
+            DataTable SuppInfo = null;
+
+            if (ExpType == "Province")
+            {
+                string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+                using (var conn = new SqlConnection(strConnection))
+                using (var cmd = conn.CreateCommand())
+                {
+
+                    conn.Open();
+
+                    //cmd.CommandText = "SELECT DISTINCT StudentInfo.AddmisionNo AS AdmissionNo, StudentInfo.DOB, StudentInfo.Gender, Height, Weight " +
+                    //                   "FROM " +
+                    //                   "StudentInfo LEFT OUTER JOIN BMIInformation ON StudentInfo.SchoolID = BMIInformation.SchoolID AND StudentInfo.AddmisionNo = BMIInformation.AdmissionNo AND StudentInfo.CurrentGrade = BMIInformation.Class AND Trimester = " + DateTime.Now.Year.ToString() + Trimester.ToString() +
+                    //                   " WHERE StudentInfo.SchoolID ='" + SchoolID + "' AND StudentInfo.CurrentGrade = '" + Grade + "'";
+
+
+                    cmd.CommandText = "SELECT m_Zones.ZoneName, m_Devisions.DevisionName, m_Schools.CensorsID, m_Schools.SchoolName, " +
+                                "m_SupplierInformation.SupplierName, m_SupplierInformation.Address, m_SupplierInformation.NIC, " +
+                                 "m_SupplierInformation.Phone, m_SupplierInformation.BankAccountNo, m_SupplierInformation.Grade, " +
+                                 "m_SupplierInformation.NoOfMaleStudents + m_SupplierInformation.NoOfFemaleStudents AS TotStudents " +
+                                 "FROM m_Zones INNER JOIN " +
+                                 "m_Schools ON m_Zones.ZoneID = m_Schools.ZoneID INNER JOIN " +
+                                 "m_Devisions ON m_Schools.DevisionID = m_Devisions.DevisionID RIGHT OUTER JOIN " +
+                                 "m_SupplierInformation ON m_Schools.SchoolID = m_SupplierInformation.SchoolID " +
+                                 "WHERE(m_Schools.ProvinceID = " + Convert.ToInt64(ID) + ") AND (m_SupplierInformation.Status = 'NEW') " +
+                                 "ORDER BY m_Zones.ZoneName, m_Devisions.DevisionName";
+
+
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    SuppInfo = new DataTable();
+                    da.Fill(SuppInfo);
+
+
+                }
+            }
+
+
+            var grid = new GridView();
+            grid.DataSource = SuppInfo;
+            grid.DataBind();
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(SuppInfo, "SupplierInfo");
+                wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                wb.Style.Font.Bold = true;
+
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.Charset = "";
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                Response.AddHeader("content-disposition", "attachment;filename= " + ExpType + "_Supplier.xlsx");
+
+                using (MemoryStream MyMemoryStream = new MemoryStream())
+                {
+                    wb.SaveAs(MyMemoryStream);
+                    MyMemoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                }
+            }
+        }
 
         public List<SupplierPaymentMOE> getSupplierPaymentDetails()
         {

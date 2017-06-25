@@ -7,15 +7,15 @@
 
 
 
-        @if (ViewData.ModelState["Error"] != null) //    @if (!ViewData.ModelState.IsValid)
-        {
-   
-            <div style="background-color: #ffeeee; border: 1px solid #de8181; color: #b55858; font-size: 12px; font-weight: 900; padding: 9px 9px 11px 22px; width: 97%;">
+@if (ViewData.ModelState["Error"] != null) //    @if (!ViewData.ModelState.IsValid)
+{
+
+    <div style="background-color: #ffeeee; border: 1px solid #de8181; color: #b55858; font-size: 12px; font-weight: 900; padding: 9px 9px 11px 22px; width: 97%;">
 
 
-                @Html.ValidationMessage("Error")
+        @Html.ValidationMessage("Error")
 
-            </div>
+    </div>
 }
 
 
@@ -68,8 +68,6 @@
             });
 
 
-
-
             function SetGender(_SchoolId) {
 
 
@@ -109,7 +107,6 @@
                 $("#NIC").val(_NIC);
                 $("#ContactNo").val(_ContactNo);
 
-
                 $("#AddmisionNo").attr("readonly", "readonly");
                 //alert(_SuppName);
 
@@ -118,6 +115,26 @@
         </script>
         <script type="text/javascript">
             $(function () {
+                //ADDED TO GET THE YEAR WASANTHA
+
+                $('#Export_info').on('click', function () {
+
+                    var vschoolid = $('#SchoolID').val();
+                    var vGrade = $('#Grade').val();
+                    var vTrimester = $('#Trimester').val();
+                    if (vGrade != '' && vTrimester != '') {
+
+                        window.location.href = '/Home/Export2Excelsidyear?iSchoolID=' + $("#SchoolID").val() + '&Year=' + $("#Year").val();;
+
+                    }
+
+                });
+                $("#Year").change(function(){
+
+                    window.location.href = '/Home/AddStudent?iSchoolID=' + $("#SchoolID").val() + '&Year=' + $("#Year").val();
+                })
+
+
                 var new_dialog = function (type, row) {
                     var dlg = $("#dialog-form").clone();
 
@@ -144,6 +161,14 @@
                     function get_data() {
 
                     }
+
+                    //________
+
+
+
+                    //_______
+
+
                     function save_data() {
 
                         var url = "/Home/DeleteStudent/";
@@ -185,7 +210,8 @@
 
                     <tr>
                         <td style="width: 12%; text-align: right;">Year</td>
-                        <td style="width: 38%;">@Html.TextBox("Year", @DateTime.Today.Year, new { disabled = "true" })</td>
+                        @*<td style="width: 38%;">@Html.TextBox("Year", @DateTime.Today.Year, new { disabled = "true" })</td>*@
+                        <td style="width: 38%;">@Html.DropDownList("Year", (List<SelectListItem>)ViewBag.Years, "Select Year")</td>
                         <td style="width: 12%; text-align: right;">Censors ID</td>
                         <td style="width: 38%;">@Html.TextBox("CensorsID", (string)ViewBag.CensorsID, new { disabled = "true" })
                     </tr>
@@ -196,84 +222,101 @@
                         <td style="width: 38%;">
                             @*@Html.DropDownList("SchoolID", (List<SelectListItem>)ViewBag.Schools, "Select School",  new { disabled = "true" })*@
                             @Html.TextBox("School", (String)ViewBag.School, new { disabled = "true" })
-                            @Html.DropDownListFor(m => m.SchoolID, (List<SelectListItem>)ViewBag.Schools, "Select School", new { style = "display:none" })
+                            @Html.HiddenFor(m => m.SchoolID);
                             @Html.ValidationMessageFor(m => m.SchoolID)
                         </td>
                         <td style="width: 12%; text-align: right;">Addmision No</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.AddmisionNo)
-                            @Html.ValidationMessageFor(m => m.AddmisionNo)</td>
-                    </tr>
-
-                    <tr>
-                        <td style="width: 12%; text-align: right;">Grade</td>
-                        <td style="width: 38%;">@Html.DropDownList("CurrentGrade", (List<SelectListItem>)ViewBag.SchoolGrades, "Current Grade")
-                            @Html.ValidationMessageFor(m => m.CurrentGrade)</td>
-                        <td style="width: 12%; text-align: right;">Name With Initials</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.NameWithInitials)
-                            @Html.ValidationMessageFor(m => m.NameWithInitials)</td>
-                    </tr>
-
-                    <tr>
-                        <td style="width: 12%; text-align: right;">Name In Full</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.NameInFull)
-                            @Html.ValidationMessageFor(m => m.NameInFull)</td>
-                        <td style="width: 12%; text-align: right;">Date Of Birth</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.DOB, new { id = "datetimepicker1" })
-                            @Html.ValidationMessageFor(m => m.DOB)</td>
-                    </tr>
-
-                    <tr>
-                        <td style="width: 12%; text-align: right;">Gender</td>
-                        <td style="width: 38%;">@Html.DropDownList("Gender", new List<SelectListItem>{
-                new SelectListItem{Text="Male", Value="Male"},
-                new SelectListItem{Text="Female", Value="Female"}            
-                }, "Select Gender")
-                            @Html.ValidationMessageFor(m => m.Gender)</td>
-                        <td style="width: 12%; text-align: right;">Parent Name</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.ParentName)
-                            @Html.ValidationMessageFor(m => m.ParentName)</td>
-                    </tr>
-
-                    <tr>
-                        <td style="width: 12%; text-align: right;">Parent Address</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.ParentAddress)
-                            @Html.ValidationMessageFor(m => m.ParentAddress)</td>
-                        <td style="width: 12%; text-align: right;">NIC</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.NIC)
-                            @Html.ValidationMessageFor(m => m.NIC)</td>
-                    </tr>
-
-                    <tr>
-                        <td style="width: 12%; text-align: right;">Contact No</td>
-                        <td style="width: 38%;">@Html.TextBoxFor(m => m.ContactNo)
-                            @Html.ValidationMessageFor(m => m.ContactNo)</td>
-                        <td style="width: 12%; text-align: right;"></td>
-                        <td style="width: 38%;"></td>
-                    </tr>
-
-                    <tr>
-                        <td style="width: 12%; text-align: right;"></td>
                         <td style="width: 38%;">
-                            <input type="submit" value="Save" name="button" class="blue-btn" />
-                        </td>
+                            @Html.TextBoxFor(m => m.AddmisionNo)
+                        @Html.ValidationMessageFor(m => m.AddmisionNo)
+                    </td>
+                </tr>
 
-                        <td style="width: 12%; text-align: right;"></td>
-                        <td style="width: 38%;">
-                            <input type="button" name="button" id="delete_student" value="Delete Student" class="blue-btn " style="text-align: center;" />
-                        </td>
+                <tr>
+                    <td style="width: 12%; text-align: right;">Grade</td>
+                    <td style="width: 38%;">
+                        @Html.DropDownList("CurrentGrade", (List<SelectListItem>)ViewBag.SchoolGrades, "Current Grade")
+                    @Html.ValidationMessageFor(m => m.CurrentGrade)
+                </td>
+                <td style="width: 12%; text-align: right;">Name With Initials</td>
+                <td style="width: 38%;">
+                    @Html.TextBoxFor(m => m.NameWithInitials)
+                @Html.ValidationMessageFor(m => m.NameWithInitials)
+            </td>
+        </tr>
+
+        <tr>
+            <td style="width: 12%; text-align: right;">Name In Full</td>
+            <td style="width: 38%;">
+                @Html.TextBoxFor(m => m.NameInFull)
+            @Html.ValidationMessageFor(m => m.NameInFull)
+        </td>
+        <td style="width: 12%; text-align: right;">Date Of Birth</td>
+        <td style="width: 38%;">
+            @Html.TextBoxFor(m => m.DOB, new { id = "datetimepicker1" })
+        @Html.ValidationMessageFor(m => m.DOB)
+    </td>
+</tr>
+
+<tr>
+    <td style="width: 12%; text-align: right;">Gender</td>
+    <td style="width: 38%;">
+        @Html.DropDownList("Gender", (List<SelectListItem>)ViewBag.Gender, "Select Gender")
+    @Html.ValidationMessageFor(m => m.Gender)
+</td>
+<td style="width: 12%; text-align: right;">Parent Name</td>
+<td style="width: 38%;">
+    @Html.TextBoxFor(m => m.ParentName)
+@Html.ValidationMessageFor(m => m.ParentName)
+</td>
+</tr>
+
+<tr>
+    <td style="width: 12%; text-align: right;">Parent Address</td>
+    <td style="width: 38%;">
+        @Html.TextBoxFor(m => m.ParentAddress)
+    @Html.ValidationMessageFor(m => m.ParentAddress)
+</td>
+<td style="width: 12%; text-align: right;">NIC</td>
+<td style="width: 38%;">
+    @Html.TextBoxFor(m => m.NIC)
+@Html.ValidationMessageFor(m => m.NIC)
+</td>
+</tr>
+
+<tr>
+    <td style="width: 12%; text-align: right;">Contact No</td>
+    <td style="width: 38%;">
+        @Html.TextBoxFor(m => m.ContactNo)
+    @Html.ValidationMessageFor(m => m.ContactNo)
+</td>
+<td style="width: 12%; text-align: right;"></td>
+<td style="width: 38%;"></td>
+</tr>
+
+<tr>
+    <td style="width: 12%; text-align: right;"></td>
+    <td style="width: 38%;">
+        <input type="submit" value="Save" name="button" class="blue-btn" />
+    </td>
+
+    <td style="width: 12%; text-align: right;"></td>
+    <td style="width: 38%;">
+        <input type="button" name="button" id="delete_student" value="Delete Student" class="blue-btn " style="text-align: center;" />
+    </td>
+
+    <td style="width: 10%; text-align: right;"></td>
+    <td style="width: 60%;">
+        <input type="button" name="button" id="Export_info" value="Exp Std Info" class="blue-btn " style="text-align: center;" />
+
+    </td>
 
 
-                </tbody>
-            </table>
-       
-     
-   
+</tbody>
+</table>
 
 
-
-    
-    
-}
+        }
 
 
         <table class="datatable sortable" cellpadding="0">
@@ -282,8 +325,8 @@
 
 
                     @*<th>
-            @Html.DisplayName("School")
-        </th>*@
+                            @Html.DisplayName("School")
+                        </th>*@
                     <th>
                         @Html.DisplayName("Addmision No")
                     </th>
@@ -315,7 +358,8 @@
                         @Html.DisplayName("Contact No")
                     </th>
 
-                    <th>Edit Student
+                    <th>
+                        Edit Student
                     </th>
 
 
@@ -327,8 +371,8 @@
                 {
                     <tr>
                         @*<td>
-            @Html.DisplayFor(modelItem => item.SchoolID)
-        </td>*@
+                                @Html.DisplayFor(modelItem => item.SchoolID)
+                            </td>*@
                         <td>
                             @Html.DisplayFor(modelItem => item.AddmisionNo)
                         </td>
@@ -360,19 +404,19 @@
                             @Html.DisplayFor(modelItem => item.ContactNo)
                         </td>
                         @* <td>
-              @Html.ActionLink("Edit" , "AddStudent", new { iSchoolID = item.SchoolID }, new {@style="color:#000aaa;" })
-        </td>*@
+                                  @Html.ActionLink("Edit" , "AddStudent", new { iSchoolID = item.SchoolID }, new {@style="color:#000aaa;" })
+                            </td>*@
                         <td>
-                            <a id="st" href="javascript:LoadStudent('@item.AddmisionNo', '@item.CurrentGrade','@item.NameWithInitials','@item.NameInFull','@item.DOB','@item.Gender', '@item.ParentName', '@item.ParentAddress', '@item.NIC', '@item.ContactNo')" >Edit</a>
+                            <a id="st" href="javascript:LoadStudent('@item.AddmisionNo', '@item.CurrentGrade','@item.NameWithInitials','@item.NameInFull','@item.DOB','@item.Gender', '@item.ParentName', '@item.ParentAddress', '@item.NIC', '@item.ContactNo')">Edit</a>
 
                         </td>
                         @* <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.EmpID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.EmpID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.EmpID })
-        </td>*@
+                                @Html.ActionLink("Edit", "Edit", new { id=item.EmpID }) |
+                                @Html.ActionLink("Details", "Details", new { id=item.EmpID }) |
+                                @Html.ActionLink("Delete", "Delete", new { id=item.EmpID })
+                            </td>*@
                     </tr>
-}
+                }
             </tbody>
         </table>
 
@@ -382,7 +426,8 @@
                 <fieldset>
 
                     <label for="reason">
-                        Reason</label>
+                        Reason
+                    </label>
                     <input type="text" name="reason" id="reason" value="" class="text ui-widget-content ui-corner-all" />
 
                 </fieldset>
@@ -392,18 +437,18 @@
 
         @*dummy *@
         @*<div>
-        <table id="resTb">
-            <thead>
-                <tr>
-                    <th style="color:red">Reasons</th>
-                   
-                </tr>
-            </thead>
-            <tbody style="color:red">
-               
-            </tbody>
-        </table>
-    </div>*@
+                <table id="resTb">
+                    <thead>
+                        <tr>
+                            <th style="color:red">Reasons</th>
+
+                        </tr>
+                    </thead>
+                    <tbody style="color:red">
+
+                    </tbody>
+                </table>
+            </div>*@
         @*dummy *@
 
     </div>
