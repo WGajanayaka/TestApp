@@ -43,7 +43,7 @@
         </div>
 
         
-        @using (Html.BeginForm())
+        @using (Ajax.BeginForm("SupplierPayments" ,"Home" ,new AjaxOptions { OnComplete = "onSuccess"}))
         {
             @Html.ValidationSummary(true)
             <table class="details_container_table">
@@ -300,11 +300,18 @@
                     //    // here we are adding option for States
 
                     //});
+
                     if (payments.status === undefined) {
                         $("#suplierPayTable").empty().append(payments);
                         $("#btn_div").removeClass('hidden');
                         return;
                     }
+                    if (payments.status != undefined && payments.Error) {
+                        $("#suplierPayTable").empty();
+                        $("#btn_div").removeClass('hidden');
+                        return;
+                    }
+
                     if (payments.status != undefined && !payments.status) {
                         $.confirm({
                             icon: 'fa fa-spinner fa-spin',
@@ -342,6 +349,11 @@
                     });
                 });
 
-            });
+    });
+
+    function onSuccess(e) {
+        debugger;
+        window.location.reload();
+    }
 
 </script>

@@ -7,32 +7,22 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 using SchoolHealthManagement.Models;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.IO;
 using System.Data.OleDb;
-using System.Data;
 using OfficeOpenXml;
-using System.Data;
-using System.Web.Security;
-using System.Web.UI;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Text;
 using System.Web.UI.WebControls;
-using ClosedXML;
 using ClosedXML.Excel;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.Globalization;
-using WHOAnthroPlus.BLL;
 using System.Web.Helpers;
-using Newtonsoft.Json;
+using log4net;
 
 namespace SchoolHealthManagement.Controllers
 {
     public class HomeController : Controller
     {
+        private string LoggedUserName => Session["UserName"].ToString();
+        
+        private readonly  ILog _log;
         //
         // GET: /Home/
         private readonly string _strConnection;
@@ -40,10 +30,11 @@ namespace SchoolHealthManagement.Controllers
         public HomeController()
         {
             _strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+            _log = LogManager.GetLogger(typeof(HomeController));
         }
         public ActionResult Home()
-        {
-            
+        { 
+           
             //string ParentFolder = Server.MapPath("~/Circulars");
             //string[] SubDirs = Directory.GetDirectories(ParentFolder);
 
@@ -3833,28 +3824,42 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.SupplierPaymentRequestList = PaymentRequestList;
             ViewBag.Month = GetMonths(paymentReq.Month);
             ViewBag.Year = GetResentYears(paymentReq.Year.ToString());
-            ViewBag.ProvinceID = GetProvincesByUser("Admin", paymentReq.ProvinceID.ToString());
-            ViewBag.ZoneID = GetZonesByUserProvice("Admin", paymentReq.ProvinceID, paymentReq.ZoneID);
+            ViewBag.ProvinceID = GetProvincesByUser(LoggedUserName, paymentReq.ProvinceID.ToString());
+            ViewBag.ZoneID = GetZonesByUserProvice(LoggedUserName, paymentReq.ProvinceID, paymentReq.ZoneID);
             return View(paymentReq);
         }
 
         public ActionResult LoadSuppliersForPaymentJson(int provinceId, string zoneId, int year, string month,
             int paymentReqNo)
         {
-            if (paymentReqNo <= 0)
+            try
             {
-               var paymentId = GetAlreadySupplierPaymentFor(provinceId, zoneId, year, month);
-                if (paymentId > 0)
+                if (paymentReqNo <= 0)
                 {
-                    return Json(
-                        new {message = "Payment has been initiated, please follow with that.!", status = false , id = paymentId },
+                    var paymentId = GetAlreadySupplierPaymentFor(provinceId, zoneId, year, month);
+                    if (paymentId > 0)
+                    {
+                        return Json(
+                            new {message = "Payment has been initiated, please follow with that.!", status = false , id = paymentId },
+                            JsonRequestBehavior.AllowGet);
+                    }
+                }
+                var data = LoadSuppliersForPayment(provinceId, zoneId, year, month, paymentReqNo);
+                if (data == null)
+                {
+                    return Json( new { message = "unexpected error occured. Please re-try .!", status = false , Error = true },
                         JsonRequestBehavior.AllowGet);
                 }
+               
+                return View("_SupplierDetailView", data);
             }
-            var data = LoadSuppliersForPayment(provinceId, zoneId, year, month, paymentReqNo);
-            
-            return View("_SupplierDetailView", data);
+            catch (Exception e)
+            {
+                _log.Error($"Error : {e.Message}");
+            }
 
+            return Json(new { message = "unexpected error occured. Please re-try .!", status = false, Error = true },
+                        JsonRequestBehavior.AllowGet);
         }
 
         private int GetAlreadySupplierPaymentFor(int provinceId, string zoneId, int year, string month)
@@ -3889,44 +3894,59 @@ namespace SchoolHealthManagement.Controllers
         {
             // Here you are free to do whatever data access code you like
             // You can invoke direct SQL queries, stored procedures, whatever 
-            string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
-            using (var conn = new SqlConnection(strConnection))
-            using (var cmd = conn.CreateCommand())
+            try
             {
-                string UserName = "";
-                conn.Open();
-                cmd.CommandText = "EXEC LoadSuppliers " + ProvinceID + ", '" + ZoneID + "', " + year + ", '" + Month + "', " + PaymentReqNo;
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-
-            
-                 //         m_BanksBranch.BranchCode, Maximum_PayableAmount_For_Scool.MAXAmount
-
-                List<SupplierPaymentRequestDetail> MyList = new List<SupplierPaymentRequestDetail>();
-                foreach (DataRow mydataRow in dt.Rows)
+                string strConnection = ConfigurationManager.ConnectionStrings["UsedConnection"].ConnectionString;
+                using (var conn = new SqlConnection(strConnection))
+                using (var cmd = conn.CreateCommand())
                 {
-                    SupplierPaymentRequestDetail supInfo = new SupplierPaymentRequestDetail();
+                    string UserName = "";
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
+                    // the code that you want to measure comes here
+                    
+                    conn.Open();
+                    cmd.CommandTimeout = 180;
+                    cmd.CommandText = "EXEC LoadSuppliers " + ProvinceID + ", '" + ZoneID + "', " + year + ", '" + Month + "', " + PaymentReqNo;
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    da.SelectCommand.CommandTimeout = 120;
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
 
-                    supInfo.CensorsID = mydataRow["CensorsID"].ToString().Trim();
-                    supInfo.Supplier.ID = mydataRow["ID"].ToString().Trim();
-                    supInfo.PaymentHeaderStatus = Convert.ToString(mydataRow["Status"]);
-                    supInfo.Supplier.SupplierName = mydataRow["SupplierName"].ToString().Trim();
-                    supInfo.Supplier.BankAccountNo = mydataRow["BankAccountNo"].ToString().Trim();
-                    supInfo.Supplier.BankName = mydataRow["BankName"].ToString().Trim();
-                    supInfo.BranchName = mydataRow["BranchName"].ToString().Trim();
-                    if (mydataRow["BankID"]!=DBNull.Value)
-                        supInfo.Supplier.BankID = Convert.ToInt16(mydataRow["BankID"]);
-                    if (mydataRow["BankBranchID"] != DBNull.Value)
-                        supInfo.Supplier.BankBranchID = Convert.ToInt16(mydataRow["BankBranchID"]);
-                    //supInfo.Supplier.BranchCode = mydataRow["BranchCode"].ToString().Trim();
-                    supInfo.MAXAmount = Convert.ToDecimal(mydataRow["MAXAmount"]);
-                    supInfo.Amount = Convert.ToDecimal(mydataRow["Amount"]);
-                    MyList.Add(supInfo);
+                    watch.Stop();
+                    var elapsedMs = watch.ElapsedMilliseconds;
+                   _log.Info($"Data loading time for loadsuppliers : province : {ProvinceID} zoneId {ZoneID} year {year} month {Month} paymentReqNo {PaymentReqNo} : time executed - {elapsedMs}");
+
+                    //         m_BanksBranch.BranchCode, Maximum_PayableAmount_For_Scool.MAXAmount
+
+                    List<SupplierPaymentRequestDetail> MyList = new List<SupplierPaymentRequestDetail>();
+                    foreach (DataRow mydataRow in dt.Rows)
+                    {
+                        SupplierPaymentRequestDetail supInfo = new SupplierPaymentRequestDetail();
+
+                        supInfo.CensorsID = mydataRow["CensorsID"].ToString().Trim();
+                        supInfo.Supplier.ID = mydataRow["ID"].ToString().Trim();
+                        supInfo.PaymentHeaderStatus = Convert.ToString(mydataRow["Status"]);
+                        supInfo.Supplier.SupplierName = mydataRow["SupplierName"].ToString().Trim();
+                        supInfo.Supplier.BankAccountNo = mydataRow["BankAccountNo"].ToString().Trim();
+                        supInfo.Supplier.BankName = mydataRow["BankName"].ToString().Trim();
+                        supInfo.BranchName = mydataRow["BranchName"].ToString().Trim();
+                        if (mydataRow["BankID"]!=DBNull.Value)
+                            supInfo.Supplier.BankID = Convert.ToInt16(mydataRow["BankID"]);
+                        if (mydataRow["BankBranchID"] != DBNull.Value)
+                            supInfo.Supplier.BankBranchID = Convert.ToInt16(mydataRow["BankBranchID"]);
+                        //supInfo.Supplier.BranchCode = mydataRow["BranchCode"].ToString().Trim();
+                        supInfo.MAXAmount = Convert.ToDecimal(mydataRow["MAXAmount"]);
+                        supInfo.Amount = Convert.ToDecimal(mydataRow["Amount"]);
+                        MyList.Add(supInfo);
+                    }
+                   
+                    return MyList;
                 }
-
-                return MyList;
+            }
+            catch (Exception e)
+            {
+                _log.Error($"{"Error"} {e.Message}");
+                return null;
             }
         }
 
@@ -3962,8 +3982,9 @@ namespace SchoolHealthManagement.Controllers
             ViewBag.SupplierPaymentRequestList = GetSupplierPaymentRequest();
             ViewBag.Month = GetMonths(modal.Month);
             ViewBag.Year = GetResentYears(modal.Year.ToString());
-            ViewBag.ProvinceID = GetProvincesByUser("Admin", modal.ProvinceID.ToString());
-            ViewBag.ZoneID = GetZonesByUserProvice("Admin", modal.ProvinceID,modal.ZoneID);
+            ViewBag.ProvinceID = GetProvincesByUser(LoggedUserName, modal.ProvinceID.ToString());
+            ViewBag.ZoneID = GetZonesByUserProvice(LoggedUserName, modal.ProvinceID,modal.ZoneID);
+            modal.Id = 0;
             return View(modal);
         }
 
@@ -3976,7 +3997,7 @@ namespace SchoolHealthManagement.Controllers
             modal.Year = Convert.ToInt16(FormData["Year"]);
             modal.Month = FormData["Month"];
             modal.RequestDate = FormData["RequestDate"];
-            modal.CreateBy = "Admin";
+            modal.CreateBy = LoggedUserName;
             modal.Status = "New";
             modal.Details  = new Dictionary<int,decimal>();
 
@@ -4119,7 +4140,7 @@ namespace SchoolHealthManagement.Controllers
             using (var conn = new SqlConnection(strConnection))
             using (var cmd = conn.CreateCommand())
             {
-                string UserName = "Admin";
+                string UserName = LoggedUserName;
                 conn.Open();
                 cmd.CommandText = "GetSupplierPaymentRequest '" + UserName + "'";
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -6745,7 +6766,8 @@ namespace SchoolHealthManagement.Controllers
 
         public JsonResult GetZonesByProvinceJson(int provinceID)
         {
-            var data =  GetZonesByUserProvice("Admin", provinceID, "");
+            
+            var data =  GetZonesByUserProvice(LoggedUserName, provinceID, "");
             return Json(data);
         }
 
