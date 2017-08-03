@@ -1799,6 +1799,27 @@ namespace SchoolHealthManagement.Controllers
                                     "WHERE A.Year = " + iYear.ToString() + " AND m_Schools.ProvinceID = '" + ProvinceID + "' " +
                                     "GROUP BY A.ProvinceID, m_Provinces.ProvinceName, B.ZoneID, B.ZoneName, m_Schools.ZoneID, A.NumberOfSchools, A.TotalStudentCount " +
                                     "ORDER BY  m_Provinces.ProvinceName, [Per] DESC, B.ZoneName";
+
+                */
+
+                cmd.CommandText = "SELECT  " +
+                                           "TOP (100) PERCENT dbo.m_Provinces.ProvinceName, B.ZoneID, B.ZoneName, A.NumberOfSchools, A.TotalStudentCount, " +
+                                           " COUNT(dbo.StudentInfo.AddmisionNo) AS [Entered], COUNT(dbo.StudentInfo.AddmisionNo) * 100 / A.TotalStudentCount AS [Per], " +
+                                           "(SELECT COUNT(BMIInformation.AdmissionNo) FROM m_Schools INNER JOIN BMIInformation ON m_Schools.SchoolID = BMIInformation.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID AND m_Schools.ZoneID = B.ZoneID AND (BMIInformation.Trimester = " + iYear.ToString() + "1)) AS BMI1, " +
+                                           "(SELECT COUNT(BMIInformation.AdmissionNo) FROM m_Schools INNER JOIN BMIInformation ON m_Schools.SchoolID = BMIInformation.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID AND m_Schools.ZoneID = B.ZoneID AND (BMIInformation.Trimester = " + iYear.ToString() + "2)) AS BMI2, " +
+                                           "(SELECT COUNT(BMIInformation.AdmissionNo) FROM m_Schools INNER JOIN BMIInformation ON m_Schools.SchoolID = BMIInformation.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID AND m_Schools.ZoneID = B.ZoneID AND (BMIInformation.Trimester = " + iYear.ToString() + "3)) AS BMI3, " +
+                                           "(SELECT COUNT(m_SupplierInformation.SupplierName) FROM m_SupplierInformation INNER JOIN m_Schools ON m_SupplierInformation.SchoolID = m_Schools.SchoolID WHERE m_Schools.ProvinceID = A.ProvinceID  AND m_Schools.ZoneID = B.ZoneID) AS SupCount, " +
+                                           "(SELECT COUNT(SanitoryFacilityInfo.NoOfMaleToilets) FROM SanitoryFacilityInfo INNER JOIN m_Schools ON SanitoryFacilityInfo.SchoolID = m_Schools.SchoolID WHERE m_Schools.ProvinceID =  A.ProvinceID  AND m_Schools.ZoneID = B.ZoneID) AS SanitoryCount " +
+                                  " FROM " +
+                                            "m_Schools INNER JOIN StudentInfo ON m_Schools.SchoolID = StudentInfo.SchoolID " +
+                                            "INNER JOIN m_Provinces ON m_Schools.ProvinceID = m_Provinces.ProvinceID " +
+                                            "INNER JOIN m_Zones B ON m_Schools.ZoneID = B.ZoneID " +
+                                            "INNER JOIN ZoneWiseStudentCount A ON A.ZoneID = B.ZoneID " +
+                                   "WHERE A.Year = " + iYear.ToString() + " AND m_Schools.ProvinceID = '" + ProvinceID + "' AND (StudentInfo.Year = " + iYear.ToString() + ") " +
+                                   "GROUP BY A.ProvinceID, m_Provinces.ProvinceName, B.ZoneID, B.ZoneName, m_Schools.ZoneID, A.NumberOfSchools, A.TotalStudentCount " +
+                                   "ORDER BY  m_Provinces.ProvinceName, [Per] DESC, B.ZoneName";
+
+
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
