@@ -1783,6 +1783,7 @@ namespace SchoolHealthManagement.Controllers
             {
 
                 conn.Open();
+                /*
                 cmd.CommandText = "SELECT  " +
                                             "TOP (100) PERCENT dbo.m_Provinces.ProvinceName, B.ZoneID, B.ZoneName, A.NumberOfSchools, A.TotalStudentCount, " +
                                             " COUNT(dbo.StudentInfo.AddmisionNo) AS [Entered], COUNT(dbo.StudentInfo.AddmisionNo) * 100 / A.TotalStudentCount AS [Per], " +
