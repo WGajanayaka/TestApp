@@ -1,6 +1,6 @@
 USE [SHPP_TST]
 GO
-/****** Object:  StoredProcedure [dbo].[Update_SupplierPaymentReq_Header]    Script Date: 2017-03-26 10:19:09 AM ******/
+/****** Object:  StoredProcedure [dbo].[Update_SupplierPaymentReq_Header]    Script Date: 2017-07-19 2:13:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -13,11 +13,11 @@ ALTER   procedure [dbo].[Update_SupplierPaymentReq_Header]
 	@Year int,
 	@Month  nvarchar(15),
 	@CreateUser  nvarchar(50),
-	@CreateDate datetime,
-	@AprovedUser nvarchar(50),
-	@ApprovedDate datetime,
-	@ProvincialApp_User nvarchar(50),
-	@ProvincialApp_Date datetime,
+	@CreateDate datetime = null,
+	@AprovedUser nvarchar(50) = null,
+	@ApprovedDate datetime =null,
+	@ProvincialApp_User nvarchar(50)=null,
+	@ProvincialApp_Date datetime = null,
 	@TotalAmount as decimal(18,2),
 	@Status  nvarchar(15),
 	@TranType as nvarchar(10),
