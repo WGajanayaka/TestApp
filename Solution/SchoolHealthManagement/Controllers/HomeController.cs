@@ -3953,9 +3953,9 @@ namespace SchoolHealthManagement.Controllers
                         supInfo.Supplier.BankName = mydataRow["BankName"].ToString().Trim();
                         supInfo.BranchName = mydataRow["BranchName"].ToString().Trim();
                         if (mydataRow["BankID"]!=DBNull.Value)
-                            supInfo.Supplier.BankID = Convert.ToInt16(mydataRow["BankID"]);
+                            supInfo.Supplier.BankID = Convert.ToInt32(mydataRow["BankID"]);
                         if (mydataRow["BankBranchID"] != DBNull.Value)
-                            supInfo.Supplier.BankBranchID = Convert.ToInt16(mydataRow["BankBranchID"]);
+                            supInfo.Supplier.BankBranchID = Convert.ToInt32(mydataRow["BankBranchID"]);
                         //supInfo.Supplier.BranchCode = mydataRow["BranchCode"].ToString().Trim();
                         supInfo.MAXAmount = Convert.ToDecimal(mydataRow["MAXAmount"]);
                         supInfo.Amount = Convert.ToDecimal(mydataRow["Amount"]);
@@ -4013,10 +4013,10 @@ namespace SchoolHealthManagement.Controllers
         private SupplierPaymentRequest MakeSupplierPaymentRequest(FormCollection FormData)
         {          
             SupplierPaymentRequest modal = new SupplierPaymentRequest();
-            modal.Id = Convert.ToInt16(FormData["Id"]);
-            modal.ProvinceID = Convert.ToInt16(FormData["ProvinceID"]);
+            modal.Id = Convert.ToInt32(FormData["Id"]);
+            modal.ProvinceID = Convert.ToInt32(FormData["ProvinceID"]);
             modal.ZoneID = FormData["ZoneID"];
-            modal.Year = Convert.ToInt16(FormData["Year"]);
+            modal.Year = Convert.ToInt32(FormData["Year"]);
             modal.Month = FormData["Month"];
             modal.RequestDate = FormData["RequestDate"];
             modal.CreateBy = LoggedUserName;
@@ -4028,7 +4028,7 @@ namespace SchoolHealthManagement.Controllers
                 if(item.IndexOf('-') > 0)
                 {
                     var arr = item.Split('-');
-                    modal.Details.Add(Convert.ToInt16(arr[1]), Convert.ToDecimal(FormData[item]));
+                    modal.Details.Add(Convert.ToInt32(arr[1]), Convert.ToDecimal(FormData[item]));
                 }
             }
             modal.Total = (float)modal.Details.Values.Sum(c => Convert.ToDecimal(c)); 
@@ -4174,14 +4174,14 @@ namespace SchoolHealthManagement.Controllers
                 {
                     SupplierPaymentRequest supInfo = new SupplierPaymentRequest();
 
-                    supInfo.Id = Convert.ToInt16(mydataRow["PaymentReqNo"]);
+                    supInfo.Id = Convert.ToInt32(mydataRow["PaymentReqNo"]);
                     supInfo.RequestDate = mydataRow["ReqDate"].ToString().Trim();
-                    supInfo.ProvinceID = Convert.ToInt16(mydataRow["ProvinceID"]);
+                    supInfo.ProvinceID = Convert.ToInt32(mydataRow["ProvinceID"]);
                     supInfo.ProvinceName = mydataRow["ProvinceName"].ToString().Trim(); 
                     supInfo.ZoneID = mydataRow["ZoneID"].ToString().Trim();
                     supInfo.ZoneName = mydataRow["ZoneName"].ToString().Trim();
-                    supInfo.Year = Convert.ToInt16(mydataRow["Year"]);
-                    supInfo.Total = Convert.ToInt16(mydataRow["TotalAmount"]);
+                    supInfo.Year = Convert.ToInt32(mydataRow["Year"]);
+                    supInfo.Total = Convert.ToInt32(mydataRow["TotalAmount"]);
                     supInfo.Month = mydataRow["Month"].ToString().Trim();
                     supInfo.CreateBy = mydataRow["CreateUser"].ToString().Trim();
                     if(mydataRow["CreateDate"]!=DBNull.Value)

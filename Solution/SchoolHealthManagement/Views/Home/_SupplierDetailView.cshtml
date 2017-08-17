@@ -48,11 +48,11 @@
                     
                     @if (string.Equals(item.PaymentHeaderStatus, "Approved-Zone", StringComparison.InvariantCultureIgnoreCase) || string.Equals(item.PaymentHeaderStatus, "Forwarded", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" readonly="readonly" min="0"/>
+                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" readonly="readonly" min="0.00" step="0.01"/>
                     }
                     else
                     {
-                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" min="0" />
+                        <input name="Amount-@item.Supplier.ID" value="@item.Amount" max="@item.MAXAmount" type="number" min="0.00" step="0.01"/>
                     }
                 </td>
 
